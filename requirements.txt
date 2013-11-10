@@ -1,0 +1,6 @@
+urwid==1.1.1
+requests==2.0.1
+
+# Debug
+ipdb
+ipython
