@@ -4,7 +4,7 @@ import json
 import requests
 
 
-class GMApiClient(object):
+class GreenMine(object):
     BASE_HEADERS = {
         "content-type": "application/json; charset: utf8",
         "X-DISABLE-PAGINATION": "true"
