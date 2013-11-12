@@ -11,7 +11,7 @@ Setup development environment
 
 Just execute these commands in your virtualenv(wrapper):
 
-.. code-block:: console
+.. code-block:: sh
 
     pip install -r requirements.txt
 
