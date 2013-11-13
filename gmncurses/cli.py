@@ -23,6 +23,7 @@ class FormMixin(object):
         key = self.KEYS.get(key, key)
         return super(FormMixin, self).keypress(size, key)
 
+
 class UI(FormMixin, urwid.ListBox):
     def __init__(self, widgets):
         self._msg = urwid.Text('')
@@ -44,6 +45,7 @@ def debug(loop):
     import ipdb; ipdb.set_trace()
     loop.screen.start()
 
+
 def key_handler(loop, key):
     if key == 'q':
         raise urwid.ExitMainLoop
@@ -54,7 +56,7 @@ def key_handler(loop, key):
     return key
 
 
-bt = urwid.BigText('Greenmine', font=urwid.font.HalfBlock7x7Font())
+bt = urwid.BigText('GreenMine', font=urwid.font.HalfBlock7x7Font())
 bt = urwid.Padding(bt, 'center', width='clip')
 header = urwid.AttrWrap(bt, 'green')
 
@@ -102,7 +104,7 @@ save_button_widget = urwid.AttrWrap(urwid.LineBox(save_button), 'save-button')
 
 whitespace = urwid.SolidFill(' ')
 ui = UI([ header, username_prompt, password_prompt, save_button_widget,])
-ui = urwid.Columns([whitespace, ui, whitespace])
+ui = urwid.Pile([whitespace, urwid.Columns([whitespace, ui, whitespace]), whitespace])
 
 GREENMINE_HOST = 'http://greenmine.kaleidos.net'
 gm = GreenMine(GREENMINE_HOST)
