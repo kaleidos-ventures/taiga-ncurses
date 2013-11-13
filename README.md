@@ -1,6 +1,9 @@
 greenmine-ncurses
 =================
 
+.. image:: http://kaleidos.net/static/img/badge.png
+    :target: http://kaleidos.net/community/greenmine/
+
 A NCurses client for GreenMine.
 
 Setup development environment

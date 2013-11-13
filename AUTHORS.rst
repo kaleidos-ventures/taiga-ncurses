@@ -1,6 +1,7 @@
 The PRIMARY AUTHORS are:
 
-- David Barragán Merino <dbarragan@dbarragan.com>
+- David Barragán    <https://github.com/bameda>
+- Alejandro Gómez   <https://github.com/alejandrogomez>
 
 Special thanks to Kaleidos Open Source S.L for provice time for greenmine
 development.
