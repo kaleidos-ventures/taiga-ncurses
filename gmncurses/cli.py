@@ -8,7 +8,7 @@ from gmncurses.api.client import GreenMine
 
 
 # TODO: config
-GREENMINE_HOST = 'http://greenmine.kaleidos.net'
+GREENMINE_HOST = 'http://api.greenmine.kaleidos.net'
 
 PALETTE = [
     ('green', 'dark green', 'default'),
