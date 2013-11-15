@@ -11,8 +11,10 @@ Setup development environment
 
 Just execute these commands in your virtualenv(wrapper):
 
-```shell
-$ pip install -r requirements.txt
-```
+.. code-block::
+
+    $ pip install -r requirements.txt
+    $ python setup.py develop
+
 
 Note: greenmine-ncurses only runs with python 3.3+.
