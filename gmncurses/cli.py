@@ -35,9 +35,11 @@ class Login(FormMixin, urwid.ListBox):
 class NotifierMixin(object):
     def error_msg(self, text):
         self.set_text(('error', text))
+        self.set_align_mode('center')
 
     def info_msg(self, text):
         self.set_text(('info', text))
+        self.set_align_mode('center')
 
     def clear_msg(self):
         self.set_text('')
