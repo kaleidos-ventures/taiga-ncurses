@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+api.client
+~~~~~~~~~~
+"""
+
 from urllib.parse import urljoin
 import json
+
 import requests
 
 
