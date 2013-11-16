@@ -4,7 +4,7 @@ import functools
 
 import urwid
 
-from gmncurses.api.client import GreenMine
+from gmncurses.api.client import GreenMineClient
 
 
 # TODO: config
@@ -115,7 +115,7 @@ def main():
     loop.unhandled_input = functools.partial(key_handler, loop)
 
     # API
-    gm = GreenMine(GREENMINE_HOST)
+    gm = GreenMineClient(GREENMINE_HOST)
 
     # Signal handlers
     def handle_login():
