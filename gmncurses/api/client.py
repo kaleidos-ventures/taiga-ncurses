@@ -10,11 +10,11 @@ class GreenMmine(object):
     >>> from gmncurses.api.client import *
     >>> api = GreenMine("http://localhost:8000")
     >>> api.login("admin", "123123")
-    ...
+    {...}
     >>> api.get_projets()
-    ...
+    [...]
     >>> api.get_task(1)
-    ...
+    {...}
     >>> api.get_issue(1234)
     False
     >>> api.last_error
