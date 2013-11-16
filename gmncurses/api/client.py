@@ -62,7 +62,7 @@ class GreenMineClient(BaseClient):
     >>> api = GreenMineClient("http://localhost:8000")
     >>> api.login("admin", "123123")
     {...}
-    >>> api.get_projets()
+    >>> api.get_projects()
     [...]
     >>> api.get_project(1)
     {...}
@@ -111,6 +111,16 @@ class GreenMineClient(BaseClient):
                error_callback=None, **kwargs):
         self._headers = self.BASE_HEADERS
         return True
+
+    def get_projects(self, params={}, data_dicti={}, on_success_callback=None,
+                 error_callback=None, **kwargs):
+        url = urljoin(self._host, self.URLS.get("projects"))
+        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+
+    def get_project(self, id, params={}, data_dicti={}, on_success_callback=None,
+                 error_callback=None, **kwargs):
+        url = urljoin(self._host, self.URLS.get("project").format(id))
+        return self._get(url, params, on_success_callback, error_callback, **kwargs)
 
     def get_users(self, params={}, data_dicti={}, on_success_callback=None,
                  error_callback=None, **kwargs):
