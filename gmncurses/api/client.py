@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-api.client
-~~~~~~~~~~
+gmncurses.api.client
+~~~~~~~~~~~~~~~~~~~~
 """
 
 from urllib.parse import urljoin

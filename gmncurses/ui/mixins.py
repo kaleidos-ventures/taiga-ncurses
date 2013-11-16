@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-ui.mixins
-~~~~~~~~~
+gmncurses.ui.mixins
+~~~~~~~~~~~~~~~~~~~
 """
 
 
