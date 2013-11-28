@@ -9,16 +9,6 @@ import urwid
 
 from .mixins import FormMixin, NotifierMixin, PlainButtonMixin
 
-PALETTE = [
-    ('green', 'dark green', 'default'),
-    ('editor', 'white', 'black'),
-    ('password-editor', 'light red', 'black'),
-    ('save-button', 'white', 'default'),
-    ('error', 'white', 'dark red'),
-    ('info', 'white', 'dark blue'),
-]
-
-
 def wrap_in_whitespace(widget, cls=urwid.Columns):
     whitespace = urwid.SolidFill(' ')
     return cls([whitespace, widget, whitespace])
@@ -48,7 +38,7 @@ def password_prompt(password_text, editor, max_prompt_padding):
                           urwid.AttrWrap(editor, 'password-editor')])
 
 
-def wrap_save_button(button):
+def wrap_login_button(button):
     return urwid.AttrWrap(urwid.LineBox(button), 'save-button')
 
 
