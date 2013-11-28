@@ -53,7 +53,7 @@ def wrap_save_button(button):
 
 
 def button(text, align=None):
-    return PlainButton(text.upper(), 'center' if align is None else align)
+    return PlainButton(text.upper(), align)
 
 
 def editor(mask=None):
@@ -73,7 +73,8 @@ class Notifier(NotifierMixin, urwid.Text):
 
 
 class PlainButton(PlainButtonMixin, urwid.Button):
-    def __init__(self, text, alignment):
+    ALIGN = 'center'
+
+    def __init__(self, text, align=None):
         super().__init__(text)
-        self._label.align = alignment
-        self._label._invalidate()
+        self._label.set_align_mode(self.ALIGN if align is None else align)
