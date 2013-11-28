@@ -5,6 +5,7 @@ gmncurses.ui.mixins
 ~~~~~~~~~~~~~~~~~~~
 """
 
+import urwid
 
 class FormMixin(object):
     KEYS = { 'tab': 'down', 'shift tab': 'up', }
@@ -28,3 +29,7 @@ class NotifierMixin(object):
     def clear_msg(self):
         self.set_text('')
 
+
+class PlainButtonMixin(object):
+    button_left = urwid.Text("")
+    button_right = urwid.Text("")

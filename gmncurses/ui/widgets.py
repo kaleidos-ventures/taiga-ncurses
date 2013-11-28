@@ -7,13 +7,13 @@ ui.widgets
 
 import urwid
 
-from .mixins import FormMixin, NotifierMixin
+from .mixins import FormMixin, NotifierMixin, PlainButtonMixin
 
 PALETTE = [
     ('green', 'dark green', 'default'),
     ('editor', 'white', 'black'),
     ('password-editor', 'light red', 'black'),
-    ('save-button', 'dark magenta', 'default'),
+    ('save-button', 'white', 'default'),
     ('error', 'white', 'dark red'),
     ('info', 'white', 'dark blue'),
 ]
@@ -53,7 +53,7 @@ def wrap_save_button(button):
 
 
 def button(text, align=None):
-    return urwid.Button(('center' if align is None else align, text))
+    return PlainButton(text.upper(), 'center' if align is None else align)
 
 
 def editor(mask=None):
@@ -70,3 +70,10 @@ class Login(FormMixin, urwid.ListBox):
 
 class Notifier(NotifierMixin, urwid.Text):
     pass
+
+
+class PlainButton(PlainButtonMixin, urwid.Button):
+    def __init__(self, text, alignment):
+        super().__init__(text)
+        self._label.align = alignment
+        self._label._invalidate()
