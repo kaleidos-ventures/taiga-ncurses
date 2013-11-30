@@ -116,6 +116,7 @@ class GreenMineClient(BaseClient):
     def set_auth_token(self, auth_token):
         self._headers["Authorization"] = "Bearer {}".format(auth_token)
 
+    @property
     def is_authenticated(self):
         return "Authorization" in self._headers
 

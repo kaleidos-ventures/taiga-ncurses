@@ -23,7 +23,10 @@ class GreenMineCore(object):
         self.executor = Executor(client)
         self.sm = StateMachine(self)
 
-        self.controller = self._build_login_controller()
+        if client.is_authenticated:
+            self.controller = self._build_projects_controller()
+        else:
+            self.controller = self._build_login_controller()
 
         # Main Loop
         self.loop = urwid.MainLoop(self.controller.view.widget,
@@ -55,14 +58,14 @@ class GreenMineCore(object):
     def login_view(self):
         pass
 
-    def _build_project_controller(self):
+    def _build_projects_controller(self):
         projects = self.client.get_projects()
         projects_view = views.ProjectsView(projects)
         projects_controller = controllers.ProjectsController(self, projects_view)
         return projects_controller
 
     def projects_view(self):
-        self.controller = self._build_project_controller()
+        self.controller = self._build_projects_controller()
         self.loop.widget = self.controller.view.widget
         self.loop.draw_screen()
 

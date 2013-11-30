@@ -1,3 +1,4 @@
+from concurrent.futures import Future
 from unittest import mock
 
 from gmncurses.ui import signals
@@ -19,8 +20,10 @@ def test_login_controller_prints_an_error_message_on_unsuccessful_login():
     login_view = factories.login_view(username, password)
     login_view.notifier = mock.Mock()
 
+    resp = Future()
+    resp.set_result(False)
     f = mock.Mock()
-    f.add_done_callback = lambda f: f(False)
+    f.add_done_callback = lambda f: f(resp)
     executor  = mock.Mock()
     executor.login = mock.Mock(return_value=f)
     _ = mock.Mock()
@@ -35,8 +38,10 @@ def test_login_controller_transitions_to_projects_on_successful_login():
     username, password = "admin", "123123"
     login_view = factories.login_view(username, password)
 
+    resp = Future()
+    resp.set_result(factories.api_successful_login_response(username))
     f = mock.Mock()
-    f.add_done_callback = lambda f: f(factories.api_successful_login_response(username))
+    f.add_done_callback = lambda f: f(resp)
     executor  = mock.Mock()
     executor.login = mock.Mock(return_value=f)
     state_machine = mock.Mock()
