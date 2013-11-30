@@ -59,3 +59,7 @@ class GreenMineCore(object):
         self.controller = self._build_project_controller()
         self.loop.widget = self.controller.view.widget
         self.loop.draw_screen()
+
+    def save_auth_token(self, token):
+        self.debug()
+

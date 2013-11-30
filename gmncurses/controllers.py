@@ -38,10 +38,12 @@ class LoginController(Controller):
             return
 
         if logged_in:
-            self.view.notifier.info_msg('Login succesful!')
+            self.view.notifier.info_msg("Login succesful!")
+            auth_token = logged_in.get("auth_token")
+            self.loop.save_auth_token(auth_token)
             self.loop.projects_view()
         else:
-            self.view.notifier.error_msg(self.client.last_error['detail'])
+            self.view.notifier.error_msg(self.client.last_error["detail"])
 
 
 class ProjectsController(Controller):
