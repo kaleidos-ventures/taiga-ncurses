@@ -70,10 +70,9 @@ class GreenMineCore(object):
         self.loop.widget = self.controller.view.widget
         self.loop.draw_screen()
 
-    def save_auth_token(self, auth_data):
+    def set_auth_config(self, auth_data):
         self.configuration.config_dict["auth"] = {}
         self.configuration.config_dict["auth"]["token"] = auth_data["auth_token"]
-        self.configuration.save()
 
 
 class StateMachine(object):
@@ -88,5 +87,5 @@ class StateMachine(object):
 
     def logged_in(self, auth_data):
         self._state = self.PROJECTS
-        self._core.save_auth_token(auth_data)
+        self._core.set_auth_config(auth_data)
         self._core.projects_view()
