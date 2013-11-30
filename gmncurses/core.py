@@ -39,6 +39,7 @@ class GreenMineCore(object):
 
     def key_handler(self, key):
         if key == Keys.QUIT:
+            self.configuration.save()
             raise urwid.ExitMainLoop
         elif key == Keys.DEBUG:
             self.debug()
