@@ -10,6 +10,7 @@ import urllib
 
 PALETTE = [
     ('green', 'dark green', 'default'),
+    ('green-bg', 'white', 'dark green'),
     ('editor', 'white', 'black'),
     ('password-editor', 'light red', 'black'),
     ('save-button', 'white', 'default'),

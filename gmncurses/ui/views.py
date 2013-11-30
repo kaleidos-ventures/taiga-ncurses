@@ -27,13 +27,13 @@ class LoginView(View):
 
         self._username_editor = widgets.editor()
         username_prompt = widgets.username_prompt(username_text, self._username_editor, max_prompt_padding)
-        self._password_editor = widgets.editor(mask='♥')
+        self._password_editor = widgets.editor(mask="♥")
         password_prompt = widgets.password_prompt(password_text, self._password_editor, max_prompt_padding)
         # Login button
-        self.login_button = widgets.button('login')
+        self.login_button = widgets.button("login")
         login_button_widget = widgets.wrap_login_button(self.login_button)
         # Notifier
-        self.notifier = widgets.Notifier('')
+        self.notifier = widgets.Notifier("")
 
         login_widget = widgets.Login([header, username_prompt, password_prompt, login_button_widget, self.notifier])
         self.widget = widgets.center(login_widget)
@@ -49,6 +49,6 @@ class LoginView(View):
 
 class ProjectsView(View):
     def __init__(self):
-        text = urwid.Text('nope')
-        textf = urwid.Filler(text, 'middle')
-        self.widget = urwid.Frame(textf)
+        text = urwid.Text("nope")
+        textf = urwid.Filler(text, "middle")
+        self.widget = urwid.Frame(textf, header=widgets.Header())
