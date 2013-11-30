@@ -5,6 +5,9 @@ gmncurses.ui.views
 ~~~~~~~~~~~~~~~~~~
 """
 
+import operator
+import functools
+
 import urwid
 
 from . import widgets
@@ -48,7 +51,9 @@ class LoginView(View):
 
 
 class ProjectsView(View):
-    def __init__(self):
-        text = urwid.Text("nope")
-        textf = urwid.Filler(text, "middle")
-        self.widget = urwid.Frame(textf, header=widgets.Header())
+    def __init__(self, projects):
+        cells = [urwid.Button(p['name']) for p in projects]
+        min_width = functools.reduce(max, (len(p['name']) for p in projects))
+        grid = widgets.Grid(cells, min_width * 4, 2, 2, 'center')
+        fill = urwid.Filler(grid, min_height=40)
+        self.widget = urwid.Frame(fill, header=widgets.Header())

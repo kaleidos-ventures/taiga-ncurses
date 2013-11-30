@@ -7,27 +7,41 @@ gmncurses.ui.mixins
 
 import urwid
 
-class FormMixin(object):
-    KEYS = { 'tab': 'down', 'shift tab': 'up', }
-
+class KeyMixin(object):
     def keypress(self, size, key):
         key = self.KEYS.get(key, key)
-        return super(FormMixin, self).keypress(size, key)
+        return super().keypress(size, key)
+
+
+class FormMixin(KeyMixin):
+    KEYS = {
+        "tab": "down",
+        "shift tab": "up",
+    }
+
+
+class ViMotionMixin(KeyMixin):
+    KEYS = {
+        "j": "down",
+        "k": "up",
+        "h": "left",
+        "l": "right",
+    }
 
 
 class NotifierMixin(object):
-    ALIGN = 'center'
+    ALIGN = "center"
 
     def error_msg(self, text):
-        self.set_text(('error', text))
+        self.set_text(("error", text))
         self.set_align_mode(self.ALIGN)
 
     def info_msg(self, text):
-        self.set_text(('info', text))
+        self.set_text(("info", text))
         self.set_align_mode(self.ALIGN)
 
     def clear_msg(self):
-        self.set_text('')
+        self.set_text("")
 
 
 class PlainButtonMixin(object):

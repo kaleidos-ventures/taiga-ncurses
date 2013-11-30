@@ -16,35 +16,31 @@ class Controller(object):
 
 
 class LoginController(Controller):
-    def __init__(self, loop, view, client):
-        self.loop = loop
+    def __init__(self, view, executor, state_machine):
         self.view = view
-        self.client = client
+        self.executor = executor
+        self.state_machine = state_machine
 
-        signals.connect(self.view.login_button, 'click', lambda _: self.handle_login())
+        signals.connect(self.view.login_button, "click", lambda _: self.handle_login_request())
 
-    def handle_login(self):
+    def handle_login_request(self):
         self.view.notifier.clear_msg()
-        user = self.view.username
+
+        username = self.view.username
         password = self.view.password
-
-        if not user or not password:
-            self.view.notifier.error_msg('Enter your username and password')
+        if not username or not password:
+            self.view.notifier.error_msg("Enter your username and password")
             return
 
-        try:
-            logged_in = self.client.login(user, password)
-        except Exception as e:
-            self.view.notifier.error_msg(e.args[0])
-            return
+        logged_in_f = self.executor.login(username, password)
+        logged_in_f.add_done_callback(self.handle_login_response)
 
-        if logged_in:
+    def handle_login_response(self, response):
+        if response:
             self.view.notifier.info_msg("Login succesful!")
-            auth_token = logged_in.get("auth_token")
-            self.loop.save_auth_token(auth_token)
-            self.loop.projects_view()
+            self.state_machine.logged_in(response)
         else:
-            self.view.notifier.error_msg(self.client.last_error["detail"])
+            self.view.notifier.error_msg("Login error")
 
 
 class ProjectsController(Controller):

@@ -7,7 +7,7 @@ gmncurses.ui.widgets
 
 import urwid
 
-from .mixins import FormMixin, NotifierMixin, PlainButtonMixin
+from . import mixins
 
 def wrap_in_whitespace(widget, cls=urwid.Columns):
     whitespace = urwid.SolidFill(" ")
@@ -53,16 +53,16 @@ def editor(mask=None):
         return urwid.Edit(mask=mask)
 
 
-class Login(FormMixin, urwid.ListBox):
+class Login(mixins.FormMixin, urwid.ListBox):
     def __init__(self, widgets):
         super(Login, self).__init__(urwid.SimpleListWalker(widgets))
 
 
-class Notifier(NotifierMixin, urwid.Text):
+class Notifier(mixins.NotifierMixin, urwid.Text):
     pass
 
 
-class PlainButton(PlainButtonMixin, urwid.Button):
+class PlainButton(mixins.PlainButtonMixin, urwid.Button):
     ALIGN = "center"
 
     def __init__(self, text, align=None):
@@ -75,3 +75,7 @@ class Header(urwid.WidgetWrap):
         bt = urwid.BigText("GREENMINE", font=urwid.font.HalfBlock5x4Font())
         widget = urwid.Padding(bt, width="clip", left=3)
         super().__init__(urwid.AttrMap(widget, "green-bg"))
+
+
+class Grid(mixins.ViMotionMixin, urwid.GridFlow):
+    pass
