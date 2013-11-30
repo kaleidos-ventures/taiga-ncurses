@@ -10,13 +10,11 @@ from . import widgets
 
 class View(object):
     widget = None
+    notifier = None
 
 
 class LoginView(View):
-    username_editor = None
-    pasword_editor = None
     login_button = None
-    notifier = None
 
     def __init__(self, username_text, password_text):
         # Header
@@ -37,6 +35,14 @@ class LoginView(View):
 
         login_widget = widgets.Login([header, username_prompt, password_prompt, login_button_widget, self.notifier])
         self.widget = widgets.center(login_widget)
+
+    @property
+    def username(self):
+        return self.username_editor.get_edit_text()
+
+    @property
+    def password(self):
+        return self.password_editor.get_edit_text()
 
 
 class ProjectsView(View):

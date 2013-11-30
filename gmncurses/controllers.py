@@ -4,7 +4,7 @@ controllers
 
 """
 
-import urwid
+from .ui import signals
 
 
 class Controller(object):
@@ -20,12 +20,12 @@ class LoginController(Controller):
         self.view = view
         self.client = client
 
-        urwid.connect_signal(self.view.login_button, 'click', lambda _: self.handle_login())
+        signals.connect(self.view.login_button, 'click', lambda _: self.handle_login())
 
     def handle_login(self):
         self.view.notifier.clear_msg()
-        user = self.view.username_editor.get_edit_text()
-        password = self.view.password_editor.get_edit_text()
+        user = self.view.username
+        password = self.view.password
 
         if not user or not password:
             self.view.notifier.error_msg('Enter your username and password')
