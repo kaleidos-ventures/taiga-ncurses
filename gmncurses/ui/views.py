@@ -51,9 +51,21 @@ class LoginView(View):
 
 
 class ProjectsView(View):
+    project_buttons = None
+    projects = None
+
     def __init__(self, projects):
-        cells = [urwid.Button(p['name']) for p in projects]
+        self.projects = projects
+        self.project_buttons = [urwid.Button(p['name']) for p in projects]
         min_width = functools.reduce(max, (len(p['name']) for p in projects), 0)
-        grid = widgets.Grid(cells, min_width * 4, 2, 2, 'center')
+        grid = widgets.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
         fill = urwid.Filler(grid, min_height=40)
         self.widget = urwid.Frame(fill, header=widgets.Header())
+
+
+class ProjectDetailView(View):
+    def __init__(self, project):
+        self.project = project
+
+        self.widget = urwid.Frame(urwid.SolidFill())
+

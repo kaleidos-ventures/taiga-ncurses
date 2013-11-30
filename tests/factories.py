@@ -26,3 +26,9 @@ def api_successful_login_response(username):
         'projects': [],
         'username': username,
     }
+
+def api_projects():
+    return [{"name": "Foo", "id": 2}, {"name": "Bar", "id": 3}]
+
+def project():
+    return {"name": "Foo", "id": 2}

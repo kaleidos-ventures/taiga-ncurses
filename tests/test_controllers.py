@@ -1,7 +1,7 @@
 from concurrent.futures import Future
 from unittest import mock
 
-from gmncurses.ui import signals
+from gmncurses.ui import signals, views
 from gmncurses import controllers
 
 from . import factories
@@ -50,3 +50,14 @@ def test_login_controller_transitions_to_projects_on_successful_login():
     signals.emit(login_view.login_button, "click")
 
     assert state_machine.logged_in.call_count == 1
+
+def test_projects_controller_click_on_project_transitions_to_project_detail():
+    projects_view = views.ProjectsView(factories.api_projects())
+    state_machine = mock.Mock()
+    login_controller = controllers.ProjectsController(projects_view, state_machine)
+
+    signals.emit(projects_view.project_buttons[0], "click")
+
+    assert state_machine.project_detail.call_count == 1
+
+

@@ -52,23 +52,19 @@ class GreenMineCore(object):
         import ipdb; ipdb.set_trace()
         self.loop.screen.start()
 
-    def _build_login_controller(self):
-        login_view = views.LoginView('username', 'password')
-        login_controller = controllers.LoginController(login_view,
-                self.executor, self.state_machine)
-        return login_controller
-
     def login_view(self):
         pass
 
-    def _build_projects_controller(self):
-        projects = self.client.get_projects()
-        projects_view = views.ProjectsView(projects)
-        projects_controller = controllers.ProjectsController(self, projects_view)
-        return projects_controller
-
     def projects_view(self):
         self.controller = self._build_projects_controller()
+        self.transition()
+
+    def project_view(self, project):
+        project = self.client.get_project(id=project["id"])
+        self.controller = self._build_project_controller(project)
+        self.transition()
+
+    def transition(self):
         self.loop.widget = self.controller.view.widget
         self.loop.draw_screen()
 
@@ -76,11 +72,27 @@ class GreenMineCore(object):
         self.configuration.config_dict["auth"] = {}
         self.configuration.config_dict["auth"]["token"] = auth_data["auth_token"]
 
+    def _build_login_controller(self):
+        login_view = views.LoginView('username', 'password')
+        login_controller = controllers.LoginController(login_view,
+                self.executor, self.state_machine)
+        return login_controller
+
+    def _build_projects_controller(self):
+        projects = self.client.get_projects()
+        projects_view = views.ProjectsView(projects)
+        projects_controller = controllers.ProjectsController(projects_view, self.state_machine)
+        return projects_controller
+
+    def _build_project_controller(self, project):
+        project_view = views.ProjectDetailView(project)
+        project_controller = controllers.ProjectDetailController(project_view, self.state_machine)
+        return project_controller
 
 class StateMachine(object):
     LOGIN = 0
     PROJECTS = 1
-    PROJECT_USERSTORIES = 2
+    PROJECT_DETAIL = 2
     # TODO
 
     def __init__(self, core, state):
@@ -91,3 +103,7 @@ class StateMachine(object):
         self.state = self.PROJECTS
         self._core.set_auth_config(auth_data)
         self._core.projects_view()
+
+    def project_detail(self, project_name):
+        self.state = self.PROJECT_DETAIL
+        self._core.project_view(project_name)

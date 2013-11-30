@@ -5,6 +5,8 @@ gmncurses.controllers
 ~~~~~~~~~~~~~~~~~~~~~
 """
 
+import functools
+
 from .ui import signals
 
 
@@ -45,6 +47,19 @@ class LoginController(Controller):
 
 
 class ProjectsController(Controller):
-    def __init__(self, loop, view):
-        self.loop = loop
+    def __init__(self, view, state_machine):
         self.view = view
+        self.state_machine = state_machine
+
+        for b, p in zip(self.view.project_buttons, self.view.projects):
+            signals.connect(b, "click", functools.partial(self.select_project, p))
+
+    def select_project(self, project, project_button):
+        self.state_machine.project_detail(project)
+
+
+class ProjectDetailController(Controller):
+    def __init__(self, view, state_machine):
+        self.view = view
+        self.state_machine = state_machine
+
