@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 """
-ui.signals
-~~~~~~~~~~
+gmncurses.ui.signals
+~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid

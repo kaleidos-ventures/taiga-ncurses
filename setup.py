@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-gmncurses
-~~~~~~
-
 A text interface to GreenMine.
 """
+
+from gmncurses import __name__, __description__, __version__
 
 from setuptools import setup, find_packages
 
@@ -15,9 +14,9 @@ REQUIREMENTS = [
 ]
 
 
-NAME = "gmncurses"
-DESCRIPTION = "A text interface to GreenMine."
-VERSION = "0.0.0"
+NAME = __name__
+DESCRIPTION = __description__
+VERSION = "{0}.{1}".format(*__version__)
 
 setup(name=NAME,
       version=VERSION,

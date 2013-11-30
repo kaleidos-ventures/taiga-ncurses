@@ -23,13 +23,13 @@ class GreenMineCore(object):
         # Main Loop
         self.loop = urwid.MainLoop(self.controller.view.widget,
                                    palette=PALETTE,
-                                   unhandled_input=self.key_controller,
+                                   unhandled_input=self.key_handler,
                                    handle_mouse=True)
 
     def run(self):
         self.loop.run()
 
-    def key_controller(self, key):
+    def key_handler(self, key):
         if key == Keys.QUIT:
             raise urwid.ExitMainLoop
         elif key == Keys.DEBUG:

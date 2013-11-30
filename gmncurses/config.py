@@ -3,7 +3,6 @@
 """
 gmncurses.config
 ~~~~~~~~~~~~~~~~
-
 """
 
 import urllib
@@ -23,9 +22,11 @@ class KeyConfigMeta(type):
         dct['config'] = {v: k.capitalize().replace('_', ' ') for k, v in dct.items() if k.isupper()}
         return super().__new__(cls, clsname, bases, dct)
 
+
 class Keys(metaclass=KeyConfigMeta):
     QUIT = 'q'
     DEBUG = 'D'
+
 
 DEFAULTS = {
     'keys': Keys.config,

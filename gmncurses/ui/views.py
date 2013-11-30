@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 """
-ui.views
-~~~~~~~~
+gmncurses.ui.views
+~~~~~~~~~~~~~~~~~~
 """
 
 import urwid

@@ -3,7 +3,6 @@
 """
 gmncurses.cli
 ~~~~~~~~~~~~~
-
 """
 
 from gmncurses.api.client import GreenMineClient

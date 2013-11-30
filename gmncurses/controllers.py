@@ -1,7 +1,8 @@
-"""
-controllers
-~~~~~~~~~~~
+# -*- coding: utf-8 -*-
 
+"""
+gmncurses.controllers
+~~~~~~~~~~~~~~~~~~~~~
 """
 
 from .ui import signals
