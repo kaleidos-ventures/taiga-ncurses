@@ -12,6 +12,9 @@ from gmncurses.config import Configuration, DEFAULTS
 
 def main():
     config = Configuration()
-    gm = GreenMineClient(config.host)
-    program = GreenMineCore(gm)
+    config.load()
+    client = GreenMineClient(config.host)
+    if config.auth_token:
+        client.set_auth_token(config.auth_token)
+    program = GreenMineCore(client, config)
     program.run()

@@ -47,10 +47,12 @@ class Configuration(object):
     def __init__(self,
                  config_dict=DEFAULTS,
                  config_file=DEFAULT_CONFIG_FILE,
-                 auth_config_file=DEFAULT_AUTH_FILE):
+                 auth_config_file=DEFAULT_AUTH_FILE,
+                 config_dir=DEFAULT_CONFIG_DIR):
         self.config_dict = config_dict
         self.config_file = config_file
         self.auth_config_file = auth_config_file
+        self.config_dir = config_dir
 
     def load(self):
         parser = ConfigParser()
@@ -59,6 +61,32 @@ class Configuration(object):
         auth_parser = ConfigParser()
         auth_parser.read(self.auth_config_file, encoding="utf-8")
         self.config_dict.update(auth_parser._sections)
+
+    def save(self):
+        try:
+            os.mkdir(self.config_dir)
+        except FileExistsError:
+            pass
+        self._save_config()
+        self._save_auth()
+
+    def _save_config(self):
+        parser = ConfigParser()
+        config_sections = (s for s in self.config_dict if s != "auth")
+        for s in config_sections:
+            parser.add_section(s)
+            for k, v in self.config_dict[s].items():
+                parser.set(s, k, str(v))
+        with open(self.config_file, mode="w+", encoding="utf-8") as config_file:
+            parser.write(config_file)
+
+    def _save_auth(self):
+        if "auth" in self.config_dict:
+            parser = ConfigParser()
+            parser.add_section("auth")
+            parser.set("auth", "token", self.config_dict["auth"]["token"])
+            with open(self.auth_config_file, mode="w+", encoding="utf-8") as auth_config_file:
+                parser.write(auth_config_file)
 
     @property
     def host(self):

@@ -35,7 +35,8 @@ class LoginController(Controller):
         logged_in_f = self.executor.login(username, password)
         logged_in_f.add_done_callback(self.handle_login_response)
 
-    def handle_login_response(self, response):
+    def handle_login_response(self, future):
+        response = future.result()
         if response:
             self.view.notifier.info_msg("Login succesful!")
             self.state_machine.logged_in(response)

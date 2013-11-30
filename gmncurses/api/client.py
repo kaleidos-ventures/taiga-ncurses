@@ -109,9 +109,15 @@ class GreenMineClient(BaseClient):
         data = self._post(url, data_dict, params, on_success_callback,
                           error_callback, **kwargs)
 
-        if data:
-            self._headers["Authorization"] = "Bearer {}".format(data.get("auth_token",""))
+        if data and "auth_token" in data:
+            self.set_auth_token(data["auth_token"])
         return data
+
+    def set_auth_token(self, auth_token):
+        self._headers["Authorization"] = "Bearer {}".format(auth_token)
+
+    def is_authenticated(self):
+        return "Authorization" in self._headers
 
     def logout(self, params={}, data_dicti={}, on_success_callback=None,
                error_callback=None, **kwargs):

@@ -16,8 +16,10 @@ from gmncurses.executor import Executor
 
 
 class GreenMineCore(object):
-    def __init__(self, client):
+    def __init__(self, client, configuration):
         self.client = client
+        self.configuration = configuration
+
         self.executor = Executor(client)
         self.sm = StateMachine(self)
 
@@ -65,8 +67,9 @@ class GreenMineCore(object):
         self.loop.draw_screen()
 
     def save_auth_token(self, auth_data):
-        #self.debug()
-        pass
+        self.configuration.config_dict["auth"] = {}
+        self.configuration.config_dict["auth"]["token"] = auth_data["auth_token"]
+        self.configuration.save()
 
 
 class StateMachine(object):
