@@ -11,7 +11,7 @@ from gmncurses.config import Configuration, DEFAULTS
 
 
 def main():
-    config = Configuration(DEFAULTS)
+    config = Configuration()
     gm = GreenMineClient(config.host)
     program = GreenMineCore(gm)
     program.run()
