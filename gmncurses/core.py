@@ -21,11 +21,12 @@ class GreenMineCore(object):
         self.configuration = configuration
 
         self.executor = Executor(client)
-        self.sm = StateMachine(self)
 
         if client.is_authenticated:
+            self.state_machine = StateMachine(self, state=StateMachine.PROJECTS)
             self.controller = self._build_projects_controller()
         else:
+            self.state_machine = StateMachine(self)
             self.controller = self._build_login_controller()
 
         # Main Loop
@@ -53,7 +54,8 @@ class GreenMineCore(object):
 
     def _build_login_controller(self):
         login_view = views.LoginView('username', 'password')
-        login_controller = controllers.LoginController(login_view, self.executor, self.sm)
+        login_controller = controllers.LoginController(login_view,
+                self.executor, self.state_machine)
         return login_controller
 
     def login_view(self):
@@ -83,9 +85,9 @@ class StateMachine(object):
 
     def __init__(self, core, state=LOGIN):
         self._core = core
-        self._state = state
+        self.state = state
 
     def logged_in(self, auth_data):
-        self._state = self.PROJECTS
+        self.state = self.PROJECTS
         self._core.set_auth_config(auth_data)
         self._core.projects_view()

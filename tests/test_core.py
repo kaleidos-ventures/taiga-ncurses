@@ -1,7 +1,7 @@
 from unittest import mock
 
 from gmncurses.config import Configuration
-from gmncurses.core import GreenMineCore
+from gmncurses.core import GreenMineCore, StateMachine
 from gmncurses import controllers
 
 
@@ -11,6 +11,7 @@ def test_if_client_is_not_authenticated_the_login_view_is_shown_on_startup():
     configuration = Configuration()
     core = GreenMineCore(client, configuration)
     assert isinstance(core.controller, controllers.LoginController)
+    assert core.state_machine.state == StateMachine.LOGIN
 
 def test_if_client_is_authenticated_the_projects_view_is_shown_on_startup():
     client = mock.Mock()
@@ -19,3 +20,4 @@ def test_if_client_is_authenticated_the_projects_view_is_shown_on_startup():
     configuration = Configuration()
     core = GreenMineCore(client, configuration)
     assert isinstance(core.controller, controllers.ProjectsController)
+    assert core.state_machine.state == StateMachine.PROJECTS
