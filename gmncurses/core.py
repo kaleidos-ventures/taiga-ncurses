@@ -26,7 +26,7 @@ class GreenMineCore(object):
             self.state_machine = StateMachine(self, state=StateMachine.PROJECTS)
             self.controller = self._build_projects_controller()
         else:
-            self.state_machine = StateMachine(self)
+            self.state_machine = StateMachine(self, state=StateMachine.LOGIN)
             self.controller = self._build_login_controller()
 
         # Main Loop
@@ -83,7 +83,7 @@ class StateMachine(object):
     PROJECT_USERSTORIES = 2
     # TODO
 
-    def __init__(self, core, state=LOGIN):
+    def __init__(self, core, state):
         self._core = core
         self.state = state
 
