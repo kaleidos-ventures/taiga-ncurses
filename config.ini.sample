@@ -1,0 +1,8 @@
+[host]
+scheme = http
+domain = localhost
+port = 8000
+
+[keys]
+quit = q
+debug = D
