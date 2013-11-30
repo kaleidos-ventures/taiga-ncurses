@@ -13,8 +13,9 @@ Just execute these commands in your virtualenv(wrapper):
 
 .. code-block::
 
-    $ pip install -r requirements.txt
+    $ pip install -r dev-requirements.txt
     $ python setup.py develop
+    $ py.test
 
 
 Note: greenmine-ncurses only runs with python 3.3+.
