@@ -79,6 +79,7 @@ class GreenMineClient(BaseClient):
         "user":  "/api/v1/users/{}",
         "projects": "/api/v1/projects",
         "project":  "/api/v1/projects/{}",
+        "project-stats": "/api/v1/projects/{}/stats",
         "milestones": "/api/v1/milestones",
         "milestone":  "/api/v1/milestones/{}",
         "user_stories": "/api/v1/userstories",
@@ -120,6 +121,10 @@ class GreenMineClient(BaseClient):
 
     def get_project(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project").format(id))
+        return self._get(url, params, **kwargs)
+
+    def get_project_stats(self, id, params={}, data_dicti={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("project-stats").format(id))
         return self._get(url, params, **kwargs)
 
     def get_users(self, params={}, data_dicti={}, **kwargs):

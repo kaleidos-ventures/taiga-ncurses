@@ -141,46 +141,46 @@ class Tabs(urwid.WidgetWrap):
         return texts
 
 class ProjectBacklogStats(urwid.WidgetWrap):
-    def __init__(self, project):
+    def __init__(self, project, project_stats):
         widget = urwid.Columns([
-            ("weight", 0.3, urwid.Pile([TotalPoints(project), TotalSprints(project)])),
-            ("weight", 0.3, urwid.Pile([CompletedPoints(project), CompletedSprints(project)])),
-            ("weight", 0.3, urwid.Pile([UnasignedPoints(project), CurrentSprint(project)])),
+            ("weight", 0.3, urwid.Pile([TotalPoints(project_stats), TotalSprints(project)])),
+            ("weight", 0.3, urwid.Pile([ClosedPoints(project_stats), CompletedSprints(project)])),
+            ("weight", 0.3, urwid.Pile([DefinedPoints(project_stats), CurrentSprint(project)])),
         ])
         super().__init__(widget)
 
 
 class TotalPoints(urwid.Text):
-    def __init__(self, project):
-        text = ["Total points: ", ("green", str(data.total_points(project)))]
+    def __init__(self, project_stats):
+        text = ["Total points: ", ("cyan", str(data.total_points(project_stats)))]
         super().__init__(text)
 
 
 class TotalSprints(urwid.Text):
     def __init__(self, project):
-        text = ["Total sprints: ", ("green", str(data.total_sprints(project)))]
+        text = ["Total sprints: ", ("cyan", str(data.total_sprints(project)))]
         super().__init__(text)
 
 
-class CompletedPoints(urwid.Text):
-    def __init__(self, project):
+class ClosedPoints(urwid.Text):
+    def __init__(self, project_stats):
         text = [
-            "Completed points: ",
-            ("red", str(data.completed_points(project))),
+            "Closed points: ",
+            ("green", str(data.closed_points(project_stats))),
             " (",
-            ("red", str(data.completed_points_percentage(project))),
+            ("green", "{0:.1f} %".format(data.closed_points_percentage(project_stats))),
             ")",
         ]
         super().__init__(text)
 
 
-class UnasignedPoints(urwid.Text):
-    def __init__(self, project):
+class DefinedPoints(urwid.Text):
+    def __init__(self, project_stats):
         text = [
-            "Unasigned points: ",
-            ("red", str(data.unasigned_points(project))),
+            "Defined points: ",
+            ("red", str(data.defined_points(project_stats))),
             " (",
-            ("red", str(data.unasigned_points_percentage(project))),
+            ("red", "{0:.1f} %".format(data.defined_points_percentage(project_stats))),
             ")",
         ]
         super().__init__(text)

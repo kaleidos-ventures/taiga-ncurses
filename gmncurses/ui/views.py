@@ -67,7 +67,7 @@ class ProjectsView(View):
 
 
 class ProjectDetailView(View):
-    def __init__(self, project):
+    def __init__(self, project, project_stats):
         self.project = project
         self.notifier = widgets.FooterNotifier("")
 
@@ -76,7 +76,7 @@ class ProjectDetailView(View):
         self.body = urwid.ListBox(urwid.SimpleListWalker([
             self.tabs,
             widgets.box_solid_fill(" ", 1),
-            widgets.ProjectBacklogStats(project),
+            widgets.ProjectBacklogStats(project, project_stats),
             widgets.box_solid_fill(" ", 1),
             self.user_stories
         ]))

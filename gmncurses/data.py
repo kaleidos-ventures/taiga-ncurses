@@ -1,49 +1,55 @@
+# -*- coding: utf-8 -*-
+
 """
 gmncurses.data
 ~~~~~~~~~~~~~~
 """
 
-def total_points(project):
-    # FIXME
-    return 42
+def total_points(project_stats):
+    return project_stats.get("total_points", 0)
 
-def total_sprints(project):
-    # FIXME
-    return 42
+def total_sprints(project_stats):
+    return project_stats.get("total_milestones", 0)
 
-def completed_points(project):
-    # FIXME
-    return 42
+def closed_points(project_stats):
+    return  project_stats.get("closed_points", 0)
 
-def completed_points_percentage(project):
-    # FIXME
-    return 42
+def closed_points_percentage(project_stats):
+    try:
+        return closed_points(project_stats) * 100 / total_points(project_stats)
+    except ZeroDivisionError:
+        return 0
 
 def completed_sprints(project):
-    # FIXME
-    return 42
+    milestones = project.get("list_of_milestones", [])
+    return len([m for m in milestones if m["closed"]])
 
-def unasigned_points(project):
-    # FIXME
-    return 42
+def defined_points(project_stats):
+    return project_stats.get("defined_points", 0)
 
-def unasigned_points_percentage(project):
-    # FIXME
-    return 42
+def defined_points_percentage(project_stats):
+    try:
+        return defined_points(project_stats) * 100 / total_points(project_stats)
+    except ZeroDivisionError:
+        return 0
 
 def current_sprint(project):
-    # FIXME
-    return 4
+    milestones = project.get("list_of_milestones", [])
+    if milestones:
+        return len(milestones)
+    return "--"
 
 def current_sprint_name(project):
-    # FIXME
-    return "Colorinchis"
+    milestones = project.get("list_of_milestones", [])
+    if milestones:
+        return milestones[-1].get("name", "unknown")
+    return "-----"
 
 def us_id(us):
-    return us["id"]
+    return us.get("ref", "--")
 
 def us_subject(us):
-    return us["subject"]
+    return us.get("subject", "------")
 
 def us_ux_points(us):
     # FIXME

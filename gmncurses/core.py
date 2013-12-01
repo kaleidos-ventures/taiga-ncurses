@@ -61,7 +61,8 @@ class GreenMineCore(object):
 
     def project_view(self, project):
         project = self.client.get_project(id=project["id"])
-        self.controller = self._build_project_controller(project)
+        project_stats = self.client.get_project_stats(id=project["id"])
+        self.controller = self._build_project_controller(project, project_stats)
         self.transition()
 
     def transition(self):
@@ -86,8 +87,8 @@ class GreenMineCore(object):
                                                              self.state_machine)
         return projects_controller
 
-    def _build_project_controller(self, project):
-        project_view = views.ProjectDetailView(project)
+    def _build_project_controller(self, project, project_stats):
+        project_view = views.ProjectDetailView(project, project_stats)
         project_controller = controllers.ProjectDetailController(project_view,
                                                                  self.executor,
                                                                  self.state_machine)
