@@ -115,4 +115,4 @@ class StateMachine(object):
 
     def project_backlog(self):
         self.state = self.PROJECT_DETAIL_BACKLOG
-        self._core.loop.draw_screen()
+        self._core.transition()
