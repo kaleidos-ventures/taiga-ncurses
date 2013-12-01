@@ -39,11 +39,11 @@ class LoginController(Controller):
 
     def handle_login_response(self, future):
         response = future.result()
-        if response:
+        if response is None:
+            self.view.notifier.error_msg("Login error")
+        else:
             self.view.notifier.info_msg("Login succesful!")
             self.state_machine.logged_in(response)
-        else:
-            self.view.notifier.error_msg("Login error")
 
 
 class ProjectsController(Controller):
@@ -62,10 +62,10 @@ class ProjectsController(Controller):
 
     def handle_project_response(self, future):
         project = future.result()
-        if project:
-            self.state_machine.project_detail(project)
-        else:
+        if project is None:
             self.view.notifier.error_msg("Failed to fetch info of project")
+        else:
+            self.state_machine.project_detail(project)
 
 
 class ProjectDetailController(Controller):
@@ -79,7 +79,9 @@ class ProjectDetailController(Controller):
         user_stories_f.add_done_callback(self.handle_user_stories)
 
     def handle_user_stories(self, future):
-        self.view.user_stories.populate(future.result() or [])
+        user_stories = future.result()
+        if user_stories is not None:
+            self.view.user_stories.populate(user_stories)
         self.view.notifier.clear_msg()
         self.state_machine.project_backlog()
 

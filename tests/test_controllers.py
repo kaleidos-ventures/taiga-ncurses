@@ -22,7 +22,7 @@ def test_login_controller_prints_an_error_message_on_unsuccessful_login():
     login_view.notifier = mock.Mock()
 
     resp = Future()
-    resp.set_result(False)
+    resp.set_result(None)
     f = mock.Mock()
     f.add_done_callback = lambda f: f(resp)
     executor  = mock.Mock()
@@ -96,7 +96,7 @@ def test_projects_controller_when_project_fetching_fails_a_error_message_is_show
     projects_view = views.ProjectsView(projects)
     projects_view.notifier = mock.Mock()
     res = Future()
-    res.set_result(False)
+    res.set_result(None)
     f = mock.Mock()
     f.add_done_callback = lambda f: f(res)
     executor = mock.Mock()

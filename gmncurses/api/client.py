@@ -24,41 +24,33 @@ class BaseClient(object):
         self._headers = self.BASE_HEADERS
         self.last_error = {}
 
-    def _get(self, url, params, on_success_callback, error_callback, **kwargs):
+    def _get(self, url, params, **kwargs):
         response = requests.get(url, params=params, headers=self._headers)
         data = json.loads(response.content.decode())
 
         if response.status_code == 200:
-            if on_success_callback and callable(on_success_callback):
-                return on_success_callback(data, **kwargs)
             return data
 
         self.last_error = {
             "status_code": response.status_code,
             "detail": data.get("detail", "")
         }
-        if error_callback and callable(error_callback):
-            return error_callback(data, **kwargs)
-        return False
+        return None
 
-    def _post(self, url, data_dict, params, on_success_callback, error_callback, **kwargs):
+    def _post(self, url, data_dict, params, **kwargs):
         rdata = json.dumps(data_dict)
 
         response = requests.post(url, data=rdata, params=params, headers=self._headers)
         data = json.loads(response.content.decode())
 
         if response.status_code == 200:
-            if on_success_callback and hasattr(on_success_callback, "__call__"):
-                return on_success_callback(data, **kwargs)
             return data
 
         self.last_error = {
             "status_code": response.status_code,
             "detail": data.get("detail", "")
         }
-        if error_callback and hasattr(error_callback, "__call__"):
-            return error_callback(data, **kwargs)
-        return False
+        return None
 
 
 class GreenMineClient(BaseClient):
@@ -75,7 +67,7 @@ class GreenMineClient(BaseClient):
     >>> api.get_user_stories(params={'project': 1})
     [...]
     >>> api.get_issue(1234)
-    False
+    None
     >>> api.last_error
     {'detail': 'Not found', 'status_code': 404}
 
@@ -99,15 +91,13 @@ class GreenMineClient(BaseClient):
         "wiki_page":  "/api/v1/wiki_pages/{}",
     }
 
-    def login(self, username, password, params={}, on_success_callback=None,
-              error_callback=None, **kwargs):
+    def login(self, username, password, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("auth"))
         data_dict = {
             "username": username,
             "password": password,
         }
-        data = self._post(url, data_dict, params, on_success_callback,
-                          error_callback, **kwargs)
+        data = self._post(url, data_dict, params, **kwargs)
 
         if data and "auth_token" in data:
             self.set_auth_token(data["auth_token"])
@@ -120,87 +110,70 @@ class GreenMineClient(BaseClient):
     def is_authenticated(self):
         return "Authorization" in self._headers
 
-    def logout(self, params={}, data_dicti={}, on_success_callback=None,
-               error_callback=None, **kwargs):
+    def logout(self, params={}, data_dicti={}, **kwargs):
         self._headers = self.BASE_HEADERS
         return True
 
-    def get_projects(self, params={}, data_dicti={}, on_success_callback=None,
-                 error_callback=None, **kwargs):
+    def get_projects(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("projects"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_project(self, id, params={}, data_dicti={}, on_success_callback=None,
-                 error_callback=None, **kwargs):
+    def get_project(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_users(self, params={}, data_dicti={}, on_success_callback=None,
-                 error_callback=None, **kwargs):
+    def get_users(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("users"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_user(self, id, params={}, data_dicti={}, on_success_callback=None,
-                 error_callback=None, **kwargs):
+    def get_user(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_users(self, params={}, data_dicti={}, on_success_callback=None,
-                  error_callback=None, **kwargs):
+    def get_users(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("users"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_user(self, id, params={}, data_dicti={}, on_success_callback=None,
-                 error_callback=None, **kwargs):
+    def get_user(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_milestones(self, params={}, data_dicti={}, on_success_callback=None,
-                       error_callback=None, **kwargs):
+    def get_milestones(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestones"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_milestone(self, id, params={}, data_dicti={}, on_success_callback=None,
-                      error_callback=None, **kwargs):
+    def get_milestone(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_user_stories(self, params={}, data_dicti={}, on_success_callback=None,
-                         error_callback=None, **kwargs):
+    def get_user_stories(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_stories"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_user_story(self, id, params={}, data_dicti={}, on_success_callback=None,
-                       error_callback=None, **kwargs):
+    def get_user_story(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_tasks(self, params={}, data_dicti={}, on_success_callback=None,
-                  error_callback=None, **kwargs):
+    def get_tasks(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("tasks"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_task(self, id, params={}, data_dicti={}, on_success_callback=None,
-                 error_callback=None, **kwargs):
+    def get_task(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("task").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_issues(self, params={}, data_dicti={}, on_success_callback=None,
-                   error_callback=None, **kwargs):
+    def get_issues(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issues"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_issue(self, id, params={}, data_dicti={}, on_success_callback=None,
-                  error_callback=None, **kwargs):
+    def get_issue(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_wiki_pages(self, params={}, data_dicti={}, on_success_callback=None,
-                       error_callback=None, **kwargs):
+    def get_wiki_pages(self, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
 
-    def get_wiki_page(self, id, params={}, data_dicti={}, on_success_callback=None,
-                      error_callback=None, **kwargs):
+    def get_wiki_page(self, id, params={}, data_dicti={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
-        return self._get(url, params, on_success_callback, error_callback, **kwargs)
+        return self._get(url, params, **kwargs)
