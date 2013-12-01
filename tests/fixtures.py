@@ -346,3 +346,7 @@ PROJECTS = """
     }
 ]
 """
+
+USER_STORIES = """
+[]
+"""

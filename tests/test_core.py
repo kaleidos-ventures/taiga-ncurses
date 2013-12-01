@@ -1,3 +1,4 @@
+from concurrent.futures import Future
 from unittest import mock
 
 from gmncurses.config import Configuration
@@ -35,8 +36,28 @@ def test_transitioning_from_projects_to_project_detail():
     setattr(core, "transition", mock.Mock())
     assert isinstance(core.controller, controllers.ProjectsController)
     assert core.state_machine.state == StateMachine.PROJECTS
+    setattr(core, "executor", mock.Mock())
     core.state_machine.project_detail(projects[0])
     assert isinstance(core.controller, controllers.ProjectDetailController)
     assert core.state_machine.state == StateMachine.PROJECT_DETAIL
+    assert isinstance(core.controller, controllers.ProjectDetailController)
+    assert core.state_machine.state == StateMachine.PROJECT_DETAIL
+
+def test_transitioning_from_project_detail_to_project_backlog():
+    projects = factories.projects()
+    client = mock.Mock()
+    client.get_project = mock.Mock(return_value=factories.project())
+    client.get_projects = mock.Mock(return_value=projects)
+    client.get_user_stories = mock.Mock(return_value=factories.user_stories())
+    client.is_authenticated = True
+    configuration = Configuration()
+    core = GreenMineCore(client, configuration)
+    setattr(core, "transition", mock.Mock())
+    res = Future()
+    res.set_result([]) #FIXME
+    core.executor.user_stories = mock.Mock(return_value=res)
+    core.project_view(projects[0])
+    assert core.executor.user_stories.call_count == 1
+    assert core.state_machine.state == StateMachine.PROJECT_DETAIL_BACKLOG
 
 

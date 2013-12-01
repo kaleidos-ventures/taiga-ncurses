@@ -3,6 +3,7 @@ from unittest import mock
 
 from gmncurses.ui import signals, views
 from gmncurses import controllers
+from gmncurses.executor import Executor
 
 from . import factories
 
@@ -55,7 +56,7 @@ def test_projects_controller_click_on_project_requests_the_project_detail():
     projects_view = views.ProjectsView(projects)
     executor = mock.Mock()
     _ = mock.Mock()
-    login_controller = controllers.ProjectsController(projects_view, executor, _)
+    projects_controller = controllers.ProjectsController(projects_view, executor, _)
 
     signals.emit(projects_view.project_buttons[0], "click")
 
@@ -66,7 +67,7 @@ def test_projects_controller_when_requesting_a_project_info_message_is_shown():
     projects_view = views.ProjectsView(projects)
     projects_view.notifier = mock.Mock()
     _ = mock.Mock()
-    login_controller = controllers.ProjectsController(projects_view, _, _)
+    projects_controller = controllers.ProjectsController(projects_view, _, _)
 
     signals.emit(projects_view.project_buttons[0], "click")
 
@@ -83,7 +84,7 @@ def test_projects_controller_click_on_project_when_project_is_fetched_transition
     executor = mock.Mock()
     executor.project_detail = mock.Mock(return_value=f)
     state_machine = mock.Mock()
-    login_controller = controllers.ProjectsController(projects_view, executor, state_machine)
+    projects_controller = controllers.ProjectsController(projects_view, executor, state_machine)
 
     signals.emit(projects_view.project_buttons[0], "click")
 
@@ -101,8 +102,21 @@ def test_projects_controller_when_project_fetching_fails_a_error_message_is_show
     executor = mock.Mock()
     executor.project_detail = mock.Mock(return_value=f)
     _ = mock.Mock()
-    login_controller = controllers.ProjectsController(projects_view, executor, _)
+    projects_controller = controllers.ProjectsController(projects_view, executor, _)
 
     signals.emit(projects_view.project_buttons[0], "click")
 
     assert projects_view.notifier.error_msg.call_count == 1
+
+def test_project_detail_controller_fetches_user_stories_and_transitions_to_backlog():
+    project = factories.project()
+    project_view = views.ProjectDetailView(project)
+    us_f = Future()
+    us_f.set_result([])
+    executor = Executor(mock.Mock())
+    executor.user_stories = mock.Mock(return_value=us_f)
+    state_machine = mock.Mock()
+    project_detail_controller = controllers.ProjectDetailController(project_view, executor, state_machine)
+
+    assert state_machine.project_backlog.call_count == 1
+

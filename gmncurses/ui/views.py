@@ -60,15 +60,23 @@ class ProjectsView(View):
         min_width = functools.reduce(max, (len(p['name']) for p in projects), 0)
         grid = widgets.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
         fill = urwid.Filler(grid, min_height=40)
-        self.notifier = widgets.ProjectsNotifier("")
+        self.notifier = widgets.FooterNotifier("")
         self.widget = urwid.Frame(fill,
                                   header=widgets.ProjectsHeader(),
-                                  footer=widgets.ProjectsFooter(self.notifier))
+                                  footer=widgets.Footer(self.notifier))
 
 
 class ProjectDetailView(View):
     def __init__(self, project):
         self.project = project
+        self.notifier = widgets.FooterNotifier("")
 
-        self.widget = urwid.Frame(urwid.SolidFill())
+        self.tabs = widgets.Tabs(["Backlog", "Sprints", "Issues", "Wiki", "Admin"])
+        self.body = urwid.ListBox(urwid.SimpleListWalker([self.tabs,
+            widgets.ProjectBacklogStats(project)]))
+        self.widget = urwid.Frame(self.body,
+                                  header=widgets.ProjectDetailHeader(project),
+                                  footer=widgets.Footer(self.notifier))
 
+    def display_user_stories(self, user_stories):
+        self.body.body.contents.append(widgets.UserStories(user_stories))

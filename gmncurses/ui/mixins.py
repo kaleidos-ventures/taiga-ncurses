@@ -31,16 +31,18 @@ class ViMotionMixin(KeyMixin):
 
 
 class NotifierMixin(object):
+    ERROR_PREFIX = ""
     ERROR_ATTR = "error"
+    INFO_PREFIX = ""
     INFO_ATTR = "info"
     ALIGN = "center"
 
     def error_msg(self, text):
-        self.set_text((self.ERROR_ATTR, text))
+        self.set_text((self.ERROR_ATTR, self.ERROR_PREFIX + text))
         self.set_align_mode(self.ALIGN)
 
     def info_msg(self, text):
-        self.set_text((self.INFO_ATTR, text))
+        self.set_text((self.INFO_ATTR, self.INFO_PREFIX + text))
         self.set_align_mode(self.ALIGN)
 
     def clear_msg(self):

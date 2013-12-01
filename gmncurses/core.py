@@ -88,13 +88,16 @@ class GreenMineCore(object):
 
     def _build_project_controller(self, project):
         project_view = views.ProjectDetailView(project)
-        project_controller = controllers.ProjectDetailController(project_view, self.state_machine)
+        project_controller = controllers.ProjectDetailController(project_view,
+                                                                 self.executor,
+                                                                 self.state_machine)
         return project_controller
 
 class StateMachine(object):
     LOGIN = 0
     PROJECTS = 1
     PROJECT_DETAIL = 2
+    PROJECT_DETAIL_BACKLOG = 3
     # TODO
 
     def __init__(self, core, state):
@@ -109,3 +112,7 @@ class StateMachine(object):
     def project_detail(self, project_name):
         self.state = self.PROJECT_DETAIL
         self._core.project_view(project_name)
+
+    def project_backlog(self):
+        self.state = self.PROJECT_DETAIL_BACKLOG
+        self._core.loop.draw_screen()

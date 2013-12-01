@@ -69,7 +69,18 @@ class ProjectsController(Controller):
 
 
 class ProjectDetailController(Controller):
-    def __init__(self, view, state_machine):
+    def __init__(self, view, executor, state_machine):
         self.view = view
+        self.executor = executor
         self.state_machine = state_machine
+
+        self.view.notifier.info_msg("Fetching User stories")
+        user_stories_f = self.executor.user_stories(self.view.project)
+        user_stories_f.add_done_callback(self.handle_user_stories)
+
+    def handle_user_stories(self, future):
+        self.view.display_user_stories(future.result() or [])
+        self.view.notifier.clear_msg()
+        self.state_machine.project_backlog()
+
 

@@ -38,3 +38,6 @@ def project(**kwargs):
     defaults = json.loads(fixtures.PROJECT)
     defaults.update(kwargs)
     return defaults
+
+def user_stories():
+    return json.loads(fixtures.USER_STORIES)

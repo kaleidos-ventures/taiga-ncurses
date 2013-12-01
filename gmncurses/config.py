@@ -21,13 +21,17 @@ PALETTE = [
     ("error", "white", "dark red"),
     ("info", "white", "dark blue"),
     ("green", "dark green", "default"),
+    ("red", "dark red", "default"),
+    ("cyan", "dark cyan", "default"),
     ("green-bg", "white", "dark green"),
     ("projects-button", "black", "dark green"),
     ("account-button", "black", "dark green"),
     ("help-button", "black", "white"),
-    ("status", "white", "default"),
-    ("status-error", "dark red", "default"),
-    ("status-info", "dark blue", "default"),
+    ("footer", "white", "default"),
+    ("footer-error", "dark red", "default"),
+    ("footer-info", "dark blue", "default"),
+    ("active-tab", "white", "dark blue"),
+    ("inactive-tab", "white", "default"),
 ]
 
 class KeyConfigMeta(type):
