@@ -216,17 +216,17 @@ class UserStoryList(mixins.ViMotionMixin,
         colum_items.append(("weight", 0.1, ListCell("TOTAL")))
 
         columns = urwid.Columns(colum_items)
-        self.widget = urwid.ListBox(urwid.SimpleFocusListWalker([columns]))
+        self.widget = urwid.Pile([columns])
         super().__init__(urwid.BoxAdapter(self.widget, height=30))
 
     def populate(self, user_stories):
-        first_gains_focus = len(self.widget.body) == 1 and user_stories
+        first_gains_focus = len(self.widget.contents) == 1 and user_stories
 
         for us in user_stories:
-            self.widget.body.append(UserStoryEntry(us, self.project, self.roles))
+            self.widget.contents.append((UserStoryEntry(us, self.project, self.roles), ("weight", 0.1)))
 
         if first_gains_focus:
-            self.widget.set_focus(1)
+            self.widget.contents.focus = 1
 
 
 class UserStoryEntry(urwid.WidgetWrap):
