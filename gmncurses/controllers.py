@@ -79,7 +79,7 @@ class ProjectDetailController(Controller):
         user_stories_f.add_done_callback(self.handle_user_stories)
 
     def handle_user_stories(self, future):
-        self.view.display_user_stories(future.result() or [])
+        self.view.user_stories.populate(future.result() or [])
         self.view.notifier.clear_msg()
         self.state_machine.project_backlog()
 

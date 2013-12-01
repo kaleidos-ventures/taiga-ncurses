@@ -198,6 +198,60 @@ class CompletedSprints(urwid.Text):
         super().__init__(text)
 
 
-class UserStories(urwid.WidgetWrap):
-    def __init__(self, user_stories):
-        super().__init__(urwid.Text("USS"))
+class UserStoryList(mixins.ViMotionMixin, urwid.WidgetWrap):
+    def __init__(self):
+        us_list = ListCell("US")
+        ux_points_list = ListCell("UX")
+        design_points_list = ListCell("Design")
+        front_points_list = ListCell("Front")
+        back_points_list = ListCell("Back")
+        columns = urwid.Columns([
+            ("weight", 0.6, us_list),
+            ("weight", 0.1, ux_points_list),
+            ("weight", 0.1, design_points_list),
+            ("weight", 0.1, front_points_list),
+            ("weight", 0.1, back_points_list),
+        ])
+        self.widget = urwid.ListBox(urwid.SimpleFocusListWalker([columns]))
+        super().__init__(urwid.BoxAdapter(self.widget, height=30))
+
+    def populate(self, user_stories):
+        focus_first = len(self.widget.body) == 1
+        for us in user_stories:
+            self.widget.body.append(UserStoryEntry(us))
+        if focus_first:
+            self.widget.set_focus(1)
+
+
+class UserStoryEntry(urwid.WidgetWrap):
+    def __init__(self, us):
+        us_id_and_name = "#{0: <10} {1}".format(str(data.us_id(us)), data.us_subject(us))
+        us_name = ListText(us_id_and_name, align="left")
+        ux_points = ListText(str(data.us_ux_points(us)))
+        design_points = ListText(str(data.us_design_points(us)))
+        front_points = ListText(str(data.us_front_points(us)))
+        back_points = ListText(str(data.us_back_points(us)))
+        self.widget = urwid.Columns([
+            ("weight", 0.6, us_name),
+            ("weight", 0.1, ux_points),
+            ("weight", 0.1, design_points),
+            ("weight", 0.1, front_points),
+            ("weight", 0.1, back_points),
+        ])
+        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
+
+    def selectable(self):
+        return True
+
+
+class ListCell(urwid.WidgetWrap):
+    def __init__(self, text):
+        text_widget = urwid.AttrMap(ListText(text), "default")
+        widget = urwid.AttrMap(urwid.LineBox(text_widget), "green")
+        super().__init__(widget)
+
+
+class ListText(mixins.IgnoreKeyPressMixin, urwid.Text):
+    def __init__(self, text, align="center"):
+        super().__init__(text, align=align)
+

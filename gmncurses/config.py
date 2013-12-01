@@ -15,6 +15,7 @@ DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
 DEFAULT_AUTH_FILE = os.path.join(DEFAULT_CONFIG_DIR, "auth.ini")
 
 PALETTE = [
+    ("default", "white", "default"),
     ("editor", "white", "black"),
     ("password-editor", "light red", "black"),
     ("save-button", "white", "default"),
@@ -32,6 +33,7 @@ PALETTE = [
     ("footer-info", "dark blue", "default"),
     ("active-tab", "white", "dark blue"),
     ("inactive-tab", "white", "default"),
+    ("focus", "black", "dark cyan"),
 ]
 
 class KeyConfigMeta(type):

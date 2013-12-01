@@ -14,6 +14,11 @@ class KeyMixin(object):
         return super().keypress(size, key)
 
 
+class IgnoreKeyPressMixin(object):
+    def keypress(self, size, key):
+        return key
+
+
 class FormMixin(KeyMixin):
     KEYS = {
         "tab": "down",

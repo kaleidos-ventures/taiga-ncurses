@@ -72,11 +72,9 @@ class ProjectDetailView(View):
         self.notifier = widgets.FooterNotifier("")
 
         self.tabs = widgets.Tabs(["Backlog", "Sprints", "Issues", "Wiki", "Admin"])
+        self.user_stories = widgets.UserStoryList()
         self.body = urwid.ListBox(urwid.SimpleListWalker([self.tabs,
-            widgets.ProjectBacklogStats(project)]))
+            widgets.ProjectBacklogStats(project), self.user_stories]))
         self.widget = urwid.Frame(self.body,
                                   header=widgets.ProjectDetailHeader(project),
                                   footer=widgets.Footer(self.notifier))
-
-    def display_user_stories(self, user_stories):
-        self.body.body.contents.append(widgets.UserStories(user_stories))
