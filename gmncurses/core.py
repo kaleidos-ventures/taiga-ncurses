@@ -81,7 +81,9 @@ class GreenMineCore(object):
     def _build_projects_controller(self):
         projects = self.client.get_projects()
         projects_view = views.ProjectsView(projects)
-        projects_controller = controllers.ProjectsController(projects_view, self.state_machine)
+        projects_controller = controllers.ProjectsController(projects_view,
+                                                             self.executor,
+                                                             self.state_machine)
         return projects_controller
 
     def _build_project_controller(self, project):

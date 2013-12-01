@@ -15,3 +15,6 @@ class Executor(object):
 
     def login(self, username, password):
         return self.pool.submit(self.client.login, username, password)
+
+    def project_detail(self, project):
+        return self.pool.submit(self.client.get_project, id=project["id"])
