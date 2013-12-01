@@ -183,7 +183,7 @@ class UnasignedPoints(urwid.Text):
 class CurrentSprint(urwid.Text):
     def __init__(self, project):
         text = [
-            "Current sprint: Sprint ",
+            "Current sprint: ",
             ("cyan", str(data.current_sprint(project))),
             " (",
             ("cyan", str(data.current_sprint_name(project))),
