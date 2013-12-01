@@ -121,7 +121,7 @@ class ProjectDetailHeader(urwid.WidgetWrap):
         super().__init__(urwid.AttrMap(cols, "green-bg"))
 
 
-class Grid(mixins.ViMotionMixin, urwid.GridFlow):
+class Grid(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.GridFlow):
     pass
 
 
@@ -204,7 +204,9 @@ class CompletedSprints(urwid.Text):
         super().__init__(text)
 
 
-class UserStoryList(mixins.ViMotionMixin, urwid.WidgetWrap):
+class UserStoryList(mixins.ViMotionMixin,
+                    mixins.EmacsMotionMixin,
+                    urwid.WidgetWrap):
     def __init__(self):
         columns = urwid.Columns([
             ("weight", 0.6, ListCell("US")),

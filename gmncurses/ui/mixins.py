@@ -8,32 +8,44 @@ gmncurses.ui.mixins
 import urwid
 
 
-class KeyMixin(object):
-    def keypress(self, size, key):
-        key = self.KEYS.get(key, key)
-        return super().keypress(size, key)
-
-
 class IgnoreKeyPressMixin(object):
     def keypress(self, size, key):
         return key
 
 
-class FormMixin(KeyMixin):
-    KEYS = {
+class FormMixin(object):
+    FORM_KEYS = {
         "tab": "down",
         "shift tab": "up",
     }
 
+    def keypress(self, size, key):
+        key = self.FORM_KEYS.get(key, key)
+        return super().keypress(size, key)
 
-class ViMotionMixin(KeyMixin):
-    KEYS = {
+class ViMotionMixin(object):
+    VI_KEYS = {
         "j": "down",
         "k": "up",
         "h": "left",
         "l": "right",
     }
 
+    def keypress(self, size, key):
+        key = self.VI_KEYS.get(key, key)
+        return super().keypress(size, key)
+
+class EmacsMotionMixin(object):
+    EMACS_KEYS = {
+        "ctrl n": "down",
+        "ctrl p": "up",
+        "ctrl b": "left",
+        "ctrl f": "right",
+    }
+
+    def keypress(self, size, key):
+        key = self.EMACS_KEYS.get(key, key)
+        return super().keypress(size, key)
 
 class NotifierMixin(object):
     ERROR_PREFIX = ""
