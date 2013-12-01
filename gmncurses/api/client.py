@@ -29,7 +29,7 @@ class BaseClient(object):
         data = json.loads(response.content.decode())
 
         if response.status_code == 200:
-            if on_success_callback and hasattr(on_success_callback, "__call__"):
+            if on_success_callback and callable(on_success_callback):
                 return on_success_callback(data, **kwargs)
             return data
 
@@ -37,7 +37,7 @@ class BaseClient(object):
             "status_code": response.status_code,
             "detail": data.get("detail", "")
         }
-        if error_callback and hasattr(error_callback, "__call__"):
+        if error_callback and callable(error_callback):
             return error_callback(data, **kwargs)
         return False
 
