@@ -216,10 +216,12 @@ class UserStoryList(mixins.ViMotionMixin, urwid.WidgetWrap):
         super().__init__(urwid.BoxAdapter(self.widget, height=30))
 
     def populate(self, user_stories):
-        focus_first = len(self.widget.body) == 1
+        first_gains_focus = len(self.widget.body) == 1 and user_stories
+
         for us in user_stories:
             self.widget.body.append(UserStoryEntry(us))
-        if focus_first:
+
+        if first_gains_focus:
             self.widget.set_focus(1)
 
 
