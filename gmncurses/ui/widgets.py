@@ -10,6 +10,12 @@ import urwid
 from . import mixins
 from gmncurses import data
 
+
+def box_solid_fill(char, height):
+    sf = urwid.SolidFill(char)
+    return urwid.BoxAdapter(sf, height=height)
+
+
 def wrap_in_whitespace(widget, cls=urwid.Columns):
     whitespace = urwid.SolidFill(" ")
     return cls([whitespace, widget, whitespace])
@@ -200,17 +206,12 @@ class CompletedSprints(urwid.Text):
 
 class UserStoryList(mixins.ViMotionMixin, urwid.WidgetWrap):
     def __init__(self):
-        us_list = ListCell("US")
-        ux_points_list = ListCell("UX")
-        design_points_list = ListCell("Design")
-        front_points_list = ListCell("Front")
-        back_points_list = ListCell("Back")
         columns = urwid.Columns([
-            ("weight", 0.6, us_list),
-            ("weight", 0.1, ux_points_list),
-            ("weight", 0.1, design_points_list),
-            ("weight", 0.1, front_points_list),
-            ("weight", 0.1, back_points_list),
+            ("weight", 0.6, ListCell("US")),
+            ("weight", 0.1, ListCell("UX")),
+            ("weight", 0.1, ListCell("Design")),
+            ("weight", 0.1, ListCell("Front")),
+            ("weight", 0.1, ListCell("Back")),
         ])
         self.widget = urwid.ListBox(urwid.SimpleFocusListWalker([columns]))
         super().__init__(urwid.BoxAdapter(self.widget, height=30))
