@@ -38,7 +38,7 @@ def test_login_controller_transitions_to_projects_on_successful_login():
     login_view = factories.login_view(username, password)
 
     resp = Future()
-    resp.set_result(factories.api_successful_login_response(username))
+    resp.set_result(factories.successful_login_response(username))
     f = mock.Mock()
     f.add_done_callback = lambda f: f(resp)
     executor  = mock.Mock()
@@ -51,7 +51,7 @@ def test_login_controller_transitions_to_projects_on_successful_login():
     assert state_machine.logged_in.call_count == 1
 
 def test_projects_controller_click_on_project_requests_the_project_detail():
-    projects = factories.api_projects()
+    projects = factories.projects()
     projects_view = views.ProjectsView(projects)
     executor = mock.Mock()
     _ = mock.Mock()
@@ -62,7 +62,7 @@ def test_projects_controller_click_on_project_requests_the_project_detail():
     executor.project_detail.assert_called_with(projects[0])
 
 def test_projects_controller_when_requesting_a_project_info_message_is_shown():
-    projects = factories.api_projects()
+    projects = factories.projects()
     projects_view = views.ProjectsView(projects)
     projects_view.notifier = mock.Mock()
     _ = mock.Mock()
@@ -73,7 +73,7 @@ def test_projects_controller_when_requesting_a_project_info_message_is_shown():
     assert projects_view.notifier.info_msg.call_count == 1
 
 def test_projects_controller_click_on_project_when_project_is_fetched_transitions_to_project_detail():
-    projects = factories.api_projects()
+    projects = factories.projects()
     fetched_project = projects[0]
     projects_view = views.ProjectsView(projects)
     res = Future()
@@ -90,7 +90,7 @@ def test_projects_controller_click_on_project_when_project_is_fetched_transition
     state_machine.project_detail.assert_called_with(fetched_project)
 
 def test_projects_controller_when_project_fetching_fails_a_error_message_is_shown():
-    projects = factories.api_projects()
+    projects = factories.projects()
     fetched_project = projects[0]
     projects_view = views.ProjectsView(projects)
     projects_view.notifier = mock.Mock()

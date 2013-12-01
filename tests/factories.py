@@ -1,4 +1,8 @@
+import json
+
 from gmncurses.ui import views, signals
+
+from . import fixtures
 
 
 def login_view(username, password):
@@ -7,7 +11,7 @@ def login_view(username, password):
     login_view._password_editor.set_edit_text(password)
     return login_view
 
-def api_successful_login_response(username):
+def successful_login_response(username):
     return {
         'auth_token': 'eyJ1c2VyX2lkIjoxfQ:1Vmjdp:ILIJVRazEdK_pObFedQc2aZNWd0',
         'color': '',
@@ -27,8 +31,10 @@ def api_successful_login_response(username):
         'username': username,
     }
 
-def api_projects():
-    return [{"name": "Foo", "id": 2}, {"name": "Bar", "id": 3}]
+def projects():
+    return json.loads(fixtures.PROJECTS)
 
-def project():
-    return {"name": "Foo", "id": 2}
+def project(**kwargs):
+    defaults = json.loads(fixtures.PROJECT)
+    defaults.update(kwargs)
+    return defaults

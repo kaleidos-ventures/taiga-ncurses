@@ -28,7 +28,7 @@ def test_transitioning_from_projects_to_project_detail():
     client = mock.Mock()
     client.get_project = mock.Mock(return_value=factories.project())
     client.is_authenticated = True
-    projects = factories.api_projects()
+    projects = factories.projects()
     client.get_projects = mock.Mock(return_value=projects)
     configuration = Configuration()
     core = GreenMineCore(client, configuration)
