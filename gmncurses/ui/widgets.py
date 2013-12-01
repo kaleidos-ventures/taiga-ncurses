@@ -70,11 +70,46 @@ class PlainButton(mixins.PlainButtonMixin, urwid.Button):
         self._label.set_align_mode(self.ALIGN if align is None else align)
 
 
-class Header(urwid.WidgetWrap):
+class ProjectsHeader(urwid.WidgetWrap):
     def __init__(self):
-        bt = urwid.BigText("GREENMINE", font=urwid.font.HalfBlock5x4Font())
-        widget = urwid.Padding(bt, width="clip", left=3)
-        super().__init__(urwid.AttrMap(widget, "green-bg"))
+        text = urwid.Text("GREENMINE")
+        self.account_button = PlainButton("My account")
+        cols = urwid.Columns([
+            ('weight', 0.9, text),
+            ('weight', 0.1, urwid.AttrMap(self.account_button, "account-button")),
+        ])
+        super().__init__(urwid.AttrMap(cols, "green-bg"))
+
+
+class ProjectsNotifier(Notifier):
+    ALIGN = "left"
+    ERROR_ATTR = "status-error"
+    INFO_ATTR = "status-info"
+
+
+class ProjectsFooter(urwid.WidgetWrap):
+    def __init__(self, notifier):
+        assert isinstance(notifier, ProjectsNotifier)
+        cols = urwid.Columns([
+            ('weight', 0.9, urwid.AttrMap(notifier, "status")),
+            ('weight', 0.1, urwid.AttrMap(PlainButton("? Help"), "help-button")),
+        ])
+        super().__init__(cols)
+
+
+class ProjectDetailHeader(urwid.WidgetWrap):
+    def __init__(self):
+        text = urwid.Text("GREENMINE")
+        self.title = urwid.Text("")
+        self.projects_button = PlainButton("My projects")
+        self.account_button = PlainButton("My account")
+        cols = urwid.Columns([
+            ('weight', 0.2, text),
+            ('weight', 0.6, self.title),
+            ('weight', 0.1, urwid.AttrMap(self.projects_button, "projects-button")),
+            ('weight', 0.1, urwid.AttrMap(self.account_button, "account-button")),
+        ])
+        super().__init__(urwid.AttrMap(cols, "green-bg"))
 
 
 class Grid(mixins.ViMotionMixin, urwid.GridFlow):

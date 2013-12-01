@@ -60,7 +60,10 @@ class ProjectsView(View):
         min_width = functools.reduce(max, (len(p['name']) for p in projects), 0)
         grid = widgets.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
         fill = urwid.Filler(grid, min_height=40)
-        self.widget = urwid.Frame(fill, header=widgets.Header())
+        self.notifier = widgets.ProjectsNotifier("")
+        self.widget = urwid.Frame(fill,
+                                  header=widgets.ProjectsHeader(),
+                                  footer=widgets.ProjectsFooter(self.notifier))
 
 
 class ProjectDetailView(View):

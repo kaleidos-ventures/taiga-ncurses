@@ -24,7 +24,6 @@ def test_if_client_is_authenticated_the_projects_view_is_shown_on_startup():
     assert isinstance(core.controller, controllers.ProjectsController)
     assert core.state_machine.state == StateMachine.PROJECTS
 
-
 def test_transitioning_from_projects_to_project_detail():
     client = mock.Mock()
     client.get_project = mock.Mock(return_value=factories.project())
@@ -39,3 +38,5 @@ def test_transitioning_from_projects_to_project_detail():
     core.state_machine.project_detail(projects[0])
     assert isinstance(core.controller, controllers.ProjectDetailController)
     assert core.state_machine.state == StateMachine.PROJECT_DETAIL
+
+

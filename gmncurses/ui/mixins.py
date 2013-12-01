@@ -7,6 +7,7 @@ gmncurses.ui.mixins
 
 import urwid
 
+
 class KeyMixin(object):
     def keypress(self, size, key):
         key = self.KEYS.get(key, key)
@@ -30,14 +31,16 @@ class ViMotionMixin(KeyMixin):
 
 
 class NotifierMixin(object):
+    ERROR_ATTR = "error"
+    INFO_ATTR = "info"
     ALIGN = "center"
 
     def error_msg(self, text):
-        self.set_text(("error", text))
+        self.set_text((self.ERROR_ATTR, text))
         self.set_align_mode(self.ALIGN)
 
     def info_msg(self, text):
-        self.set_text(("info", text))
+        self.set_text((self.INFO_ATTR, text))
         self.set_align_mode(self.ALIGN)
 
     def clear_msg(self):

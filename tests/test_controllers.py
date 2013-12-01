@@ -33,7 +33,6 @@ def test_login_controller_prints_an_error_message_on_unsuccessful_login():
 
     assert login_view.notifier.error_msg.call_count == 1
 
-
 def test_login_controller_transitions_to_projects_on_successful_login():
     username, password = "admin", "123123"
     login_view = factories.login_view(username, password)
