@@ -22,3 +22,5 @@ class Executor(object):
     def unassigned_user_stories(self, project):
         return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
                                                                       "milestone__isnull": True})
+    def project_stats(self, project):
+        return self.pool.submit(self.client.get_project_stats, id=project["id"])

@@ -5,6 +5,8 @@ gmncurses.data
 ~~~~~~~~~~~~~~
 """
 
+from datetime import datetime
+
 
 def total_points(project_stats):
     return project_stats.get("total_points", 0)
@@ -23,7 +25,11 @@ def closed_points_percentage(project_stats):
 
 def completed_sprints(project):
     milestones = project.get("list_of_milestones", [])
-    return [m for m in milestones if m.get("closed", False)]
+    now = datetime.now()
+    return [m for m in milestones if date(m["finish_date"]) < now]
+
+def date(text, date_format="%Y-%m-%d"):
+    return datetime.strptime(text, date_format)
 
 def defined_points(project_stats):
     return project_stats.get("defined_points", 0)

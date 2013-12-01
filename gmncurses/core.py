@@ -6,6 +6,7 @@ gmncurses.core
 """
 
 import functools
+from concurrent.futures import wait
 
 import urwid
 
@@ -60,10 +61,17 @@ class GreenMineCore(object):
         self.transition()
 
     def project_view(self, project):
-        project = self.client.get_project(id=project["id"])
-        project_stats = self.client.get_project_stats(id=project["id"])
-        self.controller = self._build_project_controller(project, project_stats)
-        self.transition()
+        project_f = self.executor.project_detail(project)
+        project_stats_f = self.executor.project_stats(project)
+        done, not_done = wait((project_f, project_stats_f), 10)
+        if len(done) == 2:
+            self.controller = self._build_project_controller(project_f.result(),
+                                                             project_stats_f.result())
+            self.transition()
+        else:
+            # :(
+            # TODO: retry failed operations
+            pass
 
     def transition(self):
         self.loop.widget = self.controller.view.widget
