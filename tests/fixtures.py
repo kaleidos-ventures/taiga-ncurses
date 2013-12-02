@@ -350,3 +350,31 @@ PROJECTS = """
 USER_STORIES = """
 []
 """
+
+PROJECT_STATS = """
+{
+    "milestones": [
+        {
+            "optimal": 123.0, 
+            "evolution": 123.0, 
+            "client-increment": 0, 
+            "name": "Sprint 1", 
+            "team-increment": 0
+        }, 
+        {
+            "optimal": 0.0, 
+            "evolution": 123.0, 
+            "client-increment": 0, 
+            "name": "Project End", 
+            "team-increment": 0
+        }
+    ], 
+    "defined_points": 0, 
+    "closed_points": 0, 
+    "total_points": 123.0, 
+    "total_milestones": 1, 
+    "assigned_points": 0, 
+    "name": "Bar"
+}
+
+"""

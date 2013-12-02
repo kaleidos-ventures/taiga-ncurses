@@ -17,16 +17,9 @@ def test_when_clicking_login_button_controllers_handle_login_method_is_called():
     assert login_controller.handle_login_request.call_count == 1
 
 def test_login_controller_prints_an_error_message_on_unsuccessful_login():
-    username, password = "admin", "123123"
-    login_view = factories.login_view(username, password)
+    login_view = factories.login_view("admin", "123123")
     login_view.notifier = mock.Mock()
-
-    resp = Future()
-    resp.set_result(None)
-    f = mock.Mock()
-    f.add_done_callback = lambda f: f(resp)
-    executor  = mock.Mock()
-    executor.login = mock.Mock(return_value=f)
+    executor = factories.patched_executor(login_response=factories.future(None))
     _ = mock.Mock()
     login_controller = controllers.LoginController(login_view, executor, _)
 
@@ -53,8 +46,8 @@ def test_login_controller_transitions_to_projects_on_successful_login():
 
 def test_projects_controller_click_on_project_requests_the_project_detail():
     projects = factories.projects()
-    projects_view = views.ProjectsView(projects)
-    executor = mock.Mock()
+    projects_view = views.ProjectsView()
+    executor = factories.patched_executor()
     _ = mock.Mock()
     projects_controller = controllers.ProjectsController(projects_view, executor, _)
 
@@ -64,10 +57,11 @@ def test_projects_controller_click_on_project_requests_the_project_detail():
 
 def test_projects_controller_when_requesting_a_project_info_message_is_shown():
     projects = factories.projects()
-    projects_view = views.ProjectsView(projects)
+    projects_view = views.ProjectsView()
     projects_view.notifier = mock.Mock()
+    executor = factories.patched_executor()
     _ = mock.Mock()
-    projects_controller = controllers.ProjectsController(projects_view, _, _)
+    projects_controller = controllers.ProjectsController(projects_view, executor, _)
 
     signals.emit(projects_view.project_buttons[0], "click")
 
@@ -76,13 +70,8 @@ def test_projects_controller_when_requesting_a_project_info_message_is_shown():
 def test_projects_controller_click_on_project_when_project_is_fetched_transitions_to_project_detail():
     projects = factories.projects()
     fetched_project = projects[0]
-    projects_view = views.ProjectsView(projects)
-    res = Future()
-    res.set_result(fetched_project)
-    f = mock.Mock()
-    f.add_done_callback = lambda f: f(res)
-    executor = mock.Mock()
-    executor.project_detail = mock.Mock(return_value=f)
+    projects_view = views.ProjectsView()
+    executor = factories.patched_executor(project_detail=factories.future(fetched_project))
     state_machine = mock.Mock()
     projects_controller = controllers.ProjectsController(projects_view, executor, state_machine)
 
@@ -93,14 +82,9 @@ def test_projects_controller_click_on_project_when_project_is_fetched_transition
 def test_projects_controller_when_project_fetching_fails_a_error_message_is_shown():
     projects = factories.projects()
     fetched_project = projects[0]
-    projects_view = views.ProjectsView(projects)
+    projects_view = views.ProjectsView()
     projects_view.notifier = mock.Mock()
-    res = Future()
-    res.set_result(None)
-    f = mock.Mock()
-    f.add_done_callback = lambda f: f(res)
-    executor = mock.Mock()
-    executor.project_detail = mock.Mock(return_value=f)
+    executor = factories.patched_executor(project_detail=factories.future(None))
     _ = mock.Mock()
     projects_controller = controllers.ProjectsController(projects_view, executor, _)
 
@@ -111,12 +95,8 @@ def test_projects_controller_when_project_fetching_fails_a_error_message_is_show
 def test_project_detail_controller_fetches_user_stories_and_transitions_to_backlog():
     project = factories.project()
     project_view = views.ProjectDetailView(project)
-    us_f = Future()
-    us_f.set_result([])
-    executor = Executor(mock.Mock())
-    executor.user_stories = mock.Mock(return_value=us_f)
+    executor = factories.patched_executor()
     state_machine = mock.Mock()
     project_detail_controller = controllers.ProjectDetailController(project_view, executor, state_machine)
 
     assert state_machine.project_backlog.call_count == 1
-

@@ -13,17 +13,15 @@ import urwid
 from gmncurses.ui import views
 from gmncurses import controllers
 from gmncurses.config import Keys, PALETTE
-from gmncurses.executor import Executor
 
 
 class GreenMineCore(object):
-    def __init__(self, client, configuration):
-        self.client = client
+    def __init__(self, executor, configuration, authenticated=False, draw=True):
+        self.executor = executor
         self.configuration = configuration
+        self.draw = draw
 
-        self.executor = Executor(client)
-
-        if client.is_authenticated:
+        if authenticated:
             self.state_machine = StateMachine(self, state=StateMachine.PROJECTS)
             self.controller = self._build_projects_controller()
         else:
@@ -61,21 +59,13 @@ class GreenMineCore(object):
         self.transition()
 
     def project_view(self, project):
-        project_f = self.executor.project_detail(project)
-        project_stats_f = self.executor.project_stats(project)
-        done, not_done = wait((project_f, project_stats_f), 10)
-        if len(done) == 2:
-            self.controller = self._build_project_controller(project_f.result(),
-                                                             project_stats_f.result())
-            self.transition()
-        else:
-            # :(
-            # TODO: retry failed operations
-            pass
+        self.controller = self._build_project_controller(project)
+        self.transition()
 
     def transition(self):
-        self.loop.widget = self.controller.view.widget
-        self.loop.draw_screen()
+        if self.draw:
+            self.loop.widget = self.controller.view.widget
+            self.loop.draw_screen()
 
     def set_auth_config(self, auth_data):
         self.configuration.config_dict["auth"] = {}
@@ -88,15 +78,14 @@ class GreenMineCore(object):
         return login_controller
 
     def _build_projects_controller(self):
-        projects = self.client.get_projects()
-        projects_view = views.ProjectsView(projects)
+        projects_view = views.ProjectsView()
         projects_controller = controllers.ProjectsController(projects_view,
                                                              self.executor,
                                                              self.state_machine)
         return projects_controller
 
-    def _build_project_controller(self, project, project_stats):
-        project_view = views.ProjectDetailView(project, project_stats)
+    def _build_project_controller(self, project):
+        project_view = views.ProjectDetailView(project)
         project_controller = controllers.ProjectDetailController(project_view,
                                                                  self.executor,
                                                                  self.state_machine)
@@ -114,9 +103,12 @@ class StateMachine(object):
         self.state = state
 
     def logged_in(self, auth_data):
-        self.state = self.PROJECTS
         self._core.set_auth_config(auth_data)
         self._core.projects_view()
+
+    def projects(self):
+        self.state = self.PROJECTS
+        self._core.transition()
 
     def project_detail(self, project_name):
         self.state = self.PROJECT_DETAIL

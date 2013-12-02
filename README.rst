@@ -3,6 +3,7 @@ greenmine-ncurses
 
 .. image:: http://kaleidos.net/static/img/badge.png
     :target: http://kaleidos.net/community/greenmine/
+.. image:: https://api.travis-ci.org/kaleidos/greenmine-ncurses.png?branch=master
 
 A NCurses client for GreenMine.
 

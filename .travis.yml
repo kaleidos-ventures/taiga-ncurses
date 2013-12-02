@@ -1,0 +1,6 @@
+language: python
+python:
+  - "3.3"
+# dependencies
+install: pip install -r dev-requirements.txt --use-mirrors
+script: py.test

@@ -5,6 +5,7 @@ gmncurses.controllers
 ~~~~~~~~~~~~~~~~~~~~~
 """
 
+from concurrent.futures import wait
 import functools
 
 from .ui import signals
@@ -52,8 +53,20 @@ class ProjectsController(Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+        projects_f = self.executor.projects()
+        projects_f.add_done_callback(self.handle_projects_response)
+
+    def handle_projects_response(self, future):
+        projects = future.result()
+        if projects is None:
+            return # FIXME
+
+        self.view.populate(projects)
         for b, p in zip(self.view.project_buttons, self.view.projects):
             signals.connect(b, "click", functools.partial(self.select_project, p))
+
+        self.state_machine.projects()
+
 
     def select_project(self, project, project_button):
         self.view.notifier.info_msg("Fetching info of project: {}".format(project["name"]))
@@ -75,14 +88,36 @@ class ProjectDetailController(Controller):
         self.state_machine = state_machine
 
         self.view.notifier.info_msg("Fetching User stories")
+
+        project_stats_f = self.executor.project_stats(self.view.project)
+        project_stats_f.add_done_callback(self.handle_project_stats)
+
         user_stories_f = self.executor.unassigned_user_stories(self.view.project)
         user_stories_f.add_done_callback(self.handle_user_stories)
+
+        futures = (project_stats_f, user_stories_f)
+        futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+        futures_completed_f.add_done_callback(self.backlog)
+
+    def backlog(self, futures_results):
+        done, not_done = futures_results.result()
+        if len(done) == 2:
+            self.state_machine.project_backlog()
+        else:
+            # TODO retry failed operations
+            self.view.notifier.error_msg("Failed to fetch project data")
+
+    def handle_project_stats(self, future):
+        project_stats = future.result()
+        if project_stats is not None:
+            self.view.stats.populate(project_stats)
+            self.view.widget._invalidate()
+        self.view.notifier.clear_msg()
 
     def handle_user_stories(self, future):
         user_stories = future.result()
         if user_stories is not None:
             self.view.user_stories.populate(user_stories)
         self.view.notifier.clear_msg()
-        self.state_machine.project_backlog()
 
 

@@ -141,13 +141,21 @@ class Tabs(urwid.WidgetWrap):
         return texts
 
 class ProjectBacklogStats(urwid.WidgetWrap):
-    def __init__(self, project, project_stats):
+    def __init__(self, project):
+        self.project = project
         widget = urwid.Columns([
-            ("weight", 0.3, urwid.Pile([TotalPoints(project_stats), TotalSprints(project)])),
-            ("weight", 0.3, urwid.Pile([ClosedPoints(project_stats), CompletedSprints(project)])),
-            ("weight", 0.3, urwid.Pile([DefinedPoints(project_stats), CurrentSprint(project)])),
+            ("weight", 0.3, urwid.Pile([urwid.Text("")])),
+            ("weight", 0.3, urwid.Pile([urwid.Text("")])),
+            ("weight", 0.3, urwid.Pile([urwid.Text("")])),
         ])
         super().__init__(widget)
+
+    def populate(self, project_stats):
+        self._w = urwid.Columns([
+            ("weight", 0.3, urwid.Pile([TotalPoints(project_stats), TotalSprints(self.project)])),
+            ("weight", 0.3, urwid.Pile([ClosedPoints(project_stats), CompletedSprints(self.project)])),
+            ("weight", 0.3, urwid.Pile([DefinedPoints(project_stats), CurrentSprint(self.project)])),
+        ])
 
 
 class TotalPoints(urwid.Text):
@@ -204,11 +212,10 @@ class CompletedSprints(urwid.Text):
         super().__init__(text)
 
 
-class UserStoryList(mixins.ViMotionMixin,
-                    mixins.EmacsMotionMixin,
-                    urwid.WidgetWrap):
+class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
+
         self.roles = data.computable_roles(project)
 
         colum_items = [("weight", 0.6, ListCell("US"))]
@@ -217,7 +224,7 @@ class UserStoryList(mixins.ViMotionMixin,
 
         columns = urwid.Columns(colum_items)
         self.widget = urwid.Pile([columns])
-        super().__init__(urwid.BoxAdapter(self.widget, height=30))
+        super().__init__(self.widget)
 
     def populate(self, user_stories):
         first_gains_focus = len(self.widget.contents) == 1 and user_stories
@@ -226,6 +233,7 @@ class UserStoryList(mixins.ViMotionMixin,
             self.widget.contents.append((UserStoryEntry(us, self.project, self.roles), ("weight", 0.1)))
 
         if first_gains_focus:
+            t = self.widget.contents
             self.widget.contents.focus = 1
 
 

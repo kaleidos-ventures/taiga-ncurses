@@ -54,31 +54,38 @@ class ProjectsView(View):
     project_buttons = None
     projects = None
 
-    def __init__(self, projects):
-        self.projects = projects
-        self.project_buttons = [urwid.Button(p['name']) for p in projects]
-        min_width = functools.reduce(max, (len(p['name']) for p in projects), 0)
-        grid = widgets.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
+    def __init__(self):
+        self.projects = []
+        self.project_buttons = []
+        grid = widgets.Grid([], 4, 2, 2, 'center')
         fill = urwid.Filler(grid, min_height=40)
         self.notifier = widgets.FooterNotifier("")
         self.widget = urwid.Frame(fill,
                                   header=widgets.ProjectsHeader(),
                                   footer=widgets.Footer(self.notifier))
 
+    def populate(self, projects):
+        self.projects = projects
+        self.project_buttons = [urwid.Button(p['name']) for p in projects]
+        min_width = functools.reduce(max, (len(p['name']) for p in projects), 0)
+        grid = widgets.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
+        self.widget.set_body(urwid.Filler(grid, min_height=40))
+
 
 class ProjectDetailView(View):
-    def __init__(self, project, project_stats):
+    def __init__(self, project):
         self.project = project
-        self.project_stats = project_stats
 
         self.notifier = widgets.FooterNotifier("")
 
         self.tabs = widgets.Tabs(["Backlog", "Sprints", "Issues", "Wiki", "Admin"])
+        self.stats = widgets.ProjectBacklogStats(project)
         self.user_stories = widgets.UserStoryList(project)
+
         self.body = urwid.ListBox(urwid.SimpleListWalker([
             self.tabs,
             widgets.box_solid_fill(" ", 1),
-            widgets.ProjectBacklogStats(project, project_stats),
+            self.stats,
             widgets.box_solid_fill(" ", 1),
             self.user_stories
         ]))

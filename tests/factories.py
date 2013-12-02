@@ -1,6 +1,9 @@
+from unittest import mock
+from concurrent.futures import Future
 import json
 
 from gmncurses.ui import views, signals
+from gmncurses.executor import Executor
 
 from . import fixtures
 
@@ -41,3 +44,24 @@ def project(**kwargs):
 
 def user_stories():
     return json.loads(fixtures.USER_STORIES)
+
+def project_stats():
+    return json.loads(fixtures.PROJECT_STATS)
+
+def future(value):
+    f = Future()
+    f.set_result(value)
+    return f
+
+def patched_executor(login_response=future(successful_login_response("admin")),
+                     projects=future(projects()),
+                     project_detail=future(project()),
+                     project_stats=future(project_stats()),
+                     user_stories=future([])):
+    executor = Executor(mock.Mock())
+    executor.login = mock.Mock(return_value=login_response)
+    executor.projects = mock.Mock(return_value=projects)
+    executor.project_detail = mock.Mock(return_value=project_detail)
+    executor.project_stats = mock.Mock(return_value=project_stats)
+    executor.unassigned_user_stories = mock.Mock(return_value=user_stories)
+    return executor

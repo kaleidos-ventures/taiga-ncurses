@@ -53,7 +53,8 @@ def current_sprint_name(project):
     return "-----"
 
 def computable_roles(project):
-    return [r for r in project["roles"] if r["computable"]]
+    # FIXME
+    return [r for r in project["roles"] if r["computable"]] if "roles" in project else []
 
 def us_ref(us):
     return us.get("ref", "--")
