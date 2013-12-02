@@ -200,7 +200,7 @@ class CurrentSprint(urwid.Text):
 
 class CompletedSprints(urwid.Text):
     def __init__(self, project):
-        text = ["Completed sprints: ", ("green", str(data.completed_sprints(project)))]
+        text = ["Completed sprints: ", ("green", str(len(data.completed_sprints(project))))]
         super().__init__(text)
 
 

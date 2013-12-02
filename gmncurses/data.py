@@ -23,7 +23,7 @@ def closed_points_percentage(project_stats):
 
 def completed_sprints(project):
     milestones = project.get("list_of_milestones", [])
-    return len([m for m in milestones if m["closed"]])
+    return [m for m in milestones if m.get("closed", False)]
 
 def defined_points(project_stats):
     return project_stats.get("defined_points", 0)
