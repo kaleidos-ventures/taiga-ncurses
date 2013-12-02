@@ -46,25 +46,27 @@ def current_sprint_name(project):
         return milestones[-1].get("name", "unknown")
     return "-----"
 
+def computable_roles(project):
+    return [r for r in project["roles"] if r["computable"]]
+
 def us_ref(us):
     return us.get("ref", "--")
 
 def us_subject(us):
     return us.get("subject", "------")
 
-def us_ux_points(us):
-    # FIXME
-    return 42
+def us_points_by_role(us, project, roles):
+    us_points = us.get("points", [])
+    project_points = {str(p["id"]): p for p in project["points"]}
+    default_point = project["default_points"]
 
-def us_design_points(us):
-    # FIXME
-    return 42
+    points = []
+    for role in roles:
+        try:
+            points.append(project_points[str(us_points[str(role["id"])])]["name"])
+        except KeyError:
+            points.append(project_points[str(default_point)]["name"])
+    return points
 
-def us_front_points(us):
-    pass
-    # FIXME
-    return 42
-
-def us_back_points(us):
-    # FIXME
-    return 42
+def us_total_points(us):
+    return us.get("total_points", "--")

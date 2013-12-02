@@ -207,14 +207,15 @@ class CompletedSprints(urwid.Text):
 class UserStoryList(mixins.ViMotionMixin,
                     mixins.EmacsMotionMixin,
                     urwid.WidgetWrap):
-    def __init__(self):
-        columns = urwid.Columns([
-            ("weight", 0.6, ListCell("US")),
-            ("weight", 0.1, ListCell("UX")),
-            ("weight", 0.1, ListCell("Design")),
-            ("weight", 0.1, ListCell("Front")),
-            ("weight", 0.1, ListCell("Back")),
-        ])
+    def __init__(self, project):
+        self.project = project
+        self.roles = data.computable_roles(project)
+
+        colum_items = [("weight", 0.6, ListCell("US"))]
+        colum_items.extend([("weight", 0.1, ListCell(r["name"])) for r in self.roles])
+        colum_items.append(("weight", 0.1, ListCell("TOTAL")))
+
+        columns = urwid.Columns(colum_items)
         self.widget = urwid.ListBox(urwid.SimpleFocusListWalker([columns]))
         super().__init__(urwid.BoxAdapter(self.widget, height=30))
 
@@ -222,27 +223,23 @@ class UserStoryList(mixins.ViMotionMixin,
         first_gains_focus = len(self.widget.body) == 1 and user_stories
 
         for us in user_stories:
-            self.widget.body.append(UserStoryEntry(us))
+            self.widget.body.append(UserStoryEntry(us, self.project, self.roles))
 
         if first_gains_focus:
             self.widget.set_focus(1)
 
 
 class UserStoryEntry(urwid.WidgetWrap):
-    def __init__(self, us):
+    def __init__(self, us, project, roles):
         us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
-        us_name = ListText(us_id_and_name, align="left")
-        ux_points = ListText(str(data.us_ux_points(us)))
-        design_points = ListText(str(data.us_design_points(us)))
-        front_points = ListText(str(data.us_front_points(us)))
-        back_points = ListText(str(data.us_back_points(us)))
-        self.widget = urwid.Columns([
-            ("weight", 0.6, us_name),
-            ("weight", 0.1, ux_points),
-            ("weight", 0.1, design_points),
-            ("weight", 0.1, front_points),
-            ("weight", 0.1, back_points),
-        ])
+        points_by_role = data.us_points_by_role(us, project, roles)
+
+        colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
+        for point in points_by_role:
+            colum_items.append(("weight", 0.1, ListText(str(point))))
+        colum_items.append(("weight", 0.1, ListText("{0:.1f}".format(data.us_total_points(us)))))
+
+        self.widget = urwid.Columns(colum_items)
         super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
 
     def selectable(self):
