@@ -75,7 +75,7 @@ class ProjectDetailController(Controller):
         self.state_machine = state_machine
 
         self.view.notifier.info_msg("Fetching User stories")
-        user_stories_f = self.executor.user_stories(self.view.project)
+        user_stories_f = self.executor.unassigned_user_stories(self.view.project)
         user_stories_f.add_done_callback(self.handle_user_stories)
 
     def handle_user_stories(self, future):
