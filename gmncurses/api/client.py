@@ -111,74 +111,74 @@ class GreenMineClient(BaseClient):
     def is_authenticated(self):
         return "Authorization" in self._headers
 
-    def logout(self, params={}, data_dicti={}, **kwargs):
+    def logout(self):
         self._headers = self.BASE_HEADERS
         return True
 
-    def get_projects(self, params={}, data_dicti={}, **kwargs):
+    def get_projects(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("projects"))
         return self._get(url, params, **kwargs)
 
-    def get_project(self, id, params={}, data_dicti={}, **kwargs):
+    def get_project(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_project_stats(self, id, params={}, data_dicti={}, **kwargs):
+    def get_project_stats(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project-stats").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_users(self, params={}, data_dicti={}, **kwargs):
+    def get_users(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("users"))
         return self._get(url, params, **kwargs)
 
-    def get_user(self, id, params={}, data_dicti={}, **kwargs):
+    def get_user(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_users(self, params={}, data_dicti={}, **kwargs):
+    def get_users(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("users"))
         return self._get(url, params, **kwargs)
 
-    def get_user(self, id, params={}, data_dicti={}, **kwargs):
+    def get_user(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_milestones(self, params={}, data_dicti={}, **kwargs):
+    def get_milestones(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestones"))
         return self._get(url, params, **kwargs)
 
-    def get_milestone(self, id, params={}, data_dicti={}, **kwargs):
+    def get_milestone(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_user_stories(self, params={}, data_dicti={}, **kwargs):
+    def get_user_stories(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_stories"))
         return self._get(url, params, **kwargs)
 
-    def get_user_story(self, id, params={}, data_dicti={}, **kwargs):
+    def get_user_story(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_tasks(self, params={}, data_dicti={}, **kwargs):
+    def get_tasks(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("tasks"))
         return self._get(url, params, **kwargs)
 
-    def get_task(self, id, params={}, data_dicti={}, **kwargs):
+    def get_task(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("task").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_issues(self, params={}, data_dicti={}, **kwargs):
+    def get_issues(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issues"))
         return self._get(url, params, **kwargs)
 
-    def get_issue(self, id, params={}, data_dicti={}, **kwargs):
+    def get_issue(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_wiki_pages(self, params={}, data_dicti={}, **kwargs):
+    def get_wiki_pages(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
         return self._get(url, params, **kwargs)
 
-    def get_wiki_page(self, id, params={}, data_dicti={}, **kwargs):
+    def get_wiki_page(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
         return self._get(url, params, **kwargs)
