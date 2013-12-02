@@ -135,14 +135,6 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("user").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_users(self, params={}, **kwargs):
-        url = urljoin(self._host, self.URLS.get("users"))
-        return self._get(url, params, **kwargs)
-
-    def get_user(self, id, params={}, **kwargs):
-        url = urljoin(self._host, self.URLS.get("user").format(id))
-        return self._get(url, params, **kwargs)
-
     def get_milestones(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestones"))
         return self._get(url, params, **kwargs)
