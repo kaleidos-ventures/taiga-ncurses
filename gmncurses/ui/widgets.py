@@ -230,7 +230,7 @@ class UserStoryList(mixins.ViMotionMixin,
 
 class UserStoryEntry(urwid.WidgetWrap):
     def __init__(self, us):
-        us_id_and_name = "#{0: <10} {1}".format(str(data.us_id(us)), data.us_subject(us))
+        us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
         us_name = ListText(us_id_and_name, align="left")
         ux_points = ListText(str(data.us_ux_points(us)))
         design_points = ListText(str(data.us_design_points(us)))

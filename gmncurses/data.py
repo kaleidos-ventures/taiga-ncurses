@@ -5,6 +5,7 @@ gmncurses.data
 ~~~~~~~~~~~~~~
 """
 
+
 def total_points(project_stats):
     return project_stats.get("total_points", 0)
 
@@ -45,7 +46,7 @@ def current_sprint_name(project):
         return milestones[-1].get("name", "unknown")
     return "-----"
 
-def us_id(us):
+def us_ref(us):
     return us.get("ref", "--")
 
 def us_subject(us):
