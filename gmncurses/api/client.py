@@ -107,6 +107,14 @@ class GreenMineClient(BaseClient):
         "wiki_page":  "/api/v1/wiki_pages/{}",
     }
 
+    # AUTHENTICATIONS
+    @property
+    def is_authenticated(self):
+        return "Authorization" in self._headers
+
+    def set_auth_token(self, auth_token):
+        self._headers["Authorization"] = "Bearer {}".format(auth_token)
+
     def login(self, username, password, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("auth"))
         data_dict = {
@@ -119,16 +127,25 @@ class GreenMineClient(BaseClient):
             self.set_auth_token(data["auth_token"])
         return data
 
-    def set_auth_token(self, auth_token):
-        self._headers["Authorization"] = "Bearer {}".format(auth_token)
-
-    @property
-    def is_authenticated(self):
-        return "Authorization" in self._headers
-
     def logout(self):
         self._headers = self.BASE_HEADERS
         return True
+
+    # USER
+
+    def get_users(self, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("users"))
+        return self._get(url, params, **kwargs)
+
+    def update_user(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("user").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
+
+    def get_user(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("user").format(id))
+        return self._get(url, params, **kwargs)
+
+    # PROJECT
 
     def get_projects(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("projects"))
@@ -138,6 +155,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("projects"))
         return self._post(url, data_dict, params, **kwargs)
 
+    def update_project(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("project").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
+
     def get_project(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project").format(id))
         return self._get(url, params, **kwargs)
@@ -146,13 +167,7 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("project-stats").format(id))
         return self._get(url, params, **kwargs)
 
-    def get_users(self, params={}, **kwargs):
-        url = urljoin(self._host, self.URLS.get("users"))
-        return self._get(url, params, **kwargs)
-
-    def get_user(self, id, params={}, **kwargs):
-        url = urljoin(self._host, self.URLS.get("user").format(id))
-        return self._get(url, params, **kwargs)
+    # MILESTONE
 
     def get_milestones(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestones"))
@@ -162,9 +177,15 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("milestones"))
         return self._post(url, data_dict, params, **kwargs)
 
+    def update_milestone(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("milestone").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
+
     def get_milestone(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
         return self._get(url, params, **kwargs)
+
+    # USER STORY
 
     def get_user_stories(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_stories"))
@@ -174,9 +195,15 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("user_stories"))
         return self._post(url, data_dict, params, **kwargs)
 
+    def update_user_story(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("user_story").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
+
     def get_user_story(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
         return self._get(url, params, **kwargs)
+
+    # TASK
 
     def get_tasks(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("tasks"))
@@ -186,9 +213,15 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("tasks"))
         return self._post(url, data_dict, params, **kwargs)
 
+    def update_task(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("task").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
+
     def get_task(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("task").format(id))
         return self._get(url, params, **kwargs)
+
+    # ISSUE
 
     def get_issues(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issues"))
@@ -198,9 +231,15 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("issues"))
         return self._post(url, data_dict, params, **kwargs)
 
+    def update_issue(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("issue").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
+
     def get_issue(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
         return self._get(url, params, **kwargs)
+
+    # WIKI PAGE
 
     def get_wiki_pages(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
@@ -209,6 +248,10 @@ class GreenMineClient(BaseClient):
     def create_wiki_page(self, data_dict={}, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
         return self._post(url, data_dict, params, **kwargs)
+
+    def update_wiki_page(self, id, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
+        return self._patch(url, data_dict, params, **kwargs)
 
     def get_wiki_page(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
