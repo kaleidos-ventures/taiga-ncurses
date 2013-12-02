@@ -67,6 +67,19 @@ class BaseClient(object):
         }
         return None
 
+    def _delete(self, url, params, **kwargs):
+        response = requests.delete(url, params=params, headers=self._headers)
+        data = json.loads(response.content.decode())
+
+        if response.status_code == 204:
+            return True
+
+        self.last_error = {
+            "status_code": response.status_code,
+            "detail": data.get("detail", "")
+        }
+        return None
+
 
 class GreenMineClient(BaseClient):
     """ A Greenmine Api Client.
@@ -163,6 +176,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("project").format(id))
         return self._get(url, params, **kwargs)
 
+    def delete_project(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("project").format(id))
+        return self._delete(url, params, **kwargs)
+
     def get_project_stats(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project-stats").format(id))
         return self._get(url, params, **kwargs)
@@ -185,6 +202,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
         return self._get(url, params, **kwargs)
 
+    def delete_milestone(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("milestone").format(id))
+        return self._delete(url, params, **kwargs)
+
     # USER STORY
 
     def get_user_stories(self, params={}, **kwargs):
@@ -202,6 +223,10 @@ class GreenMineClient(BaseClient):
     def get_user_story(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
         return self._get(url, params, **kwargs)
+
+    def delete_user_story(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("user_story").format(id))
+        return self._delete(url, params, **kwargs)
 
     # TASK
 
@@ -221,6 +246,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("task").format(id))
         return self._get(url, params, **kwargs)
 
+    def delete_task(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("task").format(id))
+        return self._delete(url, params, **kwargs)
+
     # ISSUE
 
     def get_issues(self, params={}, **kwargs):
@@ -239,6 +268,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
         return self._get(url, params, **kwargs)
 
+    def delete_issue(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("issue").format(id))
+        return self._delete(url, params, **kwargs)
+
     # WIKI PAGE
 
     def get_wiki_pages(self, params={}, **kwargs):
@@ -256,3 +289,7 @@ class GreenMineClient(BaseClient):
     def get_wiki_page(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
         return self._get(url, params, **kwargs)
+
+    def delete_wiki_page(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
+        return self._delete(url, params, **kwargs)
