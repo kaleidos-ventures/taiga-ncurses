@@ -52,6 +52,21 @@ class BaseClient(object):
         }
         return None
 
+    def _patch(self, url, data_dict, params, **kwargs):
+        rdata = json.dumps(data_dict)
+
+        response = requests.patch(url, data=rdata, params=params, headers=self._headers)
+        data = json.loads(response.content.decode())
+
+        if response.status_code == 200:
+            return data
+
+        self.last_error = {
+            "status_code": response.status_code,
+            "detail": data.get("detail", "")
+        }
+        return None
+
 
 class GreenMineClient(BaseClient):
     """ A Greenmine Api Client.
@@ -119,6 +134,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("projects"))
         return self._get(url, params, **kwargs)
 
+    def create_project(self, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("projects"))
+        return self._post(url, data_dict, params, **kwargs)
+
     def get_project(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("project").format(id))
         return self._get(url, params, **kwargs)
@@ -139,6 +158,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("milestones"))
         return self._get(url, params, **kwargs)
 
+    def create_milestone(self, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("milestones"))
+        return self._post(url, data_dict, params, **kwargs)
+
     def get_milestone(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
         return self._get(url, params, **kwargs)
@@ -146,6 +169,10 @@ class GreenMineClient(BaseClient):
     def get_user_stories(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_stories"))
         return self._get(url, params, **kwargs)
+
+    def create_user_story(self, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("user_stories"))
+        return self._post(url, data_dict, params, **kwargs)
 
     def get_user_story(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
@@ -155,6 +182,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("tasks"))
         return self._get(url, params, **kwargs)
 
+    def create_task(self, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("tasks"))
+        return self._post(url, data_dict, params, **kwargs)
+
     def get_task(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("task").format(id))
         return self._get(url, params, **kwargs)
@@ -163,6 +194,10 @@ class GreenMineClient(BaseClient):
         url = urljoin(self._host, self.URLS.get("issues"))
         return self._get(url, params, **kwargs)
 
+    def create_issue(self, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("issues"))
+        return self._post(url, data_dict, params, **kwargs)
+
     def get_issue(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
         return self._get(url, params, **kwargs)
@@ -170,6 +205,10 @@ class GreenMineClient(BaseClient):
     def get_wiki_pages(self, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
         return self._get(url, params, **kwargs)
+
+    def create_wiki_page(self, data_dict={}, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("wiki_pages"))
+        return self._post(url, data_dict, params, **kwargs)
 
     def get_wiki_page(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
