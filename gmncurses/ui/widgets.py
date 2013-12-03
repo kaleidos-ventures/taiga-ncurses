@@ -219,8 +219,9 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         self.roles = data.computable_roles(project)
 
         colum_items = [("weight", 0.6, ListCell("US"))]
-        colum_items.extend([("weight", 0.1, ListCell(r["name"])) for r in self.roles])
-        colum_items.append(("weight", 0.1, ListCell("TOTAL")))
+        colum_items.extend([("weight", 0.05, ListCell(r["name"])) for r in self.roles])
+        colum_items.append(("weight", 0.05, ListCell(("green", "TOTAL"))))
+        colum_items.append(("weight", 0.05, ListCell(("cyan", "SUM."))))
 
         columns = urwid.Columns(colum_items)
         self.widget = urwid.Pile([columns])
@@ -229,8 +230,11 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
     def populate(self, user_stories):
         first_gains_focus = len(self.widget.contents) == 1 and user_stories
 
+        summation = 0
         for us in user_stories:
-            self.widget.contents.append((UserStoryEntry(us, self.project, self.roles), ("weight", 0.1)))
+            summation += data.us_total_points(us)
+            self.widget.contents.append((UserStoryEntry(us, self.project, self.roles, summation),
+                                         ("weight", 0.1)))
 
         if first_gains_focus:
             t = self.widget.contents
@@ -238,14 +242,15 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
 
 
 class UserStoryEntry(urwid.WidgetWrap):
-    def __init__(self, us, project, roles):
+    def __init__(self, us, project, roles, summation=0.0):
         us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
         points_by_role = data.us_points_by_role(us, project, roles)
 
         colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
         for point in points_by_role:
-            colum_items.append(("weight", 0.1, ListText(str(point))))
-        colum_items.append(("weight", 0.1, ListText("{0:.1f}".format(data.us_total_points(us)))))
+            colum_items.append(("weight", 0.05, ListText(str(point))))
+        colum_items.append(("weight", 0.05, ListText(("green", "{0:.1f}".format(data.us_total_points(us))))))
+        colum_items.append(("weight", 0.05, ListText(("cyan", "{0:.1f}".format(summation)))))
 
         self.widget = urwid.Columns(colum_items)
         super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
