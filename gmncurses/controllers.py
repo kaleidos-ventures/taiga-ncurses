@@ -105,7 +105,6 @@ class ProjectDetailController(Controller):
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
-    #@ignore_cancelled_futures
     def handle_project_stats(self, future):
         project_stats = future.result()
         if project_stats is not None:
