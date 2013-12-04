@@ -34,6 +34,9 @@ def closed_points_percentage(project_stats):
     except ZeroDivisionError:
         return 0
 
+def doomline_limit_points(project_stats):
+    return total_points(project_stats) - assigned_points(project_stats)
+
 
 # project_stats - Sprints
 

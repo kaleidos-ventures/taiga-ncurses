@@ -215,8 +215,11 @@ class CompletedSprints(urwid.Text):
 class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
-
         self.roles = data.computable_roles(project)
+        # FIXME: We need project stats. Doomline limit is equal to total_points less
+        #        assigned points of a project.
+        #self.doomline_limit = data.doomline_limit_points(project_stats)
+        self.doomline_limit = 200
 
         colum_items = [("weight", 0.6, ListCell("US"))]
         colum_items.extend([("weight", 0.05, ListCell(r["name"])) for r in self.roles])
@@ -231,8 +234,15 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         first_gains_focus = len(self.widget.contents) == 1 and user_stories
 
         summation = 0
+        doomline = False
+
         for us in user_stories:
             summation += data.us_total_points(us)
+
+            if not doomline and summation > self.doomline_limit:
+                self.widget.contents.append((RowDivider("red"), ("weight", 0.1)))
+                doomline = True
+
             self.widget.contents.append((UserStoryEntry(us, self.project, self.roles, summation),
                                          ("weight", 0.1)))
 
@@ -270,3 +280,8 @@ class ListText(mixins.IgnoreKeyPressMixin, urwid.Text):
     def __init__(self, text, align="center"):
         super().__init__(text, align=align)
 
+
+class RowDivider(urwid.WidgetWrap):
+    def __init__(self, attr_map="default", div_char="-"):
+        widget = urwid.AttrMap(urwid.Divider(div_char), attr_map)
+        super().__init__(widget)
