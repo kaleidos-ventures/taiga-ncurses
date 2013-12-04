@@ -18,6 +18,10 @@ class View(object):
     notifier = None
 
 
+class SubView(object):
+    widget = None
+
+
 class LoginView(View):
     login_button = None
 
@@ -72,6 +76,23 @@ class ProjectsView(View):
         self.widget.set_body(urwid.Filler(grid, min_height=40))
 
 
+class ProjectBacklogSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.stats = widgets.ProjectBacklogStats(project)
+        self.user_stories = widgets.UserStoryList(project)
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+            self.stats,
+            widgets.box_solid_fill(" ", 1),
+            self.user_stories
+        ]))
+
+
 class ProjectDetailView(View):
     def __init__(self, project):
         self.project = project
@@ -79,16 +100,10 @@ class ProjectDetailView(View):
         self.notifier = widgets.FooterNotifier("")
 
         self.tabs = widgets.Tabs(["Backlog", "Sprints", "Issues", "Wiki", "Admin"])
-        self.stats = widgets.ProjectBacklogStats(project)
-        self.user_stories = widgets.UserStoryList(project)
+        # Subviews
+        self.backlog = ProjectBacklogSubView(project, self.notifier, self.tabs)
+        # TODO
 
-        self.body = urwid.ListBox(urwid.SimpleListWalker([
-            self.tabs,
-            widgets.box_solid_fill(" ", 1),
-            self.stats,
-            widgets.box_solid_fill(" ", 1),
-            self.user_stories
-        ]))
-        self.widget = urwid.Frame(self.body,
+        self.widget = urwid.Frame(self.backlog.widget,
                                   header=widgets.ProjectDetailHeader(project),
                                   footer=widgets.Footer(self.notifier))

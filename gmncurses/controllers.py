@@ -81,16 +81,12 @@ class ProjectsController(Controller):
             self.state_machine.project_detail(project)
 
 
-class ProjectDetailController(Controller):
+class ProjectBacklogSubController(Controller):
     def __init__(self, view, executor, state_machine):
         self.view = view
         self.executor = executor
         self.state_machine = state_machine
 
-
-        self.backlog()
-
-    def backlog(self):
         self.state_machine.transition(self.state_machine.PROJECT_BACKLOG)
 
         self.view.notifier.info_msg("Fetching Stats and User stories")
@@ -126,4 +122,19 @@ class ProjectDetailController(Controller):
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch project data")
 
+
+class ProjectDetailController(Controller):
+    def __init__(self, view, executor, state_machine):
+        self.view = view
+        self.executor = executor
+        self.state_machine = state_machine
+
+        # Subcontrollers
+        self.backlog = ProjectBacklogSubController(self.view.backlog, executor, state_machine)
+
+        self.subcontroller = self.backlog
+
+    def handle(self, key):
+        # TODO:
+        return key
 
