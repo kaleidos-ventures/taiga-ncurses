@@ -127,14 +127,19 @@ class Grid(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.GridFlow):
 
 class Tabs(urwid.WidgetWrap):
     def __init__(self, tabs):
-        self.tabs = urwid.MonitoredFocusList(tabs)
+        self.tab_list = urwid.MonitoredFocusList(tabs)
+        self.tab_list.set_focus_changed_callback(lambda _: self.when_focus_changed())
         texts = self._create_texts()
         super().__init__(urwid.Columns(texts))
 
+    def when_focus_changed(self):
+        texts = self._create_texts()
+        self._w = urwid.Columns(texts)
+
     def _create_texts(self):
         texts = []
-        for i, tab in enumerate(self.tabs):
-            if i == self.tabs.focus:
+        for i, tab in enumerate(self.tab_list):
+            if i == self.tab_list.focus:
                 texts.append(urwid.AttrMap(urwid.LineBox(urwid.Text(tab + " ")), "active-tab"))
             else:
                 texts.append(urwid.AttrMap(urwid.LineBox(urwid.Text(tab + " ")), "inactive-tab"))
