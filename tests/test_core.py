@@ -37,10 +37,8 @@ def test_transitioning_from_projects_to_project_detail_and_project_backlog():
     assert core.state_machine.state == StateMachine.PROJECTS
     core.state_machine.project_detail(project)
     project_f.set_result(project)
-    assert isinstance(core.controller, controllers.ProjectDetailController)
-    assert core.state_machine.state == StateMachine.PROJECT_DETAIL
     us.set_result([])
     stats.set_result(factories.project_stats())
     assert isinstance(core.controller, controllers.ProjectDetailController)
-    assert core.state_machine.state == StateMachine.PROJECT_DETAIL
+    assert core.state_machine.state == StateMachine.PROJECT_BACKLOG
 

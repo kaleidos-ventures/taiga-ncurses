@@ -4,6 +4,7 @@ from unittest import mock
 from gmncurses.ui import signals, views
 from gmncurses import controllers
 from gmncurses.executor import Executor
+from gmncurses.core import StateMachine
 
 from . import factories
 
@@ -96,7 +97,7 @@ def test_project_detail_controller_fetches_user_stories_and_transitions_to_backl
     project = factories.project()
     project_view = views.ProjectDetailView(project)
     executor = factories.patched_executor()
-    state_machine = mock.Mock()
+    state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
     project_detail_controller = controllers.ProjectDetailController(project_view, executor, state_machine)
 
-    assert state_machine.project_backlog.call_count == 1
+    assert state_machine.state == state_machine.PROJECT_BACKLOG

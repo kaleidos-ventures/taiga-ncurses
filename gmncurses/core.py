@@ -65,6 +65,7 @@ class GreenMineCore(object):
     def transition(self):
         if self.draw:
             self.loop.widget = self.controller.view.widget
+            self.loop.widget._invalidate()
             self.loop.draw_screen()
 
     def set_auth_config(self, auth_data):
@@ -91,12 +92,25 @@ class GreenMineCore(object):
                                                                  self.state_machine)
         return project_controller
 
-class StateMachine(object):
+
+
+class StateMeta(type):
+    def __new__(cls, clsname, bases, dct):
+        state_attrs = [k for k in dct if k.isupper()]
+        state_set = {dct[s] for s in state_attrs}
+        assert len(state_attrs) == len(state_set), "State attributes must be unique"
+        dct["STATES"] = state_set
+        return super().__new__(cls, clsname, bases, dct)
+
+
+class StateMachine(metaclass=StateMeta):
     LOGIN = 0
     PROJECTS = 1
-    PROJECT_DETAIL = 2
-    PROJECT_DETAIL_BACKLOG = 3
-    # TODO
+    PROJECT_BACKLOG = 2
+    PROJECT_SPRINTS = 3
+    PROJECT_ISSUES = 4
+    PROJECT_WIKI = 5
+    PROJECT_ADMIN = 6
 
     def __init__(self, core, state):
         self._core = core
@@ -106,14 +120,13 @@ class StateMachine(object):
         self._core.set_auth_config(auth_data)
         self._core.projects_view()
 
-    def projects(self):
-        self.state = self.PROJECTS
-        self._core.transition()
+    def project_detail(self, project):
+        self._core.project_view(project)
 
-    def project_detail(self, project_name):
-        self.state = self.PROJECT_DETAIL
-        self._core.project_view(project_name)
+    def transition(self, state):
+        assert state in self.STATES, "{0} is not a valid state".format(state)
+        self.state = state
+        self.refresh()
 
-    def project_backlog(self):
-        self.state = self.PROJECT_DETAIL_BACKLOG
+    def refresh(self):
         self._core.transition()
