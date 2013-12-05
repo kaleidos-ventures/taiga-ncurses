@@ -8,6 +8,7 @@ gmncurses.config
 import os
 import urllib
 from configparser import ConfigParser
+from collections import ChainMap
 
 
 DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".gmncurses")
@@ -46,8 +47,15 @@ class Keys(metaclass=KeyConfigMeta):
     QUIT = "q"
     DEBUG = "D"
 
+class ProjectKeys(metaclass=KeyConfigMeta):
+    BACKLOG = "B"
+    SPRINT = "S"
+    ISSUES = "I"
+    WIKI = "W"
+    ADMIN = "A"
+
 DEFAULTS = {
-    "keys": Keys.config,
+    "keys": ChainMap(Keys.config, ProjectKeys.config),
     "host": {
         "scheme": "http",
         "domain": "localhost",
