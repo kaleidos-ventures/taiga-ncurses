@@ -5,7 +5,6 @@ gmncurses.ui.views
 ~~~~~~~~~~~~~~~~~~
 """
 
-import operator
 import functools
 
 import urwid
