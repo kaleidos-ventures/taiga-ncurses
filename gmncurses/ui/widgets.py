@@ -221,10 +221,6 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
-        # FIXME: We need project stats. Doomline limit is equal to total_points less
-        #        assigned points of a project.
-        #self.doomline_limit = data.doomline_limit_points(project_stats)
-        self.doomline_limit = 200
 
         colum_items = [("weight", 0.6, ListCell("US"))]
         colum_items.extend([("weight", 0.05, ListCell(r["name"])) for r in self.roles])
@@ -235,7 +231,11 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         self.widget = urwid.Pile([columns])
         super().__init__(self.widget)
 
-    def populate(self, user_stories):
+    def populate(self, user_stories, project_stats):
+        # FIXME: We need project stats. Doomline limit is equal to total_points less
+        #        assigned points of a project.
+        self.doomline_limit = data.doomline_limit_points(project_stats)
+
         first_gains_focus = len(self.widget.contents) == 1 and user_stories
 
         summation = 0

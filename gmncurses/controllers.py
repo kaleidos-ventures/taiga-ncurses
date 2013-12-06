@@ -102,20 +102,18 @@ class ProjectBacklogSubController(Controller):
         futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handle_project_stats(self, future):
-        project_stats = future.result()
-        if project_stats is not None:
-            self.view.stats.populate(project_stats)
+        self.project_stats = future.result()
+        if self.project_stats is not None:
+            self.view.stats.populate(self.project_stats)
             self.state_machine.refresh()
 
     def handle_user_stories(self, future):
-        user_stories = future.result()
-        if user_stories is not None:
-            self.view.user_stories.populate(user_stories)
-            self.state_machine.refresh()
+        self.user_stories = future.result()
 
     def when_backlog_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()
         if len(done) == 2:
+            self.view.user_stories.populate(self.user_stories, self.project_stats)
             self.view.notifier.info_msg("Project Stats and User Stories fetched")
             self.state_machine.refresh()
         else:
