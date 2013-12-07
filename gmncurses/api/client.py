@@ -12,7 +12,7 @@ import requests
 
 
 class BaseClient(object):
-    """ Tha base class for an API client. """
+    """ The base class for an API client. """
 
     BASE_HEADERS = {
         "content-type": "application/json; charset: utf8",
