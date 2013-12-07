@@ -98,8 +98,31 @@ def us_points_by_role(us, project, roles):
     return points
 
 
+# issues stats - issues
+
+def total_issues(issues_stats):
+    return issues_stats.get("total_issues", 0)
+
+def opened_issues(issues_stats):
+    return issues_stats.get("opened_issues", 0)
+
+def closed_issues(issues_stats):
+    return issues_stats.get("closed_issues", 0)
+
+def issues_statuses_stats(issues_stats):
+    return issues_stats.get("issues_per_status", {})
+
+def issues_priorities_stats(issues_stats):
+    return issues_stats.get("issues_per_priority", {})
+
+def issues_severities_stats(issues_stats):
+    return issues_stats.get("issues_per_severity", {})
+
+
 # Misc
 
 def date(text, date_format="%Y-%m-%d"):
     return datetime.strptime(text, date_format)
+
+
 
