@@ -291,3 +291,61 @@ class RowDivider(urwid.WidgetWrap):
     def __init__(self, attr_map="default", div_char="-"):
         widget = urwid.AttrMap(urwid.Divider(div_char), attr_map)
         super().__init__(widget)
+
+
+# Issues
+
+class ProjectIssuesStats(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        widget = urwid.Columns([
+            ("weight", 0.25, urwid.Pile([urwid.Text("")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("Statuses")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("Priorities")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("Severities")])),
+        ])
+        super().__init__(widget)
+
+    def populate(self, issues_stats):
+        self._w = urwid.Columns([
+            ("weight", 0.25, urwid.Pile([
+                TotalIssues(issues_stats), OpenedIssues(issues_stats), ClosedIssues(issues_stats)])),
+            ("weight", 0.25, urwid.Pile([
+                IssuesStatusStat(**ists) for ists in data.issues_statuses_stats(issues_stats).values()])),
+            ("weight", 0.25, urwid.Pile([
+                IssuesPriorityStat(**iprs) for iprs in data.issues_priorities_stats(issues_stats).values()])),
+            ("weight", 0.25, urwid.Pile([
+                IssuesSeverityStat(**ises) for ises in data.issues_severities_stats(issues_stats).values()])),
+        ])
+
+class TotalIssues(urwid.Text):
+    def __init__(self, issues_stats):
+        text = ["Total: ", ("cyan", str(data.total_issues(issues_stats)))]
+        super().__init__(text)
+
+
+class OpenedIssues(urwid.Text):
+    def __init__(self, issues_stats):
+        text = ["Opened: ", ("red", str(data.opened_issues(issues_stats)))]
+        super().__init__(text)
+
+
+class ClosedIssues(urwid.Text):
+    def __init__(self, issues_stats):
+        text = ["Closed: ", ("green", str(data.closed_issues(issues_stats)))]
+        super().__init__(text)
+
+class IssuesStatusStat(urwid.Text):
+    def __init__(self, name="", color="", count="", **kwargs):
+        text = ["{}: ".format(name), (color, str(count))]
+        super().__init__(text)
+
+class IssuesPriorityStat(urwid.Text):
+    def __init__(self, name="", color="", count="", **kwargs):
+        text = ["{}: ".format(name), (color, str(count))]
+        super().__init__(text)
+
+class IssuesSeverityStat(urwid.Text):
+    def __init__(self, name="", color="", count="", **kwargs):
+        text = ["{}: ".format(name), (color, str(count))]
+        super().__init__(text)

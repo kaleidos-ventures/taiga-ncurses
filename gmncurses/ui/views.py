@@ -21,6 +21,8 @@ class SubView(object):
     widget = None
 
 
+# Auth
+
 class LoginView(View):
     login_button = None
 
@@ -41,7 +43,8 @@ class LoginView(View):
         # Notifier
         self.notifier = widgets.Notifier("")
 
-        login_widget = widgets.Login([header, username_prompt, password_prompt, login_button_widget, self.notifier])
+        login_widget = widgets.Login([header, username_prompt, password_prompt, login_button_widget,
+                                      self.notifier])
         self.widget = widgets.center(login_widget)
 
     @property
@@ -52,6 +55,8 @@ class LoginView(View):
     def password(self):
         return self._password_editor.get_edit_text()
 
+
+# Projects List
 
 class ProjectsView(View):
     project_buttons = None
@@ -75,68 +80,7 @@ class ProjectsView(View):
         self.widget.set_body(urwid.Filler(grid, min_height=40))
 
 
-class ProjectBacklogSubView(SubView):
-    def __init__(self, project, notifier, tabs):
-        self.project = project
-        self.notifier = notifier
-
-        self.stats = widgets.ProjectBacklogStats(project)
-        self.user_stories = widgets.UserStoryList(project)
-
-        list_walker = urwid.SimpleFocusListWalker([
-            tabs,
-            widgets.box_solid_fill(" ", 1),
-            self.stats,
-            widgets.box_solid_fill(" ", 1),
-            self.user_stories
-        ])
-        list_walker.set_focus(4)
-        self.widget = urwid.ListBox(list_walker)
-
-
-class ProjectSprintSubView(SubView):
-    def __init__(self, project, notifier, tabs):
-        self.project = project
-        self.notifier = notifier
-
-        self.widget = urwid.ListBox(urwid.SimpleListWalker([
-            tabs,
-            widgets.box_solid_fill(" ", 1),
-        ]))
-
-
-class ProjectIssuesSubView(SubView):
-    def __init__(self, project, notifier, tabs):
-        self.project = project
-        self.notifier = notifier
-
-        self.widget = urwid.ListBox(urwid.SimpleListWalker([
-            tabs,
-            widgets.box_solid_fill(" ", 1),
-        ]))
-
-
-class ProjectWikiSubView(SubView):
-    def __init__(self, project, notifier, tabs):
-        self.project = project
-        self.notifier = notifier
-
-        self.widget = urwid.ListBox(urwid.SimpleListWalker([
-            tabs,
-            widgets.box_solid_fill(" ", 1),
-        ]))
-
-
-class ProjectAdminSubView(SubView):
-    def __init__(self, project, notifier, tabs):
-        self.project = project
-        self.notifier = notifier
-
-        self.widget = urwid.ListBox(urwid.SimpleListWalker([
-            tabs,
-            widgets.box_solid_fill(" ", 1),
-        ]))
-
+# Project Detail
 
 class ProjectDetailView(View):
     TABS = ["Backlog", "Sprints", "Issues", "Wiki", "Admin"]
@@ -178,3 +122,74 @@ class ProjectDetailView(View):
     def admin_view(self):
         self.tabs.tab_list.focus = 4
         self.widget.set_body(self.issues.widget)
+
+
+class ProjectBacklogSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.stats = widgets.ProjectBacklogStats(project)
+        self.user_stories = widgets.UserStoryList(project)
+
+        list_walker = urwid.SimpleFocusListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+            self.stats,
+            widgets.box_solid_fill(" ", 1),
+            self.user_stories
+        ])
+        list_walker.set_focus(4)
+        self.widget = urwid.ListBox(list_walker)
+
+
+class ProjectSprintSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+        ]))
+
+
+class ProjectIssuesSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.stats = widgets.ProjectIssuesStats(project)
+        #self.issues = widgets.IssuesList(project) #TODO
+
+        list_walker = urwid.SimpleFocusListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+            self.stats,
+            widgets.box_solid_fill(" ", 1),
+            #self.issues #TODO
+        ])
+        list_walker.set_focus(3) #TODO: Change to 4
+        self.widget = urwid.ListBox(list_walker)
+
+
+class ProjectWikiSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+        ]))
+
+
+class ProjectAdminSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+        ]))
