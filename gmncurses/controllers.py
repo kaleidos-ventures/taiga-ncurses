@@ -8,6 +8,7 @@ gmncurses.controllers
 from concurrent.futures import wait
 import functools
 
+from .config import ProjectKeys
 from .ui import signals
 
 
@@ -121,6 +122,13 @@ class ProjectBacklogSubController(Controller):
             self.view.notifier.error_msg("Failed to fetch project data")
 
 
+class ProjectSubController(Controller):
+    def __init__(self, view, executor, state_machine):
+        self.view = view
+        self.executor = executor
+        self.state_machine = state_machine
+
+
 class ProjectDetailController(Controller):
     def __init__(self, view, executor, state_machine):
         self.view = view
@@ -129,10 +137,34 @@ class ProjectDetailController(Controller):
 
         # Subcontrollers
         self.backlog = ProjectBacklogSubController(self.view.backlog, executor, state_machine)
+        self.sprint = ProjectSubController(self.view.backlog, executor, state_machine)
+        self.issues = ProjectSubController(self.view.backlog, executor, state_machine)
+        self.wiki = ProjectSubController(self.view.backlog, executor, state_machine)
+        self.admin = ProjectSubController(self.view.backlog, executor, state_machine)
 
         self.subcontroller = self.backlog
 
     def handle(self, key):
-        # TODO:
-        return key
+        if key == ProjectKeys.BACKLOG:
+            self.view.backlog_view()
+            self.subcontroller = self.backlog
+            self.state_machine.transition(self.state_machine.PROJECT_BACKLOG)
+        elif key == ProjectKeys.SPRINT:
+            self.view.sprint_view()
+            self.subcontroller = self.sprint
+            self.state_machine.transition(self.state_machine.PROJECT_SPRINT)
+        elif key == ProjectKeys.ISSUES:
+            self.view.issues_view()
+            self.subcontroller = self.issues
+            self.state_machine.transition(self.state_machine.PROJECT_ISSUES)
+        elif key == ProjectKeys.WIKI:
+            self.view.wiki_view()
+            self.subcontroller = self.wiki
+            self.state_machine.transition(self.state_machine.PROJECT_WIKI)
+        elif key == ProjectKeys.ADMIN:
+            self.view.admin_view()
+            self.subcontroller = self.admin
+            self.state_machine.transition(self.state_machine.PROJECT_ADMIN)
+        else:
+            return self.subcontroller.handle(key)
 

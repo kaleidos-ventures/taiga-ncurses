@@ -65,7 +65,7 @@ class Login(mixins.FormMixin, urwid.ListBox):
         super(Login, self).__init__(urwid.SimpleListWalker(widgets))
 
 
-class Notifier(mixins.NotifierMixin, urwid.Text):
+class Notifier(mixins.NotifierMixin, mixins.NonSelectableMixin, urwid.Text):
     pass
 
 
@@ -77,7 +77,7 @@ class PlainButton(mixins.PlainButtonMixin, urwid.Button):
         self._label.set_align_mode(self.ALIGN if align is None else align)
 
 
-class ProjectsHeader(urwid.WidgetWrap):
+class ProjectsHeader(mixins.NonSelectableMixin, urwid.WidgetWrap):
     def __init__(self):
         text = urwid.Text("GREENMINE")
         self.account_button = PlainButton("My account")
@@ -96,7 +96,7 @@ class FooterNotifier(Notifier):
     INFO_ATTR = "footer-info"
 
 
-class Footer(urwid.WidgetWrap):
+class Footer(mixins.NonSelectableMixin, urwid.WidgetWrap):
     def __init__(self, notifier):
         assert isinstance(notifier, FooterNotifier)
         cols = urwid.Columns([
@@ -106,7 +106,7 @@ class Footer(urwid.WidgetWrap):
         super().__init__(cols)
 
 
-class ProjectDetailHeader(urwid.WidgetWrap):
+class ProjectDetailHeader(mixins.NonSelectableMixin, urwid.WidgetWrap):
     def __init__(self, project):
         text = urwid.Text("GREENMINE")
         self.title = urwid.Text(project["name"], align="left")
@@ -125,25 +125,26 @@ class Grid(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.GridFlow):
     pass
 
 
-class Tabs(urwid.WidgetWrap):
-    def __init__(self, tabs):
+class Tabs(mixins.NonSelectableMixin, urwid.WidgetWrap):
+    def __init__(self, tabs, focus=0):
         self.tab_list = urwid.MonitoredFocusList(tabs)
-        self.tab_list.set_focus_changed_callback(lambda _: self.when_focus_changed())
-        texts = self._create_texts()
-        super().__init__(urwid.Columns(texts))
+        self.tab_list.focus = focus
+        self.tab_list.set_focus_changed_callback(self.rebuild_tabs)
 
-    def when_focus_changed(self):
-        texts = self._create_texts()
-        self._w = urwid.Columns(texts)
+        cols = [urwid.AttrMap(self.tab(t), "active-tab" if i == self.tab_list.focus else "inactive-tab")
+                                for i, t in enumerate(tabs)]
+        self.columns = urwid.Columns(cols)
 
-    def _create_texts(self):
-        texts = []
-        for i, tab in enumerate(self.tab_list):
-            if i == self.tab_list.focus:
-                texts.append(urwid.AttrMap(urwid.LineBox(urwid.Text(tab + " ")), "active-tab"))
-            else:
-                texts.append(urwid.AttrMap(urwid.LineBox(urwid.Text(tab + " ")), "inactive-tab"))
-        return texts
+        super().__init__(self.columns)
+
+    def rebuild_tabs(self, new_focus):
+        for i, c in enumerate(self.columns.contents):
+            widget, _ = c
+            widget.set_attr_map({None: "active-tab" if i == new_focus  else "inactive-tab"})
+
+    def tab(self, text):
+        return urwid.LineBox(urwid.Text(text + " "))
+
 
 class ProjectBacklogStats(urwid.WidgetWrap):
     def __init__(self, project):

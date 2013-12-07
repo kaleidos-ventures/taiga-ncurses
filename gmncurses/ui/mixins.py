@@ -69,3 +69,8 @@ class NotifierMixin(object):
 class PlainButtonMixin(object):
     button_left = urwid.Text("")
     button_right = urwid.Text("")
+
+
+class NonSelectableMixin(object):
+    def selectable(self):
+        return False

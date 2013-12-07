@@ -83,26 +83,98 @@ class ProjectBacklogSubView(SubView):
         self.stats = widgets.ProjectBacklogStats(project)
         self.user_stories = widgets.UserStoryList(project)
 
-        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+        list_walker = urwid.SimpleFocusListWalker([
             tabs,
             widgets.box_solid_fill(" ", 1),
             self.stats,
             widgets.box_solid_fill(" ", 1),
             self.user_stories
+        ])
+        list_walker.set_focus(4)
+        self.widget = urwid.ListBox(list_walker)
+
+
+class ProjectSprintSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+        ]))
+
+
+class ProjectIssuesSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+        ]))
+
+
+class ProjectWikiSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
+        ]))
+
+
+class ProjectAdminSubView(SubView):
+    def __init__(self, project, notifier, tabs):
+        self.project = project
+        self.notifier = notifier
+
+        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+            tabs,
+            widgets.box_solid_fill(" ", 1),
         ]))
 
 
 class ProjectDetailView(View):
+    TABS = ["Backlog", "Sprints", "Issues", "Wiki", "Admin"]
+
     def __init__(self, project):
         self.project = project
 
         self.notifier = widgets.FooterNotifier("")
 
-        self.tabs = widgets.Tabs(["Backlog", "Sprints", "Issues", "Wiki", "Admin"])
+        self.tabs = widgets.Tabs(self.TABS)
+
         # Subviews
         self.backlog = ProjectBacklogSubView(project, self.notifier, self.tabs)
-        # TODO
+        self.sprint = ProjectSprintSubView(project, self.notifier, self.tabs)
+        self.issues = ProjectIssuesSubView(project, self.notifier, self.tabs)
+        self.wiki = ProjectWikiSubView(project, self.notifier, self.tabs)
+        self.admin = ProjectAdminSubView(project, self.notifier, self.tabs)
 
         self.widget = urwid.Frame(self.backlog.widget,
                                   header=widgets.ProjectDetailHeader(project),
                                   footer=widgets.Footer(self.notifier))
+
+    def backlog_view(self):
+        self.tabs.tab_list.focus = 0
+        self.widget.set_body(self.backlog.widget)
+
+    def sprint_view(self):
+        self.tabs.tab_list.focus = 1
+        self.widget.set_body(self.sprint.widget)
+
+    def issues_view(self):
+        self.tabs.tab_list.focus = 2
+        self.widget.set_body(self.issues.widget)
+
+    def wiki_view(self):
+        self.tabs.tab_list.focus = 3
+        self.widget.set_body(self.issues.widget)
+
+    def admin_view(self):
+        self.tabs.tab_list.focus = 4
+        self.widget.set_body(self.issues.widget)

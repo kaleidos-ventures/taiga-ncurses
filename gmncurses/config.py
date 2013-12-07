@@ -47,12 +47,14 @@ class Keys(metaclass=KeyConfigMeta):
     QUIT = "q"
     DEBUG = "D"
 
+
 class ProjectKeys(metaclass=KeyConfigMeta):
     BACKLOG = "B"
     SPRINT = "S"
     ISSUES = "I"
     WIKI = "W"
     ADMIN = "A"
+
 
 DEFAULTS = {
     "keys": ChainMap(Keys.config, ProjectKeys.config),
@@ -65,11 +67,12 @@ DEFAULTS = {
 
 class Configuration(object):
     def __init__(self,
-                 config_dict=DEFAULTS,
+                 config_dict=None,
                  config_file=DEFAULT_CONFIG_FILE,
                  auth_config_file=DEFAULT_AUTH_FILE,
                  config_dir=DEFAULT_CONFIG_DIR):
-        self.config_dict = config_dict
+        self.config_dict = DEFAULTS.copy()
+        self.config_dict.update({} if config_dict is None else config_dict)
         self.config_file = config_file
         self.auth_config_file = auth_config_file
         self.config_dir = config_dir
