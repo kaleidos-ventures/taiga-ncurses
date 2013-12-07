@@ -115,11 +115,55 @@ class ProjectBacklogSubController(Controller):
         done, not_done = future_with_results.result()
         if len(done) == 2:
             self.view.user_stories.populate(self.user_stories, self.project_stats)
-            self.view.notifier.info_msg("Project Stats and User Stories fetched")
+            self.view.notifier.info_msg("Project stats and user stories fetched")
             self.state_machine.refresh()
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch project data")
+
+
+class ProjectIssuesSubController(Controller):
+    def __init__(self, view, executor, state_machine):
+        self.view = view
+        self.executor = executor
+        self.state_machine = state_machine
+
+        self.state_machine.transition(self.state_machine.PROJECT_ISSUES)
+
+        self.view.notifier.info_msg("Fetching Stats and Issues")
+
+        issues_stats_f = self.executor.project_issues_stats(self.view.project)
+        issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+        issues_f = self.executor.issues(self.view.project)
+        issues_f.add_done_callback(self.handle_issues)
+
+        futures = (issues_stats_f, issues_f)
+        futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+        futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def handle_issues_stats(self, future):
+        self.issues_stats = future.result()
+        if self.issues_stats is not None:
+            self.view.stats.populate(self.issues_stats)
+            self.state_machine.refresh()
+
+    def handle_issues(self, future):
+        self.issues = future.result()
+        if self.issues is not None:
+            #TODO:
+            #self.view.issues.populate(self.issues)
+            #self.state_machine.refresh()
+            pass
+
+    def when_issues_info_fetched(self, future_with_results):
+        done, not_done = future_with_results.result()
+        if len(done) == 2:
+            self.view.notifier.info_msg("Stats and issues fetched")
+            self.state_machine.refresh()
+        else:
+            # TODO retry failed operations
+            self.view.notifier.error_msg("Failed to fetch issues data")
 
 
 class ProjectSubController(Controller):
@@ -138,7 +182,7 @@ class ProjectDetailController(Controller):
         # Subcontrollers
         self.backlog = ProjectBacklogSubController(self.view.backlog, executor, state_machine)
         self.sprint = ProjectSubController(self.view.backlog, executor, state_machine)
-        self.issues = ProjectSubController(self.view.backlog, executor, state_machine)
+        self.issues = ProjectIssuesSubController(self.view.issues, executor, state_machine)
         self.wiki = ProjectSubController(self.view.backlog, executor, state_machine)
         self.admin = ProjectSubController(self.view.backlog, executor, state_machine)
 
