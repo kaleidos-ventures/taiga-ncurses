@@ -233,8 +233,6 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         super().__init__(self.widget)
 
     def populate(self, user_stories, project_stats):
-        # FIXME: We need project stats. Doomline limit is equal to total_points less
-        #        assigned points of a project.
         self.doomline_limit = data.doomline_limit_points(project_stats)
 
         first_gains_focus = len(self.widget.contents) == 1 and user_stories
@@ -275,6 +273,77 @@ class UserStoryEntry(urwid.WidgetWrap):
         return True
 
 
+# Issues
+
+class ProjectIssuesStats(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        widget = urwid.Columns([
+            ("weight", 0.25, urwid.Pile([urwid.Text("")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("")])),
+        ])
+        super().__init__(widget)
+
+    def populate(self, issues_stats):
+        issues_statuses_stats = [urwid.Text(("cyan", "Status")),]
+        issues_statuses_stats += [IssuesStatusStat(**ists) for ists in
+                                  data.issues_statuses_stats(issues_stats).values()]
+        issues_priorities_stats = [urwid.Text(("cyan", "Priority")),]
+        issues_priorities_stats += [IssuesPriorityStat(**iprs) for iprs in
+                                    data.issues_priorities_stats(issues_stats).values()]
+        issues_severities_stats = [urwid.Text(("cyan", "Severities")),]
+        issues_severities_stats += [IssuesSeverityStat(**ises) for ises in
+                                    data.issues_severities_stats(issues_stats).values()]
+
+        self._w = urwid.Columns([
+            ("weight", 0.25, urwid.Pile([urwid.Text(""),
+                TotalIssues(issues_stats), OpenedIssues(issues_stats), ClosedIssues(issues_stats)])),
+            ("weight", 0.25, urwid.Pile(issues_statuses_stats)),
+            ("weight", 0.25, urwid.Pile(issues_priorities_stats)),
+            ("weight", 0.25, urwid.Pile(issues_severities_stats)),
+        ])
+
+
+class TotalIssues(urwid.Text):
+    def __init__(self, issues_stats):
+        text = ["Total issues: ", ("cyan", str(data.total_issues(issues_stats)))]
+        super().__init__(text)
+
+
+class OpenedIssues(urwid.Text):
+    def __init__(self, issues_stats):
+        text = ["Opened issues: ", ("red", str(data.opened_issues(issues_stats)))]
+        super().__init__(text)
+
+
+class ClosedIssues(urwid.Text):
+    def __init__(self, issues_stats):
+        text = ["Closed issues: ", ("green", str(data.closed_issues(issues_stats)))]
+        super().__init__(text)
+
+
+class IssuesStatusStat(urwid.Text):
+    def __init__(self, name="", color="", count="", **kwargs):
+        text = ["{}: ".format(name), (color, str(count))]
+        super().__init__(text)
+
+
+class IssuesPriorityStat(urwid.Text):
+    def __init__(self, name="", color="", count="", **kwargs):
+        text = ["{}: ".format(name), (color, str(count))]
+        super().__init__(text)
+
+
+class IssuesSeverityStat(urwid.Text):
+    def __init__(self, name="", color="", count="", **kwargs):
+        text = ["{}: ".format(name), (color, str(count))]
+        super().__init__(text)
+
+
+# Misc
+
 class ListCell(urwid.WidgetWrap):
     def __init__(self, text):
         text_widget = urwid.AttrMap(ListText(text), "default")
@@ -291,61 +360,3 @@ class RowDivider(urwid.WidgetWrap):
     def __init__(self, attr_map="default", div_char="-"):
         widget = urwid.AttrMap(urwid.Divider(div_char), attr_map)
         super().__init__(widget)
-
-
-# Issues
-
-class ProjectIssuesStats(urwid.WidgetWrap):
-    def __init__(self, project):
-        self.project = project
-        widget = urwid.Columns([
-            ("weight", 0.25, urwid.Pile([urwid.Text("")])),
-            ("weight", 0.25, urwid.Pile([urwid.Text("Statuses")])),
-            ("weight", 0.25, urwid.Pile([urwid.Text("Priorities")])),
-            ("weight", 0.25, urwid.Pile([urwid.Text("Severities")])),
-        ])
-        super().__init__(widget)
-
-    def populate(self, issues_stats):
-        self._w = urwid.Columns([
-            ("weight", 0.25, urwid.Pile([
-                TotalIssues(issues_stats), OpenedIssues(issues_stats), ClosedIssues(issues_stats)])),
-            ("weight", 0.25, urwid.Pile([
-                IssuesStatusStat(**ists) for ists in data.issues_statuses_stats(issues_stats).values()])),
-            ("weight", 0.25, urwid.Pile([
-                IssuesPriorityStat(**iprs) for iprs in data.issues_priorities_stats(issues_stats).values()])),
-            ("weight", 0.25, urwid.Pile([
-                IssuesSeverityStat(**ises) for ises in data.issues_severities_stats(issues_stats).values()])),
-        ])
-
-class TotalIssues(urwid.Text):
-    def __init__(self, issues_stats):
-        text = ["Total: ", ("cyan", str(data.total_issues(issues_stats)))]
-        super().__init__(text)
-
-
-class OpenedIssues(urwid.Text):
-    def __init__(self, issues_stats):
-        text = ["Opened: ", ("red", str(data.opened_issues(issues_stats)))]
-        super().__init__(text)
-
-
-class ClosedIssues(urwid.Text):
-    def __init__(self, issues_stats):
-        text = ["Closed: ", ("green", str(data.closed_issues(issues_stats)))]
-        super().__init__(text)
-
-class IssuesStatusStat(urwid.Text):
-    def __init__(self, name="", color="", count="", **kwargs):
-        text = ["{}: ".format(name), (color, str(count))]
-        super().__init__(text)
-
-class IssuesPriorityStat(urwid.Text):
-    def __init__(self, name="", color="", count="", **kwargs):
-        text = ["{}: ".format(name), (color, str(count))]
-        super().__init__(text)
-
-class IssuesSeverityStat(urwid.Text):
-    def __init__(self, name="", color="", count="", **kwargs):
-        text = ["{}: ".format(name), (color, str(count))]
-        super().__init__(text)
