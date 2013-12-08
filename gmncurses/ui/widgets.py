@@ -233,8 +233,10 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         super().__init__(self.widget)
 
     def populate(self, user_stories, project_stats):
-        self.doomline_limit = data.doomline_limit_points(project_stats)
+        if user_stories:
+            self.reset()
 
+        self.doomline_limit = data.doomline_limit_points(project_stats)
         first_gains_focus = len(self.widget.contents) == 1 and user_stories
 
         summation = 0
@@ -253,6 +255,9 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         if first_gains_focus:
             t = self.widget.contents
             self.widget.contents.focus = 1
+
+    def reset(self):
+        self.widget.contents = self.widget.contents[:1]
 
 
 class UserStoryEntry(urwid.WidgetWrap):
@@ -357,6 +362,9 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
         super().__init__(self.widget)
 
     def populate(self, issues):
+        if issues:
+            self.reset()
+
         first_gains_focus = len(self.widget.contents) == 1 and issues
 
         for issue in issues:
@@ -366,6 +374,9 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
         if first_gains_focus:
             t = self.widget.contents
             self.widget.contents.focus = 1
+
+    def reset(self):
+        self.widget.contents = self.widget.contents[:1]
 
 
 class IssueEntry(urwid.WidgetWrap):

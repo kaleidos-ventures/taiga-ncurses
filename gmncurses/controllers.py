@@ -88,6 +88,7 @@ class ProjectBacklogSubController(Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+    def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_BACKLOG)
 
         self.view.notifier.info_msg("Fetching Stats and User stories")
@@ -128,6 +129,7 @@ class ProjectIssuesSubController(Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+    def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_ISSUES)
 
         self.view.notifier.info_msg("Fetching Stats and Issues")
@@ -185,28 +187,25 @@ class ProjectDetailController(Controller):
         self.admin = ProjectSubController(self.view.backlog, executor, state_machine)
 
         self.subcontroller = self.backlog
+        self.subcontroller.load()
 
     def handle(self, key):
         if key == ProjectKeys.BACKLOG:
             self.view.backlog_view()
             self.subcontroller = self.backlog
-            self.state_machine.transition(self.state_machine.PROJECT_BACKLOG)
+            self.subcontroller.load()
         elif key == ProjectKeys.SPRINT:
             self.view.sprint_view()
             self.subcontroller = self.sprint
-            self.state_machine.transition(self.state_machine.PROJECT_SPRINT)
         elif key == ProjectKeys.ISSUES:
             self.view.issues_view()
             self.subcontroller = self.issues
-            self.state_machine.transition(self.state_machine.PROJECT_ISSUES)
+            self.subcontroller.load()
         elif key == ProjectKeys.WIKI:
             self.view.wiki_view()
             self.subcontroller = self.wiki
-            self.state_machine.transition(self.state_machine.PROJECT_WIKI)
         elif key == ProjectKeys.ADMIN:
             self.view.admin_view()
             self.subcontroller = self.admin
-            self.state_machine.transition(self.state_machine.PROJECT_ADMIN)
         else:
             return self.subcontroller.handle(key)
-
