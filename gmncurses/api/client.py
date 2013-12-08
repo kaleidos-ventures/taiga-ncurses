@@ -117,8 +117,8 @@ class GreenMineClient(BaseClient):
         "task":  "/api/v1/tasks/{}",
         "issues": "/api/v1/issues",
         "issue":  "/api/v1/issues/{}",
-        "wiki_pages": "/api/v1/wiki_pages",
-        "wiki_page":  "/api/v1/wiki_pages/{}",
+        "wiki_pages": "/api/v1/wiki",
+        "wiki_page":  "/api/v1/wiki/{}",
     }
 
     # AUTHENTICATIONS
