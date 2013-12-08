@@ -287,13 +287,13 @@ class ProjectIssuesStats(urwid.WidgetWrap):
         super().__init__(widget)
 
     def populate(self, issues_stats):
-        issues_statuses_stats = [urwid.Text(("cyan", "Status")),]
+        issues_statuses_stats = [urwid.Text(("cyan", "Per Status")),]
         issues_statuses_stats += [IssuesStatusStat(**ists) for ists in
                                   data.issues_statuses_stats(issues_stats).values()]
-        issues_priorities_stats = [urwid.Text(("cyan", "Priority")),]
+        issues_priorities_stats = [urwid.Text(("cyan", "Per Priority")),]
         issues_priorities_stats += [IssuesPriorityStat(**iprs) for iprs in
                                     data.issues_priorities_stats(issues_stats).values()]
-        issues_severities_stats = [urwid.Text(("cyan", "Severities")),]
+        issues_severities_stats = [urwid.Text(("cyan", "Per Severity")),]
         issues_severities_stats += [IssuesSeverityStat(**ises) for ises in
                                     data.issues_severities_stats(issues_stats).values()]
 
