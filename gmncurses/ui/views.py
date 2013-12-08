@@ -160,16 +160,16 @@ class ProjectIssuesSubView(SubView):
         self.notifier = notifier
 
         self.stats = widgets.ProjectIssuesStats(project)
-        #self.issues = widgets.IssuesList(project) #TODO
+        self.issues = widgets.IssuesList(project)
 
         list_walker = urwid.SimpleFocusListWalker([
             tabs,
             widgets.box_solid_fill(" ", 1),
             self.stats,
             widgets.box_solid_fill(" ", 1),
-            #self.issues #TODO
+            self.issues
         ])
-        list_walker.set_focus(3) #TODO: Change to 4
+        list_walker.set_focus(4)
         self.widget = urwid.ListBox(list_walker)
 
 

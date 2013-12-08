@@ -342,6 +342,48 @@ class IssuesSeverityStat(urwid.Text):
         super().__init__(text)
 
 
+class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+
+        colum_items = [("weight", 0.55, ListCell("Issue"))]
+        colum_items.append(("weight", 0.1, ListCell("Status")))
+        colum_items.append(("weight", 0.1, ListCell("Priority")))
+        colum_items.append(("weight", 0.1, ListCell("Severity")))
+        colum_items.append(("weight", 0.15, ListCell("Assigned to")))
+
+        columns = urwid.Columns(colum_items)
+        self.widget = urwid.Pile([columns])
+        super().__init__(self.widget)
+
+    def populate(self, issues):
+        first_gains_focus = len(self.widget.contents) == 1 and issues
+
+        for issue in issues:
+            self.widget.contents.append((IssueEntry(issue, self.project),
+                                         ("weight", 0.1)))
+
+        if first_gains_focus:
+            t = self.widget.contents
+            self.widget.contents.focus = 1
+
+
+class IssueEntry(urwid.WidgetWrap):
+    def __init__(self, issue, project):
+        issue_ref_and_name = "#{0: <4} {1}".format(str(data.issue_ref(issue)), data.issue_subject(issue))
+
+        colum_items = [("weight", 0.55, ListText(issue_ref_and_name, align="left"))]
+        colum_items.append(("weight", 0.1, ListText(data.issue_status(issue, project))))
+        colum_items.append(("weight", 0.1, ListText(data.issue_priority(issue, project))))
+        colum_items.append(("weight", 0.1, ListText(data.issue_severity(issue, project))))
+        colum_items.append(("weight", 0.15, ListText(data.issue_assigned_to(issue, project))))
+
+        self.widget = urwid.Columns(colum_items)
+        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
+
+    def selectable(self):
+        return True
+
 # Misc
 
 class ListCell(urwid.WidgetWrap):

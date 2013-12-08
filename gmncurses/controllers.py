@@ -151,10 +151,8 @@ class ProjectIssuesSubController(Controller):
     def handle_issues(self, future):
         self.issues = future.result()
         if self.issues is not None:
-            #TODO:
-            #self.view.issues.populate(self.issues)
-            #self.state_machine.refresh()
-            pass
+            self.view.issues.populate(self.issues)
+            self.state_machine.refresh()
 
     def when_issues_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()

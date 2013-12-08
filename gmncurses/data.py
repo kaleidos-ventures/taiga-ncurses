@@ -85,6 +85,8 @@ def us_total_points(us):
 # us, project, computable roles - US points
 
 def us_points_by_role(us, project, roles):
+    # FIXME: Improvement, get project_points from a project constant
+    # FIXME: Improvement, get rolesofrom a project constant
     us_points = us.get("points", [])
     project_points = {str(p["id"]): p for p in project["points"]}
     default_point = project["default_points"]
@@ -117,6 +119,56 @@ def issues_priorities_stats(issues_stats):
 
 def issues_severities_stats(issues_stats):
     return issues_stats.get("issues_per_severity", {})
+
+
+# issue - issues
+
+def issue_ref(issue):
+    return issue.get("ref", "--")
+
+def issue_subject(issue):
+    return issue.get("subject", "------")
+
+def issue_status(issue, project):
+    # FIXME: Improvement, get issues_statuses from a project constant
+    status_id = issue.get("status", None)
+    if status_id:
+        issue_statuses = {str(p["id"]): p for p in project["issue_statuses"]}
+        try:
+            return (issue_statuses[str(status_id)]["color"], issue_statuses[str(status_id)]["name"])
+        except KeyError:
+            pass
+        return str(status)
+    return "---"
+
+def issue_priority(issue, project):
+    # FIXME: Improvement, get priorities from a project constant
+    priority_id = issue.get("priority", None)
+    if priority_id:
+        priorities = {str(p["id"]): p for p in project["priorities"]}
+        try:
+            return (priorities[str(priority_id)]["color"], priorities[str(priority_id)]["name"])
+        except KeyError:
+            pass
+    return "---"
+
+def issue_severity(issue, project):
+    # FIXME: Improvement, get severities from a project constant
+    severity_id = issue.get("severity", None)
+    if severity_id:
+        severities = {str(p["id"]): p for p in project["severities"]}
+        try:
+            return (severities[str(severity_id)]["color"], severities[str(severity_id)]["name"])
+        except KeyError:
+            pass
+    return "---"
+
+def issue_assigned_to(issue, project):
+    user = issue.get("assigned_to", None)
+    if user:
+        #TODO
+        return str(user) + " #TODO"
+    return "Unassigned"
 
 
 # Misc
