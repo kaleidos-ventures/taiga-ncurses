@@ -166,6 +166,42 @@ class ProjectIssuesSubController(Controller):
             self.view.notifier.error_msg("Failed to fetch issues data")
 
 
+class ProjectWikiSubController(Controller):
+    def __init__(self, view, executor, state_machine):
+        self.view = view
+        self.executor = executor
+        self.state_machine = state_machine
+
+    def load(self):
+        self.state_machine.transition(self.state_machine.PROJECT_WIKI)
+
+        self.view.notifier.info_msg("Fetching Wiki")
+
+        wiki_pages_f = self.executor.wiki_pages(self.view.project)
+        wiki_pages_f.add_done_callback(self.handle_wiki_pages)
+
+        futures = (wiki_pages_f,)
+        futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+        futures_completed_f.add_done_callback(self.when_wiki_pages_fetched)
+
+    def handle_wiki_pages(self, future):
+        self.wiki_pages = future.result()
+        if self.wiki_pages is not None:
+            self.view.wiki_explorer.populate(self.wiki_pages)
+            if len(self.wiki_pages) > 0:
+                self.view.wiki_page.populate(self.wiki_pages[0])
+            self.state_machine.refresh()
+
+    def when_wiki_pages_fetched(self, future_with_results):
+        done, not_done = future_with_results.result()
+        if len(done) == 1:
+            self.view.notifier.info_msg("Wiki pages fetched")
+            self.state_machine.refresh()
+        else:
+            # TODO retry failed operations
+            self.view.notifier.error_msg("Failed to fetch wiki data")
+
+
 class ProjectSubController(Controller):
     def __init__(self, view, executor, state_machine):
         self.view = view
@@ -183,7 +219,7 @@ class ProjectDetailController(Controller):
         self.backlog = ProjectBacklogSubController(self.view.backlog, executor, state_machine)
         self.sprint = ProjectSubController(self.view.backlog, executor, state_machine)
         self.issues = ProjectIssuesSubController(self.view.issues, executor, state_machine)
-        self.wiki = ProjectSubController(self.view.backlog, executor, state_machine)
+        self.wiki = ProjectWikiSubController(self.view.wiki, executor, state_machine)
         self.admin = ProjectSubController(self.view.backlog, executor, state_machine)
 
         self.subcontroller = self.backlog
@@ -204,6 +240,7 @@ class ProjectDetailController(Controller):
         elif key == ProjectKeys.WIKI:
             self.view.wiki_view()
             self.subcontroller = self.wiki
+            self.subcontroller.load()
         elif key == ProjectKeys.ADMIN:
             self.view.admin_view()
             self.subcontroller = self.admin

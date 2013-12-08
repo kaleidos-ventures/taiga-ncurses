@@ -46,4 +46,6 @@ class Executor(object):
         return self.pool.submit(self.client.get_issues, params={"project": project["id"]})
 
     # Wiki
-    #TODO
+    def wiki_pages(self, project):
+        return self.pool.submit(self.client.get_wiki_pages, params={"project": project["id"]})
+

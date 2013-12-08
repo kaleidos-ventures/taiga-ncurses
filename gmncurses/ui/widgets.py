@@ -395,6 +395,37 @@ class IssueEntry(urwid.WidgetWrap):
     def selectable(self):
         return True
 
+
+# Wiki
+
+class WikiExplorer(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
+    def __init__(self, project):
+        # TODO
+        self.project = project
+
+        colum_items = []
+        columns = urwid.Columns(colum_items)
+        self.widget = urwid.Pile([columns])
+        super().__init__(self.widget)
+
+    def populate(self, wiki_pages):
+        pass
+
+
+class WikiPage(urwid.WidgetWrap):
+    def __init__(self, project):
+        # TODO
+        self.project = project
+
+        colum_items = []
+        columns = urwid.Columns(colum_items)
+        self.widget = urwid.Pile([columns])
+        super().__init__(self.widget)
+
+    def populate(self, wiki_page):
+        pass
+
+
 # Misc
 
 class ListCell(urwid.WidgetWrap):

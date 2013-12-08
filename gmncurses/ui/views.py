@@ -178,10 +178,18 @@ class ProjectWikiSubView(SubView):
         self.project = project
         self.notifier = notifier
 
-        self.widget = urwid.ListBox(urwid.SimpleListWalker([
+        self.wiki_explorer = widgets.WikiExplorer(project)
+        self.wiki_page = widgets.WikiPage(project)
+
+        list_walker = urwid.SimpleFocusListWalker([
             tabs,
             widgets.box_solid_fill(" ", 1),
-        ]))
+            self.wiki_explorer,
+            widgets.box_solid_fill(" ", 1),
+            self.wiki_page,
+        ])
+        list_walker.set_focus(4)
+        self.widget = urwid.ListBox(list_walker)
 
 
 class ProjectAdminSubView(SubView):
