@@ -164,10 +164,14 @@ def issue_severity(issue, project):
     return "---"
 
 def issue_assigned_to(issue, project):
-    user = issue.get("assigned_to", None)
-    if user:
-        #TODO
-        return str(user) + " #TODO"
+    # FIXME: Improvement, get memberships and users from a project constant
+    user_id = issue.get("assigned_to", None)
+    if user_id:
+        memberships = {str(p["user"]): p for p in project["memberships"]}
+        try:
+            return (memberships[str(user_id)]["color"], memberships[str(user_id)]["full_name"])
+        except KeyError:
+            pass
     return "Unassigned"
 
 
