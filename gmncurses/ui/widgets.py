@@ -385,19 +385,25 @@ class IssueEntry(urwid.WidgetWrap):
         issue_ref_and_name = "#{0: <4} {1}".format(str(data.issue_ref(issue)), data.issue_subject(issue))
 
         colum_items = [("weight", 0.55, ListText(issue_ref_and_name, align="left"))]
-        colum_items.append(("weight", 0.1, ListText(data.issue_status(issue, project))))
-        colum_items.append(("weight", 0.1, ListText(data.issue_priority(issue, project))))
-        colum_items.append(("weight", 0.1, ListText(data.issue_severity(issue, project))))
 
-        assigned_to = data.issue_assigned_to(issue, project)
-        try:
-            hex_color, username = assigned_to
-        except ValueError:
-            attr = urwid.AttrSpec("white", "default")
-            username = assigned_to
-        else:
-            color = x256.from_hex(hex_color.strip("#"))
-            attr = urwid.AttrSpec("black", "h{0}".format(color))
+        hex_color, status = data.issue_status_with_color(issue, project)
+        color = x256.from_hex(hex_color.strip("#"))
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        colum_items.append(("weight", 0.1, ListText((attr, status))))
+
+        hex_color, priority = data.issue_priority_with_color(issue, project)
+        color = x256.from_hex(hex_color.strip("#"))
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        colum_items.append(("weight", 0.1, ListText((attr, priority))))
+
+        hex_color, severity = data.issue_severity_with_color(issue, project)
+        color = x256.from_hex(hex_color.strip("#"))
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        colum_items.append(("weight", 0.1, ListText((attr, severity))))
+
+        hex_color, username =  data.issue_assigned_to_with_color(issue, project)
+        color = x256.from_hex(hex_color.strip("#"))
+        attr = urwid.AttrSpec("black", "h{0}".format(color))
         colum_items.append(("weight", 0.15, ListText((attr, username))))
 
         self.widget = urwid.Columns(colum_items)

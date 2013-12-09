@@ -129,56 +129,61 @@ def issue_ref(issue):
 def issue_subject(issue):
     return issue.get("subject", "------")
 
-def issue_status(issue, project):
+def issue_status_with_color(issue, project, default_color="#ffffff"):
     # FIXME: Improvement, get issues_statuses from a project constant
+    # TODO: Check that the color is in hex format
     status_id = issue.get("status", None)
     if status_id:
         issue_statuses = {str(p["id"]): p for p in project["issue_statuses"]}
         try:
-            return (issue_statuses[str(status_id)]["color"], issue_statuses[str(status_id)]["name"])
+            return (issue_statuses[str(status_id)]["color"] or default_color,
+                    issue_statuses[str(status_id)]["name"])
         except KeyError:
             pass
         return str(status)
-    return "---"
+    return (default_color, "---")
 
-def issue_priority(issue, project):
+def issue_priority_with_color(issue, project, default_color="#ffffff"):
     # FIXME: Improvement, get priorities from a project constant
+    # TODO: Check that the color is in hex format
     priority_id = issue.get("priority", None)
     if priority_id:
         priorities = {str(p["id"]): p for p in project["priorities"]}
         try:
-            return (priorities[str(priority_id)]["color"], priorities[str(priority_id)]["name"])
+            return (priorities[str(priority_id)]["color"] or default_color,
+                    priorities[str(priority_id)]["name"])
         except KeyError:
             pass
-    return "---"
+    return (default_color, "---")
 
-def issue_severity(issue, project):
+def issue_severity_with_color(issue, project, default_color="#ffffff"):
     # FIXME: Improvement, get severities from a project constant
+    # TODO: Check that the color is in hex format
     severity_id = issue.get("severity", None)
     if severity_id:
         severities = {str(p["id"]): p for p in project["severities"]}
         try:
-            return (severities[str(severity_id)]["color"], severities[str(severity_id)]["name"])
+            return (severities[str(severity_id)]["color"] or default_color,
+                    severities[str(severity_id)]["name"])
         except KeyError:
             pass
-    return "---"
+    return (default_color, "---")
 
-def issue_assigned_to(issue, project):
+def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
     # FIXME: Improvement, get memberships and users from a project constant
+    # TODO: Check that the color is in hex format
     user_id = issue.get("assigned_to", None)
     if user_id:
         memberships = {str(p["user"]): p for p in project["memberships"]}
         try:
-            return (memberships[str(user_id)]["color"], memberships[str(user_id)]["full_name"])
+            return (memberships[str(user_id)]["color"] or default_color,
+                    memberships[str(user_id)]["full_name"])
         except KeyError:
             pass
-    return "Unassigned"
+    return  (default_color, "Unassigned")
 
 
 # Misc
 
 def date(text, date_format="%Y-%m-%d"):
     return datetime.strptime(text, date_format)
-
-
-
