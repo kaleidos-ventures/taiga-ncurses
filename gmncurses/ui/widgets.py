@@ -6,6 +6,7 @@ gmncurses.ui.widgets
 """
 
 import urwid
+from x256 import x256
 
 from . import mixins
 from gmncurses import data
@@ -387,7 +388,17 @@ class IssueEntry(urwid.WidgetWrap):
         colum_items.append(("weight", 0.1, ListText(data.issue_status(issue, project))))
         colum_items.append(("weight", 0.1, ListText(data.issue_priority(issue, project))))
         colum_items.append(("weight", 0.1, ListText(data.issue_severity(issue, project))))
-        colum_items.append(("weight", 0.15, ListText(data.issue_assigned_to(issue, project))))
+
+        assigned_to = data.issue_assigned_to(issue, project)
+        try:
+            hex_color, username = assigned_to
+        except ValueError:
+            attr = urwid.AttrSpec("white", "default")
+            username = assigned_to
+        else:
+            color = x256.from_hex(hex_color.strip("#"))
+            attr = urwid.AttrSpec("black", "h{0}".format(color))
+        colum_items.append(("weight", 0.15, ListText((attr, username))))
 
         self.widget = urwid.Columns(colum_items)
         super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
