@@ -417,16 +417,42 @@ class IssueEntry(urwid.WidgetWrap):
 
 class WikiExplorer(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
     def __init__(self, project):
-        # TODO
         self.project = project
 
-        colum_items = []
+        colum_items = [ListCell("Wiki Pages")]
+
         columns = urwid.Columns(colum_items)
         self.widget = urwid.Pile([columns])
         super().__init__(self.widget)
 
+
     def populate(self, wiki_pages):
-        pass
+        if wiki_pages:
+            self.reset()
+
+        first_gains_focus = len(self.widget.contents) == 1 and wiki_pages
+
+        for wiki_page in wiki_pages:
+            self.widget.contents.append((WikiExplorerEntry(wiki_page),
+                                         ("weight", 0.1)))
+
+        if first_gains_focus:
+            t = self.widget.contents
+            self.widget.contents.focus = 1
+
+    def reset(self):
+        self.widget.contents = self.widget.contents[:1]
+
+
+class WikiExplorerEntry(urwid.WidgetWrap):
+    def __init__(self, wiki_page):
+        colum_items = [("weight", 1.0, ListText(wiki_page["slug"], align="left"))]
+
+        self.widget = urwid.Columns(colum_items)
+        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
+
+    def selectable(self):
+        return True
 
 
 class WikiPage(urwid.WidgetWrap):
@@ -440,8 +466,8 @@ class WikiPage(urwid.WidgetWrap):
         super().__init__(self.widget)
 
     def populate(self, wiki_page):
+        # TODO
         pass
-
 
 # Misc
 
