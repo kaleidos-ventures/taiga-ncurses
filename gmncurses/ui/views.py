@@ -117,11 +117,11 @@ class ProjectDetailView(View):
 
     def wiki_view(self):
         self.tabs.tab_list.focus = 3
-        self.widget.set_body(self.issues.widget)
+        self.widget.set_body(self.wiki.widget)
 
     def admin_view(self):
         self.tabs.tab_list.focus = 4
-        self.widget.set_body(self.issues.widget)
+        self.widget.set_body(self.admin.widget)
 
 
 class ProjectBacklogSubView(SubView):
@@ -188,7 +188,7 @@ class ProjectWikiSubView(SubView):
             widgets.box_solid_fill(" ", 1),
             self.wiki_page,
         ])
-        list_walker.set_focus(4)
+        list_walker.set_focus(2)
         self.widget = urwid.ListBox(list_walker)
 
 
