@@ -10,6 +10,7 @@ from x256 import x256
 
 from . import mixins
 from gmncurses import data
+from gmncurses.htmlcolors import color_name_to_hex
 
 
 def box_solid_fill(char, height):
@@ -387,23 +388,23 @@ class IssueEntry(urwid.WidgetWrap):
         colum_items = [("weight", 0.55, ListText(issue_ref_and_name, align="left"))]
 
         hex_color, status = data.issue_status_with_color(issue, project)
-        color = x256.from_hex(hex_color.strip("#"))
+        color = x256.from_hex(color_name_to_hex(hex_color).strip("#"))
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.1, ListText((attr, status))))
 
         hex_color, priority = data.issue_priority_with_color(issue, project)
-        color = x256.from_hex(hex_color.strip("#"))
+        color = x256.from_hex(color_name_to_hex(hex_color).strip("#"))
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.1, ListText((attr, priority))))
 
         hex_color, severity = data.issue_severity_with_color(issue, project)
-        color = x256.from_hex(hex_color.strip("#"))
+        color = x256.from_hex(color_name_to_hex(hex_color).strip("#"))
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.1, ListText((attr, severity))))
 
         hex_color, username =  data.issue_assigned_to_with_color(issue, project)
-        color = x256.from_hex(hex_color.strip("#"))
-        attr = urwid.AttrSpec("black", "h{0}".format(color))
+        color = x256.from_hex(color_name_to_hex(hex_color).strip("#"))
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.15, ListText((attr, username))))
 
         self.widget = urwid.Columns(colum_items)
