@@ -1,6 +1,6 @@
 urwid==1.1.1
 requests==2.0.1
-x256==0.0.2
+x256==0.0.3
 
 # Debug
 ipdb

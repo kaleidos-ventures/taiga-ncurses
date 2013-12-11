@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 REQUIREMENTS = [
     "requests==2.0.1",
     "urwid==1.1.1",
-    "x256==0.0.2",
+    "x256==0.0.3",
 ]
 
 
