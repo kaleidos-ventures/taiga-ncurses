@@ -187,7 +187,6 @@ class ProjectWikiSubController(Controller):
     def handle_wiki_pages(self, future):
         self.wiki_pages = future.result()
         if self.wiki_pages is not None:
-            self.view.wiki_explorer.populate(self.wiki_pages)
             if len(self.wiki_pages) > 0:
                 self.view.wiki_page.populate(self.wiki_pages[0])
             self.state_machine.refresh()

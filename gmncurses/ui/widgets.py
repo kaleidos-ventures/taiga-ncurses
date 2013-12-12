@@ -12,17 +12,6 @@ from . import mixins
 from gmncurses import data
 
 
-def color_to_hex(color):
-    """
-    Given either an hexadecimal or HTML color name, return a the hex
-    approximation without the `#`.
-    """
-    if color.startswith("#"):
-        return color.strip("#")
-    else:
-        return x256.from_html_color_name(color)
-
-
 def box_solid_fill(char, height):
     sf = urwid.SolidFill(char)
     return urwid.BoxAdapter(sf, height=height)
@@ -426,59 +415,23 @@ class IssueEntry(urwid.WidgetWrap):
 
 # Wiki
 
-class WikiExplorer(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
-    def __init__(self, project):
-        self.project = project
-
-        colum_items = [ListCell("Wiki Pages")]
-
-        columns = urwid.Columns(colum_items)
-        self.widget = urwid.Pile([columns])
-        super().__init__(self.widget)
-
-
-    def populate(self, wiki_pages):
-        if wiki_pages:
-            self.reset()
-
-        first_gains_focus = len(self.widget.contents) == 1 and wiki_pages
-
-        for wiki_page in wiki_pages:
-            self.widget.contents.append((WikiExplorerEntry(wiki_page),
-                                         ("weight", 0.1)))
-
-        if first_gains_focus:
-            t = self.widget.contents
-            self.widget.contents.focus = 1
-
-    def reset(self):
-        self.widget.contents = self.widget.contents[:1]
-
-
-class WikiExplorerEntry(urwid.WidgetWrap):
-    def __init__(self, wiki_page):
-        colum_items = [("weight", 1.0, ListText(wiki_page["slug"], align="left"))]
-
-        self.widget = urwid.Columns(colum_items)
-        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
-
-    def selectable(self):
-        return True
-
-
 class WikiPage(urwid.WidgetWrap):
     def __init__(self, project):
-        # TODO
         self.project = project
 
-        colum_items = []
-        columns = urwid.Columns(colum_items)
-        self.widget = urwid.Pile([columns])
+        self.widget = urwid.Pile([ListText("No page found")])
         super().__init__(self.widget)
 
     def populate(self, wiki_page):
-        # TODO
-        pass
+        slug_widget = ListText(data.slug(wiki_page))
+        content_widget = urwid.Edit(edit_text=data.content(wiki_page), multiline=True, wrap='any',
+                                     allow_tab=True)
+        self.widget.contents = [
+            (slug_widget, ('weight', 1)),
+            (RowDivider(div_char=" "), ("weight", 0.1)),
+            (content_widget, ('pack', None))
+        ]
+        self.widget.contents.focus = 2
 
 # Misc
 
@@ -498,3 +451,15 @@ class RowDivider(urwid.WidgetWrap):
     def __init__(self, attr_map="default", div_char="-"):
         widget = urwid.AttrMap(urwid.Divider(div_char), attr_map)
         super().__init__(widget)
+
+def color_to_hex(color):
+    """
+    Given either an hexadecimal or HTML color name, return a the hex
+    approximation without the `#`.
+    """
+    if color.startswith("#"):
+        return color.strip("#")
+    else:
+        return x256.from_html_color_name(color)
+
+

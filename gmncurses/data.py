@@ -183,6 +183,14 @@ def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
     return  (default_color, "Unassigned")
 
 
+# wiki_page - Wiki page
+
+def slug(wiki_page):
+    return wiki_page.get("slug", "")
+
+def content(wiki_page):
+    return wiki_page.get("content", "")
+
 # Misc
 
 def date(text, date_format="%Y-%m-%d"):
