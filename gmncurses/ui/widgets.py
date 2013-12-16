@@ -225,6 +225,7 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         self.roles = data.computable_roles(project)
 
         colum_items = [("weight", 0.6, ListCell("US"))]
+        colum_items.append(("weight", 0.08, ListCell("Status")))
         colum_items.extend([("weight", 0.05, ListCell(r["name"])) for r in self.roles])
         colum_items.append(("weight", 0.05, ListCell(("green", "TOTAL"))))
         colum_items.append(("weight", 0.05, ListCell(("cyan", "SUM."))))
@@ -264,9 +265,14 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
 class UserStoryEntry(urwid.WidgetWrap):
     def __init__(self, us, project, roles, summation=0.0):
         us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
-        points_by_role = data.us_points_by_role(us, project, roles)
-
         colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
+
+        hex_color, status = data.us_status_with_color(us, project)
+        color = x256.from_hex(color_to_hex(hex_color))
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        colum_items.append(("weight", 0.08, ListText( (attr, status) )))
+
+        points_by_role = data.us_points_by_role(us, project, roles)
         for point in points_by_role:
             colum_items.append(("weight", 0.05, ListText(str(point))))
         colum_items.append(("weight", 0.05, ListText(("green", "{0:.1f}".format(data.us_total_points(us))))))

@@ -81,6 +81,19 @@ def us_subject(us):
 def us_total_points(us):
     return us.get("total_points", "--")
 
+def us_status_with_color(us, project, default_color="#ffffff"):
+    # FIXME: Improvement, get priorities from a project constant
+    # TODO: Check that the color is in hex format
+    us_status_id = us.get("status", None)
+    if us_status_id:
+        us_statuses = {str(p["id"]): p for p in project["us_statuses"]}
+        try:
+            return (us_statuses[str(us_status_id)]["color"] or default_color,
+                    us_statuses[str(us_status_id)]["name"])
+        except KeyError:
+            pass
+    return (default_color, "---")
+
 
 # us, project, computable roles - US points
 
