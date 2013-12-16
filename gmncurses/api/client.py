@@ -111,6 +111,7 @@ class GreenMineClient(BaseClient):
         "project-issues-stats": "/api/v1/projects/{}/issues_stats",
         "milestones": "/api/v1/milestones",
         "milestone":  "/api/v1/milestones/{}",
+        "milestone-stats":  "/api/v1/milestones/{}/stats",
         "user_stories": "/api/v1/userstories",
         "user_story":  "/api/v1/userstories/{}",
         "tasks": "/api/v1/tasks",
@@ -210,6 +211,11 @@ class GreenMineClient(BaseClient):
     def delete_milestone(self, id, params={}, **kwargs):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
         return self._delete(url, params, **kwargs)
+
+    def get_milestone_stats(self, id, params={}, **kwargs):
+        url = urljoin(self._host, self.URLS.get("milestone-stats").format(id))
+        return self._get(url, params, **kwargs)
+
 
     # USER STORY
 
