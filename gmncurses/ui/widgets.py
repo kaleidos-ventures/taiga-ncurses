@@ -419,6 +419,35 @@ class IssueEntry(urwid.WidgetWrap):
         return True
 
 
+
+# Sprints
+
+class ProjectSprintsStats(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        widget = urwid.Columns([
+            ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
+            ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
+            ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
+            ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
+        ])
+        super().__init__(widget)
+
+    def populate(self, project_stats):
+        self._w = urwid.Columns([
+            ("weight", 0.25, urwid.Pile([Text_id(project_stats)])),
+            ("weight", 0.25, urwid.Pile([Text_id(project_stats)])),
+            ("weight", 0.20, urwid.Pile([Text_id(project_stats)])),
+            ("weight", 0.30, urwid.Pile([Text_id(project_stats)])),
+        ])
+
+
+class Text_id(urwid.Text):
+    def __init__(self, project_stats):
+        text = ["text: ", ("cyan", str(data.current_sprint_id(project_stats)))]
+        super().__init__(text)
+
+
 # Wiki
 
 class WikiPage(urwid.WidgetWrap):

@@ -31,7 +31,8 @@ class Executor(object):
         return self.pool.submit(self.client.get_project_issues_stats, id=project["id"])
 
     # Milestones
-    #TODO
+    def milestone(self, id, project):
+        return self.pool.submit(self.client.get_milestone(id, params={"project": project["id"]}))
 
     # User Stories
     def unassigned_user_stories(self, project):

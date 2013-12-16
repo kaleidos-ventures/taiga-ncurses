@@ -11,6 +11,8 @@ import functools
 from .config import ProjectKeys
 from .ui import signals
 
+import gmncurses.data
+
 
 class Controller(object):
     view = None
@@ -123,6 +125,53 @@ class ProjectBacklogSubController(Controller):
             self.view.notifier.error_msg("Failed to fetch project data")
 
 
+class ProjectSprintSubController(Controller):
+    def __init__(self, view, executor, state_machine):
+        self.view = view
+        self.executor = executor
+        self.state_machine = state_machine
+
+    def load(self):
+        self.state_machine.transition(self.state_machine.PROJECT_SPRINT)
+
+        self.view.notifier.info_msg("Fetching Stats and User stories")
+
+        res = gmncurses.data.current_sprint_id(self.view.project)
+        print("tehemos algo %d" % res)
+        if res is None:
+            import pdb; pdb.set_trace()  # XXX BREAKPOINT
+        project_stats_f = self.executor.milestone(res, self.view.project)
+        project_stats_f.add_done_callback(self.handle_project_stats)
+
+        #user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+        #user_stories_f.add_done_callback(self.handle_user_stories)
+
+        #futures = (project_stats_f, user_stories_f)
+        #futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+        #futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
+    def handle_project_stats(self, future):
+        if future is None:
+            import pdb; pdb.set_trace()  # XXX BREAKPOINT
+        self.project_stats = future.result()
+        if self.project_stats is not None:
+            self.view.stats.populate(self.project_stats)
+            self.state_machine.refresh()
+
+    def handle_user_stories(self, future):
+        self.user_stories = future.result()
+
+    def when_backlog_info_fetched(self, future_with_results):
+        done, not_done = future_with_results.result()
+        if len(done) == 2:
+            self.view.user_stories.populate(self.user_stories, self.project_stats)
+            self.view.notifier.info_msg("Project stats and user stories fetched")
+            self.state_machine.refresh()
+        else:
+            # TODO retry failed operations
+            self.view.notifier.error_msg("Failed to fetch project data")
+
+
 class ProjectIssuesSubController(Controller):
     def __init__(self, view, executor, state_machine):
         self.view = view
@@ -216,7 +265,7 @@ class ProjectDetailController(Controller):
 
         # Subcontrollers
         self.backlog = ProjectBacklogSubController(self.view.backlog, executor, state_machine)
-        self.sprint = ProjectSubController(self.view.backlog, executor, state_machine)
+        self.sprint = ProjectSprintSubController(self.view.sprint, executor, state_machine)
         self.issues = ProjectIssuesSubController(self.view.issues, executor, state_machine)
         self.wiki = ProjectWikiSubController(self.view.wiki, executor, state_machine)
         self.admin = ProjectSubController(self.view.backlog, executor, state_machine)
@@ -232,6 +281,7 @@ class ProjectDetailController(Controller):
         elif key == ProjectKeys.SPRINT:
             self.view.sprint_view()
             self.subcontroller = self.sprint
+            self.subcontroller.load()
         elif key == ProjectKeys.ISSUES:
             self.view.issues_view()
             self.subcontroller = self.issues
