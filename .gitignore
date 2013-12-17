@@ -34,3 +34,6 @@ nosetests.xml
 
 # Libreoffice
 *.odg#
+
+# Tags
+tags
