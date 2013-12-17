@@ -77,6 +77,15 @@ class PlainButton(mixins.PlainButtonMixin, urwid.Button):
         super().__init__(text)
         self._label.set_align_mode(self.ALIGN if align is None else align)
 
+class SubmitButton(PlainButton):
+    def __init__(self, text, align=None):
+        super().__init__(text, align)
+
+class CancelButton(PlainButton):
+    def __init__(self, text, align=None):
+        super().__init__(text, align)
+
+
 
 class ProjectsHeader(mixins.NonSelectableMixin, urwid.WidgetWrap):
     def __init__(self):
@@ -226,7 +235,7 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
 
         colum_items = [("weight", 0.6, ListCell("US"))]
         colum_items.append(("weight", 0.08, ListCell("Status")))
-        colum_items.extend([("weight", 0.05, ListCell(r["name"])) for r in self.roles])
+        colum_items.extend([("weight", 0.05, ListCell(r["name"])) for r in self.roles.values()])
         colum_items.append(("weight", 0.05, ListCell(("green", "TOTAL"))))
         colum_items.append(("weight", 0.05, ListCell(("cyan", "SUM."))))
 
@@ -272,7 +281,7 @@ class UserStoryEntry(urwid.WidgetWrap):
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.08, ListText( (attr, status) )))
 
-        points_by_role = data.us_points_by_role(us, project, roles)
+        points_by_role = data.us_points_by_role(us, project, roles.values())
         for point in points_by_role:
             colum_items.append(("weight", 0.05, ListText(str(point))))
         colum_items.append(("weight", 0.05, ListText(("green", "{0:.1f}".format(data.us_total_points(us))))))
@@ -284,6 +293,101 @@ class UserStoryEntry(urwid.WidgetWrap):
     def selectable(self):
         return True
 
+
+class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+
+        contents = [
+            box_solid_fill(" ", 2),
+            self._subject_input(),
+            box_solid_fill(" ", 1),
+            self._points_input(),
+            box_solid_fill(" ", 1),
+            self._status_input(),
+            box_solid_fill(" ", 1),
+            self._tags_input(),
+            box_solid_fill(" ", 1),
+            self._description_input(),
+            box_solid_fill(" ", 2),
+            self._buttons(),
+            box_solid_fill(" ", 1),
+        ]
+
+        self.widget = urwid.Pile(contents)
+        super().__init__(urwid.Padding(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     "Create User Story"), right=6, left=6))
+
+    def _subject_input(self):
+        self.subject = urwid.Edit()
+
+        colum_items = [(17, urwid.Padding(ListText("Subject", align="right"), right=4))]
+        colum_items.append(self.subject)
+        return urwid.Columns(colum_items)
+
+    def _points_input(self):
+        roles = data.computable_roles(self.project)
+        points = data.points(self.project)
+        max_length = max([len(s["name"]) for s in points.values()])
+
+        points_pile = []
+
+        for role in roles.values():
+            points_colum = [(17, urwid.Text(role["name"]))]
+            points_group = []
+            for point in points.values():
+                urwid.RadioButton(points_group, point["name"])
+            points_colum.append(Grid(points_group, 4 + max_length, 2, 0, "left"))
+
+            points_pile.append(urwid.Columns(points_colum))
+
+        self.points = urwid.Pile(points_pile)
+
+        colum_items = [(17, urwid.Padding(ListText("Points", align="right"), right=4))]
+        colum_items.append(self.points)
+        return urwid.Columns(colum_items)
+
+    def _status_input(self):
+        us_statuses = data.us_statuses(self.project)
+        max_length = max([len(s["name"]) for s in us_statuses.values()])
+
+        self.us_status_group = []
+        for status in us_statuses.values():
+            urwid.RadioButton(self.us_status_group, status["name"])
+
+        colum_items = [(17, urwid.Padding(ListText("Status", align="right"), right=4))]
+        colum_items.append(Grid(self.us_status_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _tags_input(self):
+        self.tags = urwid.Edit()
+
+        colum_items = [(17, urwid.Padding(ListText("Tags", align="right"), right=4))]
+        colum_items.append(self.tags)
+        return urwid.Columns(colum_items)
+
+    def _description_input(self):
+        self.description = urwid.Edit(multiline=True)
+
+        colum_items = [(17, urwid.Padding(ListText("Description", align="right"), right=4))]
+        colum_items.append(self.description)
+        return urwid.Columns(colum_items)
+
+    def _buttons(self):
+        self.save_button = PlainButton("Save")
+        self.cancel_buton = PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(" "))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
+                                              "submit-button") ))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_buton, right=1, left=2),
+                                              "cancel-button") ))
+        return urwid.Columns(colum_items)
+
+    def data(self):
+        #TODO
+        return {}
 
 # Issues
 
@@ -389,13 +493,13 @@ class IssuesListHeader(urwid.WidgetWrap):
         self.severity_buttton = PlainButton("Severity")
         self.assigned_to_button = PlainButton("Assigned to")
 
-        colum_items = [("weight", 0.55, urwid.AttrMap(self.issue_button, "default", "focus-header"))]
-        colum_items.append(("weight", 0.1, urwid.AttrMap(self.status_button, "default", "focus-header")))
-        colum_items.append(("weight", 0.1, urwid.AttrMap(self.priority_button, "default", "focus-header")))
-        colum_items.append(("weight", 0.1, urwid.AttrMap(self.severity_buttton, "default", "focus-header")))
-        colum_items.append(("weight", 0.15, urwid.AttrMap(self.assigned_to_button, "default", "focus-header")))
+        colum_items = [("weight", 0.55, ButtonCell(self.issue_button))]
+        colum_items.append(("weight", 0.1, ButtonCell(self.status_button)))
+        colum_items.append(("weight", 0.1, ButtonCell(self.priority_button)))
+        colum_items.append(("weight", 0.1, ButtonCell(self.severity_buttton)))
+        colum_items.append(("weight", 0.15, ButtonCell(self.assigned_to_button)))
 
-        self.widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(colum_items)), "green")
+        self.widget = urwid.Columns(colum_items)
         super().__init__(self.widget)
 
 
@@ -526,6 +630,13 @@ class ListCell(urwid.WidgetWrap):
         super().__init__(widget)
 
 
+class ButtonCell(urwid.WidgetWrap):
+    def __init__(self, button):
+        text_widget = urwid.AttrMap(button, "default", "focus-header")
+        widget = urwid.AttrMap(urwid.LineBox(text_widget), "green")
+        super().__init__(widget)
+
+
 class ListText(mixins.IgnoreKeyPressMixin, urwid.Text):
     def __init__(self, text, align="center"):
         super().__init__(text, align=align)
@@ -544,6 +655,6 @@ def color_to_hex(color):
     if color.startswith("#"):
         return color.strip("#")
     else:
-        return x256.from_html_color_name(color)
+        return x256.from_html_name(str(color))
 
 

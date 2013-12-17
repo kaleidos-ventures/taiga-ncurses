@@ -8,7 +8,7 @@ gmncurses.controllers
 from concurrent.futures import wait
 import functools
 
-from .config import ProjectKeys
+from .config import ProjectKeys, ProjectBacklogKeys
 from .ui import signals
 
 import gmncurses.data
@@ -70,7 +70,6 @@ class ProjectsController(Controller):
 
         self.state_machine.transition(self.state_machine.PROJECTS)
 
-
     def select_project(self, project, project_button):
         self.view.notifier.info_msg("Fetching info of project: {}".format(project["name"]))
         project_fetch_f = self.executor.project_detail(project)
@@ -90,6 +89,16 @@ class ProjectBacklogSubController(Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+        signals.connect(self.view.user_story_form.cancel_buton, "click",
+                lambda _: self.cancel_user_story_form())
+
+    def handle(self, key):
+        if key == ProjectBacklogKeys.CREATE_USER_STORY:
+            self.new_user_story_form()
+        if key == ProjectBacklogKeys.RELOAD:
+            self.load()
+        return super().handle(key)
+
     def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_BACKLOG)
 
@@ -104,6 +113,13 @@ class ProjectBacklogSubController(Controller):
         futures = (project_stats_f, user_stories_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
+    def new_user_story_form(self):
+        self.view.new_user_story_form()
+
+    def cancel_user_story_form(self):
+        self.view.user_stories_list()
+
 
     def handle_project_stats(self, future):
         self.project_stats = future.result()
@@ -315,5 +331,5 @@ class ProjectDetailController(Controller):
         elif key == ProjectKeys.ADMIN:
             self.view.admin_view()
             self.subcontroller = self.admin
-        else:
-            return self.subcontroller.handle(key)
+
+        return self.subcontroller.handle(key)

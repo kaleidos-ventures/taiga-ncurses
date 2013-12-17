@@ -20,6 +20,8 @@ PALETTE = [
     ("editor", "white", "black"),
     ("password-editor", "light red", "black"),
     ("save-button", "white", "default"),
+    ("submit-button", "white", "dark green"),
+    ("cancel-button", "black", "dark gray"),
     ("error", "white", "dark red"),
     ("info", "white", "dark blue"),
     ("green", "dark green", "default"),
@@ -57,8 +59,12 @@ class ProjectKeys(metaclass=KeyConfigMeta):
     ADMIN = "A"
 
 
+class ProjectBacklogKeys(metaclass=KeyConfigMeta):
+    CREATE_USER_STORY = "i"
+    RELOAD = "r"
+
 DEFAULTS = {
-    "keys": ChainMap(Keys.config, ProjectKeys.config),
+    "keys": ChainMap(Keys.config, ProjectKeys.config, ProjectBacklogKeys.config),
     "host": {
         "scheme": "http",
         "domain": "localhost",

@@ -38,6 +38,9 @@ def doomline_limit_points(project_stats):
     return total_points(project_stats) - assigned_points(project_stats)
 
 
+def points(project):
+    return {str(p["id"]): p for p in project["points"]}
+
 # project_stats - Sprints
 
 def total_sprints(project_stats):
@@ -72,8 +75,7 @@ def current_sprint_id(project):
 # project - Roles
 
 def computable_roles(project):
-    # FIXME
-    return [r for r in project["roles"] if r["computable"]] if "roles" in project else []
+    return {str(r["id"]): r for r in project["roles"] if r["computable"]} if "roles" in project else {}
 
 
 # User Stories data
@@ -86,6 +88,9 @@ def us_subject(us):
 
 def us_total_points(us):
     return us.get("total_points", "--")
+
+def us_statuses(project):
+    return {str(p["id"]): p for p in project["us_statuses"]}
 
 def us_status_with_color(us, project, default_color="#ffffff"):
     # FIXME: Improvement, get priorities from a project constant
