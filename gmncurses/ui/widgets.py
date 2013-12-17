@@ -444,7 +444,7 @@ class ProjectSprintsStats(urwid.WidgetWrap):
 
 class Text_id(urwid.Text):
     def __init__(self, project_stats):
-        text = ["text: ", ("cyan", str(data.current_sprint_id(project_stats)))]
+        text = ["text: ", ("cyan", str(project_stats["id"]))]
         super().__init__(text)
 
 

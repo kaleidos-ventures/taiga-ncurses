@@ -137,9 +137,6 @@ class ProjectSprintSubController(Controller):
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
         res = gmncurses.data.current_sprint_id(self.view.project)
-        print("tehemos algo %d" % res)
-        if res is None:
-            import pdb; pdb.set_trace()  # XXX BREAKPOINT
         project_stats_f = self.executor.milestone(res, self.view.project)
         project_stats_f.add_done_callback(self.handle_project_stats)
 
@@ -151,8 +148,6 @@ class ProjectSprintSubController(Controller):
         #futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handle_project_stats(self, future):
-        if future is None:
-            import pdb; pdb.set_trace()  # XXX BREAKPOINT
         self.project_stats = future.result()
         if self.project_stats is not None:
             self.view.stats.populate(self.project_stats)

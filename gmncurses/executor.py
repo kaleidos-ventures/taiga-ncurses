@@ -32,7 +32,7 @@ class Executor(object):
 
     # Milestones
     def milestone(self, id, project):
-        return self.pool.submit(self.client.get_milestone(id, params={"project": project["id"]}))
+        return self.pool.submit(self.client.get_milestone, id=id, params={"project": project["id"]})
 
     # User Stories
     def unassigned_user_stories(self, project):
