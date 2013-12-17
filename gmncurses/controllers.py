@@ -198,6 +198,22 @@ class ProjectIssuesSubController(Controller):
         self.issues = future.result()
         if self.issues is not None:
             self.view.issues.populate(self.issues)
+
+            signals.connect(self.view.issues.header.issue_button, "click",
+                    functools.partial(self.order_by, "issue"))
+
+            signals.connect(self.view.issues.header.status_button, "click",
+                    functools.partial(self.order_by, "status"))
+
+            signals.connect(self.view.issues.header.priority_button, "click",
+                    functools.partial(self.order_by, "priority"))
+
+            signals.connect(self.view.issues.header.severity_buttton, "click",
+                    functools.partial(self.order_by, "severity"))
+
+            signals.connect(self.view.issues.header.assigned_to_button, "click",
+                    functools.partial(self.order_by, "assigned_to"))
+
             self.state_machine.refresh()
 
     def when_issues_info_fetched(self, future_with_results):
@@ -208,6 +224,17 @@ class ProjectIssuesSubController(Controller):
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch issues data")
+
+    def order_by(self, param, button):
+        self.view.notifier.info_msg("Ordered issues by {}".format(param))
+        issues_f = self.executor.issues(self.view.project, order_by=[param])
+        issues_f.add_done_callback(self.handle_refresh_issues)
+
+    def handle_refresh_issues(self, future):
+        self.issues = future.result()
+        if self.issues is not None:
+            self.view.issues.populate(self.issues)
+            self.state_machine.refresh()
 
 
 class ProjectWikiSubController(Controller):

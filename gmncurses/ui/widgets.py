@@ -358,14 +358,9 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
     def __init__(self, project):
         self.project = project
 
-        colum_items = [("weight", 0.55, ListCell("Issue"))]
-        colum_items.append(("weight", 0.1, ListCell("Status")))
-        colum_items.append(("weight", 0.1, ListCell("Priority")))
-        colum_items.append(("weight", 0.1, ListCell("Severity")))
-        colum_items.append(("weight", 0.15, ListCell("Assigned to")))
+        self.header = IssuesListHeader()
 
-        columns = urwid.Columns(colum_items)
-        self.widget = urwid.Pile([columns])
+        self.widget = urwid.Pile([self.header])
         super().__init__(self.widget)
 
     def populate(self, issues):
@@ -384,6 +379,24 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
 
     def reset(self):
         self.widget.contents = self.widget.contents[:1]
+
+
+class IssuesListHeader(urwid.WidgetWrap):
+    def __init__(self):
+        self.issue_button = PlainButton("Issue")
+        self.status_button = PlainButton("Status")
+        self.priority_button = PlainButton("Priority")
+        self.severity_buttton = PlainButton("Severity")
+        self.assigned_to_button = PlainButton("Assigned to")
+
+        colum_items = [("weight", 0.55, urwid.AttrMap(self.issue_button, "default", "focus-header"))]
+        colum_items.append(("weight", 0.1, urwid.AttrMap(self.status_button, "default", "focus-header")))
+        colum_items.append(("weight", 0.1, urwid.AttrMap(self.priority_button, "default", "focus-header")))
+        colum_items.append(("weight", 0.1, urwid.AttrMap(self.severity_buttton, "default", "focus-header")))
+        colum_items.append(("weight", 0.15, urwid.AttrMap(self.assigned_to_button, "default", "focus-header")))
+
+        self.widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(colum_items)), "green")
+        super().__init__(self.widget)
 
 
 class IssueEntry(urwid.WidgetWrap):

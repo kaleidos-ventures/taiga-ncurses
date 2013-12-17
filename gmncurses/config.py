@@ -35,6 +35,7 @@ PALETTE = [
     ("active-tab", "white", "dark blue"),
     ("inactive-tab", "white", "default"),
     ("focus", "black", "dark cyan"),
+    ("focus-header", "black", "dark green"),
 ]
 
 class KeyConfigMeta(type):

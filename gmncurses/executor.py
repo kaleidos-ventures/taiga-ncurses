@@ -43,8 +43,13 @@ class Executor(object):
     #TODO
 
     # Issues
-    def issues(self, project):
-        return self.pool.submit(self.client.get_issues, params={"project": project["id"]})
+    def issues(self, project, order_by=[]):
+        params = {"project": project["id"]}
+
+        if order_by:
+            params["order_by"] = ", ".join(order_by)
+
+        return self.pool.submit(self.client.get_issues, params=params)
 
     # Wiki
     def wiki_pages(self, project):
