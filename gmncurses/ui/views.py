@@ -148,9 +148,14 @@ class ProjectSprintSubView(SubView):
         self.project = project
         self.notifier = notifier
 
+        self.stats = widgets.ProjectSprintsStats(project)
+
         self.widget = urwid.ListBox(urwid.SimpleListWalker([
             tabs,
             widgets.box_solid_fill(" ", 1),
+            self.stats,
+            widgets.box_solid_fill(" ", 1),
+            #self.list
         ]))
 
 

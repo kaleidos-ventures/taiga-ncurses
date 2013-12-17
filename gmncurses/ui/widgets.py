@@ -419,6 +419,71 @@ class IssueEntry(urwid.WidgetWrap):
         return True
 
 
+
+# Sprints
+
+class ProjectSprintsStats(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        widget = urwid.Columns([
+                                ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
+                                ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
+                                ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
+                                ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
+                                ])
+        super().__init__(widget)
+
+    def populate(self, milestone_stats):
+        completed_points = sum(milestone_stats["completed_points"])
+        total_points = sum(milestone_stats["total_points"].values())
+        rem_points = total_points - completed_points
+        completed_tasks = milestone_stats["completed_tasks"]
+        total_tasks = milestone_stats["total_tasks"]
+        rem_tasks = total_tasks - completed_tasks
+        percent_points_completed = '{0:.3}'.format(completed_points * 100 / total_points)
+        init_date = milestone_stats["estimated_start"]
+        finish_date = milestone_stats["estimated_finish"]
+        self._w = urwid.Columns([
+                                 ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
+                                 ("weight", 0.30, Stack_1_3_1("Points", [total_points, completed_points, rem_points])),
+                                 ("weight", 0.30, Stack_1_3_1("Tasks", [total_tasks, completed_tasks, rem_tasks])),
+                                 ("weight", 0.30, Color_dates(init_date, finish_date)),
+                                 ])
+
+class Color_dates(urwid.Pile):
+    def __init__(self, init_date, finish_date):
+        dates_col = [
+                 urwid.Pile([urwid.Text("Start"), Color_text("green", init_date)]),
+                 urwid.Pile([urwid.Text("Finish"), Color_text("red", finish_date)])
+                 ]
+        dates = [urwid.Text("Dates", align="center"), urwid.Columns(dates_col)]
+        super().__init__(dates)
+
+class Color_text(urwid.Text):
+    def __init__(self, color, text):
+        text = [(color, text)]
+        super().__init__(text)
+
+class Stack_1_3_1(urwid.Pile):
+    def __init__(self, title, values):
+        titles = ["Total", "Completed", "Remaining"]
+        columns = []
+        for i, name in enumerate(titles):
+            columns.append(("weight", 0.33, urwid.Pile([urwid.Text(name), Color_by_value(values[i])])))
+        pile = [urwid.Text(title, align="center"), urwid.Columns(columns)]
+        super().__init__(pile)
+
+class Color_by_value(urwid.Text):
+    def __init__(self, value, max_value=100.0):
+        color = "cyan"
+        if int(value) == 0.0:
+            color = "red"
+        elif int(value) == max_value:
+            color = "green"
+        text = [(color, str(value))]
+        super().__init__(text)
+
+
 # Wiki
 
 class WikiPage(urwid.WidgetWrap):

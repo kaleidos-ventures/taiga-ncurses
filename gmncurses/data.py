@@ -63,6 +63,12 @@ def current_sprint_name(project):
         return milestones[-1].get("name", "unknown")
     return "-----"
 
+def current_sprint_id(project):
+    milestones = project.get("list_of_milestones", [])
+    if milestones:
+        return milestones[-1].get("id", None)
+    return "-----"
+
 # project - Roles
 
 def computable_roles(project):
