@@ -440,14 +440,10 @@ class ProjectSprintsStats(urwid.WidgetWrap):
         completed_tasks = milestone_stats["completed_tasks"]
         total_tasks = milestone_stats["total_tasks"]
         rem_tasks = total_tasks - completed_tasks
-        #div_down = (total_points - completed_points)
-        #if div_down == 0:
-            #div_down = 1
-        #percent_points_completed = total_points / div_down - 100
         percent_points_completed = '{0:.3}'.format(completed_points * 100 / total_points)
         self._w = urwid.Columns([
                                  ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
-                                 ("weight", 0.30, urwid.Pile([urwid.Text("---")])),
+                                 ("weight", 0.30, urwid.Pile([urwid.Text("Points"), Stack_3_1([total_points, completed_points, rem_points])])),
                                  ("weight", 0.30, urwid.Pile([urwid.Text("---")])),
                                  ("weight", 0.20, urwid.Pile([urwid.Text("---")])),
                                  ])
@@ -455,6 +451,25 @@ class ProjectSprintsStats(urwid.WidgetWrap):
 class Color_text(urwid.Text):
     def __init__(self, color, text):
         text = [(color, text)]
+        super().__init__(text)
+
+class Stack_3_1(urwid.Columns):
+    def __init__(self, values):
+        titles = ["Total", "Completed", "Remaining"]
+        columns = []
+        for i, name in enumerate(titles):
+            columns.append(("weight", 0.33, urwid.Pile([urwid.Text(name), Color_by_value(values[i])])))
+        #column = urwid.Columns(columns)
+        super().__init__(columns)
+
+class Color_by_value(urwid.Text):
+    def __init__(self, value):
+        color = "cyan"
+        if int(value) < 10.0:
+            color = "red"
+        elif int(value) == 100.0:
+            color = "green"
+        text = [(color, str(value))]
         super().__init__(text)
 
 
