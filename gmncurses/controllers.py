@@ -137,20 +137,20 @@ class ProjectSprintSubController(Controller):
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
         res = gmncurses.data.current_sprint_id(self.view.project)
-        project_stats_f = self.executor.milestone(res, self.view.project)
-        project_stats_f.add_done_callback(self.handle_project_stats)
+        milestone_stats_f = self.executor.milestone_stats(res, self.view.project)
+        milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        #user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+        #user_stories_f = self.executor.unassigned_user_stories(self.view.milestone)
         #user_stories_f.add_done_callback(self.handle_user_stories)
 
-        #futures = (project_stats_f, user_stories_f)
+        #futures = (milestone_stats_f, user_stories_f)
         #futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         #futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
-    def handle_project_stats(self, future):
-        self.project_stats = future.result()
-        if self.project_stats is not None:
-            self.view.stats.populate(self.project_stats)
+    def handle_milestone_stats(self, future):
+        self.milestone_stats = future.result()
+        if self.milestone_stats is not None:
+            self.view.stats.populate(self.milestone_stats)
             self.state_machine.refresh()
 
     def handle_user_stories(self, future):
@@ -159,12 +159,12 @@ class ProjectSprintSubController(Controller):
     def when_backlog_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()
         if len(done) == 2:
-            self.view.user_stories.populate(self.user_stories, self.project_stats)
-            self.view.notifier.info_msg("Project stats and user stories fetched")
+            self.view.user_stories.populate(self.user_stories, self.milestone_stats)
+            self.view.notifier.info_msg("milestone stats and user stories fetched")
             self.state_machine.refresh()
         else:
             # TODO retry failed operations
-            self.view.notifier.error_msg("Failed to fetch project data")
+            self.view.notifier.error_msg("Failed to fetch milestone data")
 
 
 class ProjectIssuesSubController(Controller):

@@ -426,25 +426,35 @@ class ProjectSprintsStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
         widget = urwid.Columns([
-            ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
-            ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
-            ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
-            ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
-        ])
+                                ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
+                                ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
+                                ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
+                                ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
+                                ])
         super().__init__(widget)
 
-    def populate(self, project_stats):
+    def populate(self, milestone_stats):
+        completed_points = sum(milestone_stats["completed_points"])
+        total_points = sum(milestone_stats["total_points"].values())
+        rem_points = total_points - completed_points
+        completed_tasks = milestone_stats["completed_tasks"]
+        total_tasks = milestone_stats["total_tasks"]
+        rem_tasks = total_tasks - completed_tasks
+        #div_down = (total_points - completed_points)
+        #if div_down == 0:
+            #div_down = 1
+        #percent_points_completed = total_points / div_down - 100
+        percent_points_completed = '{0:.3}'.format(completed_points * 100 / total_points)
         self._w = urwid.Columns([
-            ("weight", 0.25, urwid.Pile([Text_id(project_stats)])),
-            ("weight", 0.25, urwid.Pile([Text_id(project_stats)])),
-            ("weight", 0.20, urwid.Pile([Text_id(project_stats)])),
-            ("weight", 0.30, urwid.Pile([Text_id(project_stats)])),
-        ])
+                                 ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
+                                 ("weight", 0.30, urwid.Pile([urwid.Text("---")])),
+                                 ("weight", 0.30, urwid.Pile([urwid.Text("---")])),
+                                 ("weight", 0.20, urwid.Pile([urwid.Text("---")])),
+                                 ])
 
-
-class Text_id(urwid.Text):
-    def __init__(self, project_stats):
-        text = ["text: ", ("cyan", str(project_stats["id"]))]
+class Color_text(urwid.Text):
+    def __init__(self, color, text):
+        text = [(color, text)]
         super().__init__(text)
 
 
