@@ -264,7 +264,6 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
                                          ("weight", 0.1)))
 
         if first_gains_focus:
-            t = self.widget.contents
             self.widget.contents.focus = 1
 
     def reset(self):
@@ -530,7 +529,6 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
                                          ("weight", 0.1)))
 
         if first_gains_focus:
-            t = self.widget.contents
             self.widget.contents.focus = 1
 
     def reset(self):
