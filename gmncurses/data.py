@@ -6,7 +6,8 @@ gmncurses.data
 """
 
 from datetime import datetime
-
+from collections import OrderedDict
+from operator import itemgetter
 
 # project_stats - Points
 
@@ -39,7 +40,8 @@ def doomline_limit_points(project_stats):
 
 
 def points(project):
-    return {str(p["id"]): p for p in project["points"]}
+    dc = {str(p["id"]): p for p in project.get("points", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
 
 # project_stats - Sprints
 
@@ -75,7 +77,8 @@ def current_sprint_id(project):
 # project - Roles
 
 def computable_roles(project):
-    return {str(r["id"]): r for r in project["roles"] if r["computable"]} if "roles" in project else {}
+    dc = {str(r["id"]): r for r in project.get("roles", []) if r["computable"]} if "roles" in project else {}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
 
 
 # User Stories data
@@ -90,7 +93,8 @@ def us_total_points(us):
     return us.get("total_points", "--")
 
 def us_statuses(project):
-    return {str(p["id"]): p for p in project["us_statuses"]}
+    dc = {str(p["id"]): p for p in project.get("us_statuses", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
 
 def us_status_with_color(us, project, default_color="#ffffff"):
     # FIXME: Improvement, get priorities from a project constant
