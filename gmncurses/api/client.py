@@ -24,7 +24,7 @@ class BaseClient(object):
         self._headers = self.BASE_HEADERS
         self.last_error = {}
 
-    def _get(self, url, params, **kwargs):
+    def _get(self, url, params):
         response = requests.get(url, params=params, headers=self._headers)
         data = json.loads(response.content.decode())
 
@@ -37,7 +37,7 @@ class BaseClient(object):
         }
         return None
 
-    def _post(self, url, data_dict, params, **kwargs):
+    def _post(self, url, data_dict, params):
         rdata = json.dumps(data_dict)
 
         response = requests.post(url, data=rdata, params=params, headers=self._headers)
@@ -52,7 +52,7 @@ class BaseClient(object):
         }
         return None
 
-    def _patch(self, url, data_dict, params, **kwargs):
+    def _patch(self, url, data_dict, params):
         rdata = json.dumps(data_dict)
 
         response = requests.patch(url, data=rdata, params=params, headers=self._headers)
@@ -67,7 +67,7 @@ class BaseClient(object):
         }
         return None
 
-    def _delete(self, url, params, **kwargs):
+    def _delete(self, url, params):
         response = requests.delete(url, params=params, headers=self._headers)
         data = json.loads(response.content.decode())
 
@@ -130,13 +130,13 @@ class GreenMineClient(BaseClient):
     def set_auth_token(self, auth_token):
         self._headers["Authorization"] = "Bearer {}".format(auth_token)
 
-    def login(self, username, password, params={}, **kwargs):
+    def login(self, username, password, params={}):
         url = urljoin(self._host, self.URLS.get("auth"))
         data_dict = {
             "username": username,
             "password": password,
         }
-        data = self._post(url, data_dict, params, **kwargs)
+        data = self._post(url, data_dict, params)
 
         if data and "auth_token" in data:
             self.set_auth_token(data["auth_token"])
@@ -148,159 +148,159 @@ class GreenMineClient(BaseClient):
 
     # USER
 
-    def get_users(self, params={}, **kwargs):
+    def get_users(self, params={}):
         url = urljoin(self._host, self.URLS.get("users"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def update_user(self, id, data_dict={}, params={}, **kwargs):
+    def update_user(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("user").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_user(self, id, params={}, **kwargs):
+    def get_user(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("user").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
     # PROJECT
 
-    def get_projects(self, params={}, **kwargs):
+    def get_projects(self, params={}):
         url = urljoin(self._host, self.URLS.get("projects"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def create_project(self, data_dict={}, params={}, **kwargs):
+    def create_project(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("projects"))
-        return self._post(url, data_dict, params, **kwargs)
+        return self._post(url, data_dict, params)
 
-    def update_project(self, id, data_dict={}, params={}, **kwargs):
+    def update_project(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("project").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_project(self, id, params={}, **kwargs):
+    def get_project(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("project").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def delete_project(self, id, params={}, **kwargs):
+    def delete_project(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("project").format(id))
-        return self._delete(url, params, **kwargs)
+        return self._delete(url, params)
 
-    def get_project_stats(self, id, params={}, **kwargs):
+    def get_project_stats(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("project-stats").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def get_project_issues_stats(self, id, params={}, **kwargs):
+    def get_project_issues_stats(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("project-issues-stats").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
     # MILESTONE
 
-    def get_milestones(self, params={}, **kwargs):
+    def get_milestones(self, params={}):
         url = urljoin(self._host, self.URLS.get("milestones"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def create_milestone(self, data_dict={}, params={}, **kwargs):
+    def create_milestone(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("milestones"))
-        return self._post(url, data_dict, params, **kwargs)
+        return self._post(url, data_dict, params)
 
-    def update_milestone(self, id, data_dict={}, params={}, **kwargs):
+    def update_milestone(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_milestone(self, id, params={}, **kwargs):
+    def get_milestone(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def delete_milestone(self, id, params={}, **kwargs):
+    def delete_milestone(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("milestone").format(id))
-        return self._delete(url, params, **kwargs)
+        return self._delete(url, params)
 
-    def get_milestone_stats(self, id, params={}, **kwargs):
+    def get_milestone_stats(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("milestone-stats").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
 
     # USER STORY
 
-    def get_user_stories(self, params={}, **kwargs):
+    def get_user_stories(self, params={}):
         url = urljoin(self._host, self.URLS.get("user_stories"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def create_user_story(self, data_dict={}, params={}, **kwargs):
+    def create_user_story(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("user_stories"))
-        return self._post(url, data_dict, params, **kwargs)
+        return self._post(url, data_dict, params)
 
-    def update_user_story(self, id, data_dict={}, params={}, **kwargs):
+    def update_user_story(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_user_story(self, id, params={}, **kwargs):
+    def get_user_story(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def delete_user_story(self, id, params={}, **kwargs):
+    def delete_user_story(self, id, params={},):
         url = urljoin(self._host, self.URLS.get("user_story").format(id))
-        return self._delete(url, params, **kwargs)
+        return self._delete(url, params)
 
     # TASK
 
-    def get_tasks(self, params={}, **kwargs):
+    def get_tasks(self, params={}):
         url = urljoin(self._host, self.URLS.get("tasks"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def create_task(self, data_dict={}, params={}, **kwargs):
+    def create_task(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("tasks"))
-        return self._post(url, data_dict, params, **kwargs)
+        return self._post(url, data_dict, params)
 
-    def update_task(self, id, data_dict={}, params={}, **kwargs):
+    def update_task(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("task").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_task(self, id, params={}, **kwargs):
+    def get_task(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("task").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def delete_task(self, id, params={}, **kwargs):
+    def delete_task(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("task").format(id))
-        return self._delete(url, params, **kwargs)
+        return self._delete(url, params)
 
     # ISSUE
 
-    def get_issues(self, params={}, **kwargs):
+    def get_issues(self, params={}):
         url = urljoin(self._host, self.URLS.get("issues"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def create_issue(self, data_dict={}, params={}, **kwargs):
+    def create_issue(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("issues"))
-        return self._post(url, data_dict, params, **kwargs)
+        return self._post(url, data_dict, params)
 
-    def update_issue(self, id, data_dict={}, params={}, **kwargs):
+    def update_issue(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_issue(self, id, params={}, **kwargs):
+    def get_issue(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def delete_issue(self, id, params={}, **kwargs):
+    def delete_issue(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("issue").format(id))
-        return self._delete(url, params, **kwargs)
+        return self._delete(url, params)
 
     # WIKI PAGE
 
-    def get_wiki_pages(self, params={}, **kwargs):
+    def get_wiki_pages(self, params={}):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def create_wiki_page(self, data_dict={}, params={}, **kwargs):
+    def create_wiki_page(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("wiki_pages"))
-        return self._post(url, data_dict, params, **kwargs)
+        return self._post(url, data_dict, params)
 
-    def update_wiki_page(self, id, data_dict={}, params={}, **kwargs):
+    def update_wiki_page(self, id, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
-        return self._patch(url, data_dict, params, **kwargs)
+        return self._patch(url, data_dict, params)
 
-    def get_wiki_page(self, id, params={}, **kwargs):
+    def get_wiki_page(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
-        return self._get(url, params, **kwargs)
+        return self._get(url, params)
 
-    def delete_wiki_page(self, id, params={}, **kwargs):
+    def delete_wiki_page(self, id, params={}):
         url = urljoin(self._host, self.URLS.get("wiki_page").format(id))
-        return self._delete(url, params, **kwargs)
+        return self._delete(url, params)
