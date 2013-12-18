@@ -43,7 +43,7 @@ class BaseClient(object):
         response = requests.post(url, data=rdata, params=params, headers=self._headers)
         data = json.loads(response.content.decode())
 
-        if response.status_code == 200:
+        if response.status_code == 201:
             return data
 
         self.last_error = {
