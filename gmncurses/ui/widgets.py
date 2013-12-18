@@ -689,13 +689,13 @@ class IssueEntry(urwid.WidgetWrap):
 class ProjectSprintsStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
-        widget = urwid.Columns([
+        self.widget = urwid.Columns([
                                 ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
                                 ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
                                 ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
                                 ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
                                 ])
-        super().__init__(widget)
+        super().__init__(self.widget)
 
     def populate(self, milestone_stats):
         completed_points = sum(milestone_stats["completed_points"])
@@ -708,20 +708,51 @@ class ProjectSprintsStats(urwid.WidgetWrap):
         init_date = milestone_stats["estimated_start"]
         finish_date = milestone_stats["estimated_finish"]
         self._w = urwid.Columns([
-                                 ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
-                                 ("weight", 0.30, Stack_1_3_1("Points", [total_points, completed_points, rem_points])),
-                                 ("weight", 0.30, Stack_1_3_1("Tasks", [total_tasks, completed_tasks, rem_tasks])),
-                                 ("weight", 0.30, Color_dates(init_date, finish_date)),
-                                 ])
+             ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
+             ("weight", 0.30, Stack_1_3_1("Points", [total_points, completed_points, rem_points])),
+             ("weight", 0.30, Stack_1_3_1("Tasks", [total_tasks, completed_tasks, rem_tasks])),
+             ("weight", 0.30, Color_dates(init_date, finish_date)),
+         ])
 
 class ProjectSprintsUserStories(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
-        widget = Color_text("cyan", "Fetching data")
-        super().__init__(widget)
+        self.roles = data.computable_roles(project)
+        self.widget = urwid.Pile([ListCell("Fetching data")])
+        super().__init__(self.widget)
 
-    def populate(self, milestone_stats):
-        pass
+    def populate(self, user_stories):
+        us = user_stories[0]
+        self.widget.contents.append((UserStorySprint(us, self.project, self.roles),
+                                         ("weight", 0.1)))
+
+class UserStorySprint(urwid.WidgetWrap):
+    def __init__(self, us, project, roles):
+        points_by_role = data.us_points_by_role(us, project, roles.values())
+        colum_items = [("weight", 0.6, ListText("User Story dummy", align="left"))]
+        for point in points_by_role:
+            colum_items.append(("weight", 0.05, ListText(str(point))))
+
+        #import pdb; pdb.set_trace();
+        #us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
+        #colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
+
+        #hex_color, status = data.us_status_with_color(us, project)
+        #color = x256.from_hex(color_to_hex(hex_color))
+        #attr = urwid.AttrSpec("h{0}".format(color), "default")
+        #colum_items.append(("weight", 0.08, ListText( (attr, status) )))
+
+        #points_by_role = data.us_points_by_role(us, project, roles.values())
+        #for point in points_by_role:
+            #colum_items.append(("weight", 0.05, ListText(str(point))))
+        #colum_items.append(("weight", 0.05, ListText(("green", "{0:.1f}".format(data.us_total_points(us))))))
+        #colum_items.append(("weight", 0.05, ListText(("cyan", "{0:.1f}".format(summation)))))
+
+        self.widget = urwid.Columns(colum_items)
+        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
+
+    #def selectable(self):
+        #return True
 
 
 
