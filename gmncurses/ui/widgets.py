@@ -619,38 +619,15 @@ class ProjectSprintsStats(urwid.WidgetWrap):
                                  ("weight", 0.30, Color_dates(init_date, finish_date)),
                                  ])
 
-class Color_dates(urwid.Pile):
-    def __init__(self, init_date, finish_date):
-        dates_col = [
-                 urwid.Pile([urwid.Text("Start"), Color_text("green", init_date)]),
-                 urwid.Pile([urwid.Text("Finish"), Color_text("red", finish_date)])
-                 ]
-        dates = [urwid.Text("Dates", align="center"), urwid.Columns(dates_col)]
-        super().__init__(dates)
+class ProjectSprintsUserStories(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        widget = Color_text("cyan", "Fetching data")
+        super().__init__(widget)
 
-class Color_text(urwid.Text):
-    def __init__(self, color, text):
-        text = [(color, text)]
-        super().__init__(text)
+    def populate(self, milestone_stats):
+        pass
 
-class Stack_1_3_1(urwid.Pile):
-    def __init__(self, title, values):
-        titles = ["Total", "Completed", "Remaining"]
-        columns = []
-        for i, name in enumerate(titles):
-            columns.append(("weight", 0.33, urwid.Pile([urwid.Text(name), Color_by_value(values[i])])))
-        pile = [urwid.Text(title, align="center"), urwid.Columns(columns)]
-        super().__init__(pile)
-
-class Color_by_value(urwid.Text):
-    def __init__(self, value, max_value=100.0):
-        color = "cyan"
-        if int(value) == 0.0:
-            color = "red"
-        elif int(value) == max_value:
-            color = "green"
-        text = [(color, str(value))]
-        super().__init__(text)
 
 
 # Wiki
@@ -709,4 +686,35 @@ def color_to_hex(color):
     else:
         return x256.from_html_name(str(color))
 
+class Color_text(urwid.Text):
+    def __init__(self, color, text):
+        text = [(color, text)]
+        super().__init__(text)
 
+class Stack_1_3_1(urwid.Pile):
+    def __init__(self, title, values):
+        titles = ["Total", "Completed", "Remaining"]
+        columns = []
+        for i, name in enumerate(titles):
+            columns.append(("weight", 0.33, urwid.Pile([urwid.Text(name), Color_by_value(values[i])])))
+        pile = [urwid.Text(title, align="center"), urwid.Columns(columns)]
+        super().__init__(pile)
+
+class Color_by_value(urwid.Text):
+    def __init__(self, value, max_value=100.0):
+        color = "cyan"
+        if int(value) == 0.0:
+            color = "red"
+        elif int(value) == max_value:
+            color = "green"
+        text = [(color, str(value))]
+        super().__init__(text)
+
+class Color_dates(urwid.Pile):
+    def __init__(self, init_date, finish_date):
+        dates_col = [
+                 urwid.Pile([urwid.Text("Start"), Color_text("green", init_date)]),
+                 urwid.Pile([urwid.Text("Finish"), Color_text("red", finish_date)])
+                 ]
+        dates = [urwid.Text("Dates", align="center"), urwid.Columns(dates_col)]
+        super().__init__(dates)
