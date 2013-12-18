@@ -149,6 +149,18 @@ class ProjectBacklogSubView(SubView):
     def user_stories_list(self):
         self.widget.body[4] = self.user_stories
 
+    def get_user_story_form_data(self):
+        data = {
+            "subject": self.user_story_form.subject,
+            "points": self.user_story_form.points,
+            "status": self.user_story_form.status,
+            "tags": self.user_story_form.tags,
+            "description": self.user_story_form.description,
+            "team_requirement": self.user_story_form.team_requirement,
+            "client_requirement": self.user_story_form.client_requirement,
+            "project": self.project["id"],
+        }
+        return data
 
 class ProjectSprintSubView(SubView):
     def __init__(self, project, notifier, tabs):

@@ -89,8 +89,10 @@ class ProjectBacklogSubController(Controller):
         self.executor = executor
         self.state_machine = state_machine
 
-        signals.connect(self.view.user_story_form.cancel_buton, "click",
+        signals.connect(self.view.user_story_form.cancel_button, "click",
                 lambda _: self.cancel_user_story_form())
+        signals.connect(self.view.user_story_form.save_button, "click",
+                lambda _: self.handler_create_user_story_request())
 
     def handle(self, key):
         if key == ProjectBacklogKeys.CREATE_USER_STORY:
@@ -120,7 +122,6 @@ class ProjectBacklogSubController(Controller):
     def cancel_user_story_form(self):
         self.view.user_stories_list()
 
-
     def handle_project_stats(self, future):
         self.project_stats = future.result()
         if self.project_stats is not None:
@@ -139,6 +140,34 @@ class ProjectBacklogSubController(Controller):
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch project data")
+
+    def handler_create_user_story_request(self):
+        data = self.view.get_user_story_form_data()
+
+        if not data.get("subject", None):
+            self.view.notifier.error_msg("Subject is required")
+        else:
+            us_post_f = self.executor.create_user_story(data)
+            us_post_f.add_done_callback(self.handler_create_user_story_response)
+
+    def handler_create_user_story_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Create error")
+        else:
+            self.view.notifier.info_msg("Create succesful!")
+            self.view.user_stories_list()
+
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
 
 class ProjectSprintSubController(Controller):

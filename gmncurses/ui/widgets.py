@@ -293,8 +293,10 @@ class UserStoryEntry(urwid.WidgetWrap):
     def selectable(self):
         return True
 
-
 class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
+    _status = None
+    _points = {}
+
     def __init__(self, project):
         self.project = project
 
@@ -309,6 +311,8 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
             self._tags_input(),
             box_solid_fill(" ", 1),
             self._description_input(),
+            box_solid_fill(" ", 1),
+            self._requirements_input(),
             box_solid_fill(" ", 2),
             self._buttons(),
             box_solid_fill(" ", 1),
@@ -318,11 +322,40 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         super().__init__(urwid.Padding(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
                                                      "Create User Story"), right=6, left=6))
 
+    @property
+    def subject(self):
+        return self._subject_edit.get_edit_text()
+
+    @property
+    def points(self):
+        return self._points
+
+    @property
+    def status(self):
+        return self._status
+
+    @property
+    def tags(self):
+        tags = self._tags_edit.get_edit_text()
+        return tags.split(" ,") if tags else []
+
+    @property
+    def description(self):
+        return self._description_edit.get_edit_text()
+
+    @property
+    def team_requirement(self):
+        return self._team_requirement_checkbox.get_state()
+
+    @property
+    def client_requirement(self):
+        return self._client_requirement_checkbox.get_state()
+
     def _subject_input(self):
-        self.subject = urwid.Edit()
+        self._subject_edit = urwid.Edit()
 
         colum_items = [(17, urwid.Padding(ListText("Subject", align="right"), right=4))]
-        colum_items.append(self.subject)
+        colum_items.append(self._subject_edit)
         return urwid.Columns(colum_items)
 
     def _points_input(self):
@@ -330,64 +363,83 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         points = data.points(self.project)
         max_length = max([len(s["name"]) for s in points.values()])
 
-        points_pile = []
+        self._role_points_groups = {}
 
-        for role in roles.values():
+        points_pile = []
+        for r_id, role in roles.items():
             points_colum = [(17, urwid.Text(role["name"]))]
             points_group = []
-            for point in points.values():
-                urwid.RadioButton(points_group, point["name"])
-            points_colum.append(Grid(points_group, 4 + max_length, 2, 0, "left"))
+            for p_id, point in points.items():
+                urwid.RadioButton(points_group, point["name"], state=False,
+                                  on_state_change=self._handler_point_radiobutton_change,
+                                  user_data={r_id:p_id})
 
+            points_colum.append(Grid(points_group, 4 + max_length, 2, 0, "left"))
             points_pile.append(urwid.Columns(points_colum))
 
-        self.points = urwid.Pile(points_pile)
+            self._role_points_groups[r_id] = points_group
+
+        self._points_checkbox = urwid.Pile(points_pile)
 
         colum_items = [(17, urwid.Padding(ListText("Points", align="right"), right=4))]
-        colum_items.append(self.points)
+        colum_items.append(self._points_checkbox)
         return urwid.Columns(colum_items)
+
+    def _handler_point_radiobutton_change(self, radio_button, new_state, user_data):
+        self._points.update(user_data)
 
     def _status_input(self):
         us_statuses = data.us_statuses(self.project)
         max_length = max([len(s["name"]) for s in us_statuses.values()])
 
-        self.us_status_group = []
-        for status in us_statuses.values():
-            urwid.RadioButton(self.us_status_group, status["name"])
+        self._us_status_group = []
+        for s_id, status in us_statuses.items():
+            urwid.RadioButton(self._us_status_group, status["name"], state=False,
+                              on_state_change=self._handler_status_radiobutton_change,
+                              user_data=s_id)
 
         colum_items = [(17, urwid.Padding(ListText("Status", align="right"), right=4))]
-        colum_items.append(Grid(self.us_status_group, 4 + max_length, 3, 0, "left"))
+        colum_items.append(Grid(self._us_status_group, 4 + max_length, 3, 0, "left"))
         return urwid.Columns(colum_items)
 
+    def _handler_status_radiobutton_change(self, radio_button, new_state, user_data):
+        self._status = user_data
+
     def _tags_input(self):
-        self.tags = urwid.Edit()
+        self._tags_edit = urwid.Edit()
 
         colum_items = [(17, urwid.Padding(ListText("Tags", align="right"), right=4))]
-        colum_items.append(self.tags)
+        colum_items.append(self._tags_edit)
         return urwid.Columns(colum_items)
 
     def _description_input(self):
-        self.description = urwid.Edit(multiline=True)
+        self._description_edit = urwid.Edit(multiline=True)
 
         colum_items = [(17, urwid.Padding(ListText("Description", align="right"), right=4))]
-        colum_items.append(self.description)
+        colum_items.append(self._description_edit)
+        return urwid.Columns(colum_items)
+
+    def _requirements_input(self):
+        self._client_requirement_checkbox = urwid.CheckBox("Client's requirement")
+        self._team_requirement_checkbox = urwid.CheckBox("Team's requirement")
+
+        colum_items = [(17, urwid.Text(" "))]
+        colum_items.append(self._client_requirement_checkbox)
+        colum_items.append(self._team_requirement_checkbox)
         return urwid.Columns(colum_items)
 
     def _buttons(self):
         self.save_button = PlainButton("Save")
-        self.cancel_buton = PlainButton("Cancel")
+        self.cancel_button = PlainButton("Cancel")
 
-        colum_items = [("weight", 1, urwid.Text(" "))]
+        colum_items = [("weight", 1, urwid.Text(""))]
         colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
                                               "submit-button") ))
         colum_items.append((2, urwid.Text(" ")))
-        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_buton, right=1, left=2),
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
                                               "cancel-button") ))
         return urwid.Columns(colum_items)
 
-    def data(self):
-        #TODO
-        return {}
 
 # Issues
 
