@@ -162,6 +162,7 @@ class ProjectBacklogSubView(SubView):
         }
         return data
 
+
 class ProjectSprintSubView(SubView):
     def __init__(self, project, notifier, tabs):
         self.project = project
