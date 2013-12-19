@@ -243,7 +243,7 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         self.widget = urwid.Pile([columns])
         super().__init__(self.widget)
 
-    def populate(self, user_stories, project_stats):
+    def populate(self, user_stories, project_stats, set_focus=None):
         if user_stories:
             self.reset()
 
@@ -262,9 +262,17 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
 
             self.widget.contents.append((UserStoryEntry(us, self.project, self.roles, summation),
                                          ("weight", 0.1)))
-
+        # Set the focus # TODO: Refactor
         if first_gains_focus:
-            self.widget.contents.focus = 1
+            if set_focus:
+                for idx, item in enumerate(self.widget.contents):
+                    widget, options = item
+                    if type(widget) is UserStoryEntry and widget.user_story == set_focus:
+                        self.widget.contents.focus = idx
+
+            if not self.widget.contents.focus:
+                self.widget.contents.focus = 1
+
 
     def reset(self):
         self.widget.contents = self.widget.contents[:1]

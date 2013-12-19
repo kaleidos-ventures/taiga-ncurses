@@ -61,8 +61,9 @@ class ProjectKeys(metaclass=KeyConfigMeta):
 
 class ProjectBacklogKeys(metaclass=KeyConfigMeta):
     CREATE_USER_STORY = "i"
-    US_UP = "w"
-    US_DOWN = "s"
+    UPDATE_USER_STORIES_ORDER = "w"
+    US_UP = "K"
+    US_DOWN = "J"
     RELOAD = "r"
 
 
