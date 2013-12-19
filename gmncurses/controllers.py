@@ -118,7 +118,10 @@ class ProjectBacklogSubController(Controller):
 
         futures = (project_stats_f, user_stories_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-        futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+        futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched,
+                                                                info_msg="Project stats and user stories "
+                                                                         "fetched",
+                                                                error_msg="Failed to fetch project data"))
 
     def new_user_story_form(self):
         self.view.new_user_story_form()
@@ -155,15 +158,18 @@ class ProjectBacklogSubController(Controller):
     def handle_user_stories(self, future):
         self.user_stories = future.result()
 
-    def when_backlog_info_fetched(self, future_with_results):
+    def when_backlog_info_fetched(self, future_with_results, info_msg=None, error_msg=None):
         done, not_done = future_with_results.result()
+
         if len(done) == 2:
             self.view.user_stories.populate(self.user_stories, self.project_stats)
-            self.view.notifier.info_msg("Project stats and user stories fetched")
+            if info_msg:
+                self.view.notifier.info_msg(info_msg) #
             self.state_machine.refresh()
         else:
-            # TODO retry failed operations
-            self.view.notifier.error_msg("Failed to fetch project data")
+            # TODO retry failed operationsi
+            if error_msg:
+                self.view.notifier.error_msg(error_msg)
 
     def handler_create_user_story_request(self):
         data = self.view.get_user_story_form_data()
@@ -191,7 +197,7 @@ class ProjectBacklogSubController(Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
 
     def handler_update_user_stories_order_response(self, future):
         response = future.result()
@@ -212,7 +218,7 @@ class ProjectBacklogSubController(Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
 
 
 
