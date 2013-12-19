@@ -286,7 +286,7 @@ class UserStoryEntry(urwid.WidgetWrap):
         colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
 
         hex_color, status = data.us_status_with_color(us, project)
-        color = x256.from_hex(color_to_hex(hex_color))
+        color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.08, ListText( (attr, status) )))
 
@@ -570,22 +570,22 @@ class IssueEntry(urwid.WidgetWrap):
         colum_items = [("weight", 0.55, ListText(issue_ref_and_name, align="left"))]
 
         hex_color, status = data.issue_status_with_color(issue, project)
-        color = x256.from_hex(color_to_hex(hex_color))
+        color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.1, ListText((attr, status))))
 
         hex_color, priority = data.issue_priority_with_color(issue, project)
-        color = x256.from_hex(color_to_hex(hex_color))
+        color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.1, ListText((attr, priority))))
 
         hex_color, severity = data.issue_severity_with_color(issue, project)
-        color = x256.from_hex(color_to_hex(hex_color))
+        color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.1, ListText((attr, severity))))
 
         hex_color, username =  data.issue_assigned_to_with_color(issue, project)
-        color = x256.from_hex(color_to_hex(hex_color))
+        color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         colum_items.append(("weight", 0.15, ListText((attr, username))))
 
@@ -658,7 +658,7 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
         self.widget.contents = []
 
     def HexToText(self, hex_color, text):
-        color = x256.from_hex(color_to_hex(hex_color))
+        color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
         return ("weight", 0.2, ListText((attr, text)))
 
@@ -738,9 +738,9 @@ def color_to_hex(color):
     approximation without the `#`.
     """
     if color.startswith("#"):
-        return color.strip("#")
+        return x256.from_hex(color.strip("#"))
     else:
-        return x256.from_html_name(str(color))
+        return x256.from_html_name(color)
 
 class Color_text(urwid.Text):
     def __init__(self, color, text):
