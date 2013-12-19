@@ -41,10 +41,12 @@ class BaseClient(object):
         rdata = json.dumps(data_dict)
 
         response = requests.post(url, data=rdata, params=params, headers=self._headers)
-        data = json.loads(response.content.decode())
 
         if response.status_code == 201:
+            data = json.loads(response.content.decode())
             return data
+        elif response.status_code == 204: # No content
+            return True
 
         self.last_error = {
             "status_code": response.status_code,
@@ -113,6 +115,7 @@ class GreenMineClient(BaseClient):
         "milestone":  "/api/v1/milestones/{}",
         "milestone-stats":  "/api/v1/milestones/{}/stats",
         "user_stories": "/api/v1/userstories",
+        "user_stories_bulk_update_order": "/api/v1/userstories/bulk_update_order",
         "user_story":  "/api/v1/userstories/{}",
         "tasks": "/api/v1/tasks",
         "task":  "/api/v1/tasks/{}",
@@ -222,6 +225,10 @@ class GreenMineClient(BaseClient):
     def get_user_stories(self, params={}):
         url = urljoin(self._host, self.URLS.get("user_stories"))
         return self._get(url, params)
+
+    def update_user_stories_order(self, data_dict={}, params={}):
+        url = urljoin(self._host, self.URLS.get("user_stories_bulk_update_order"))
+        return self._post(url, data_dict, params)
 
     def create_user_story(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("user_stories"))
