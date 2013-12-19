@@ -38,6 +38,9 @@ PALETTE = [
     ("inactive-tab", "white", "default"),
     ("focus", "black", "dark cyan"),
     ("focus-header", "black", "dark green"),
+    ('progressbar-normal', 'black', 'dark gray', 'standout'),
+    ('progressbar-complete', 'white', 'dark green'),
+    ('progressbar-smooth', 'dark green','dark gray')
 ]
 
 class KeyConfigMeta(type):
