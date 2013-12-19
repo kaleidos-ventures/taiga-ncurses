@@ -41,7 +41,10 @@ PALETTE = [
     ("focus-header", "black", "dark green"),
     ('progressbar-normal', 'black', 'dark gray', 'standout'),
     ('progressbar-complete', 'white', 'dark green'),
-    ('progressbar-smooth', 'dark green','dark gray')
+    ('progressbar-smooth', 'dark green','dark gray'),
+    ('progressbar-normal-red', 'black', 'dark gray', 'standout'),
+    ('progressbar-complete-red', 'white', 'dark red'),
+    ('progressbar-smooth-red', 'dark red','dark gray')
 ]
 
 class KeyConfigMeta(type):

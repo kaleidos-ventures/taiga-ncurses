@@ -168,9 +168,9 @@ class ProjectBacklogStats(urwid.WidgetWrap):
 
     def populate(self, project_stats):
         self._w = urwid.Columns([
-            ("weight", 0.3, urwid.Pile([TotalPoints(project_stats), TotalSprints(self.project)])),
-            ("weight", 0.3, urwid.Pile([ClosedPoints(project_stats), CompletedSprints(self.project)])),
-            ("weight", 0.3, urwid.Pile([DefinedPoints(project_stats), CurrentSprint(self.project)])),
+            ("weight", 0.2, urwid.Pile([TotalPoints(project_stats), TotalSprints(self.project)])),
+            ("weight", 0.3, urwid.Pile([CompletedSprints(self.project), CurrentSprint(self.project)])),
+            ("weight", 0.6, urwid.Pile([ClosedPoints(project_stats), DefinedPoints(project_stats), ])),
         ])
 
 
@@ -186,28 +186,35 @@ class TotalSprints(urwid.Text):
         super().__init__(text)
 
 
-class ClosedPoints(urwid.Text):
-    def __init__(self, project_stats):
-        text = [
-            "Closed points: ",
-            ("green", str(data.closed_points(project_stats))),
-            " (",
-            ("green", "{0:.1f} %".format(data.closed_points_percentage(project_stats))),
-            ")",
-        ]
-        super().__init__(text)
+class ClosedPoints(urwid.Columns):
+    def __init__(self, project_stats, **kwargs):
+        text = urwid.Text(["Closed points: ", ("green", str(data.closed_points(project_stats)))])
+
+        progressbar = urwid.ProgressBar("progressbar-normal", "progressbar-complete",
+                                        data.closed_points(project_stats), data.total_points(project_stats),
+                                        "progressbar-smooth")
+
+        widget_list = [("weight", 0.3, text),
+                       ("weight", 0.6, urwid.Padding(progressbar, align='center', left=2, right=2))]
+        super().__init__(widget_list, **kwargs)
 
 
-class DefinedPoints(urwid.Text):
-    def __init__(self, project_stats):
-        text = [
-            "Defined points: ",
-            ("red", str(data.defined_points(project_stats))),
-            " (",
-            ("red", "{0:.1f} %".format(data.defined_points_percentage(project_stats))),
-            ")",
-        ]
-        super().__init__(text)
+class DefinedPoints(urwid.Columns):
+    def __init__(self, project_stats, **kwargs):
+        defined_points_percentage = data.defined_points_percentage(project_stats)
+        if defined_points_percentage <= 100.0:
+            text = urwid.Text(["Defined points: ", ("red", str(data.defined_points(project_stats)))])
+        else:
+            text = urwid.Text(["Defined points: ", ("red", str(data.defined_points(project_stats))),
+                               " (", ("red", "+{0:.1f} %".format(defined_points_percentage - 100.0)), ")"])
+
+        progressbar = urwid.ProgressBar("progressbar-normal-red", "progressbar-complete-red",
+                                        data.defined_points(project_stats), data.total_points(project_stats),
+                                        "progressbar-smooth-red")
+
+        widget_list = [("weight", 0.3, text),
+                       ("weight", 0.6, urwid.Padding(progressbar, align='center', left=2, right=2))]
+        super().__init__(widget_list, **kwargs)
 
 
 class CurrentSprint(urwid.Text):
