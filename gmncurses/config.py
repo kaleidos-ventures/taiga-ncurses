@@ -70,8 +70,20 @@ class ProjectBacklogKeys(metaclass=KeyConfigMeta):
     RELOAD = "r"
 
 
+class ProjectSprintKeys(metaclass=KeyConfigMeta):
+    RELOAD = "r"
+
+
+class ProjectIssuesKeys(metaclass=KeyConfigMeta):
+    RELOAD = "r"
+
+
 DEFAULTS = {
-    "keys": ChainMap(Keys.config, ProjectKeys.config, ProjectBacklogKeys.config),
+    "keys": ChainMap(Keys.config,
+                     ProjectKeys.config,
+                     ProjectBacklogKeys.config,
+                     ProjectSprintKeys.config,
+                     ProjectIssuesKeys.config),
     "host": {
         "scheme": "http",
         "domain": "localhost",

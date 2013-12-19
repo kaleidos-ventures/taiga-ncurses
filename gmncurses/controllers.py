@@ -8,7 +8,7 @@ gmncurses.controllers
 from concurrent.futures import wait
 import functools
 
-from .config import ProjectKeys, ProjectBacklogKeys
+from .config import ProjectKeys, ProjectBacklogKeys, ProjectSprintKeys, ProjectIssuesKeys
 from .ui import signals
 
 import gmncurses.data
@@ -239,6 +239,11 @@ class ProjectSprintSubController(Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+    def handle(self, key):
+        if key == ProjectSprintKeys.RELOAD:
+            self.load()
+        return super().handle(key)
+
     def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_SPRINT)
 
@@ -290,6 +295,12 @@ class ProjectIssuesSubController(Controller):
         self.view = view
         self.executor = executor
         self.state_machine = state_machine
+
+    def handle(self, key):
+        if key == ProjectIssuesKeys.RELOAD:
+            self.load()
+        return super().handle(key)
+
 
     def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_ISSUES)
