@@ -210,6 +210,19 @@ def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
             pass
     return  (default_color, "Unassigned")
 
+# Tasks
+def task_assigned_to_with_color(task, project, default_color="#ffffff"):
+    # FIXME: Improvement, get memberships and users from a project constant
+    # TODO: Check that the color is in hex format
+    user_id = task.get("assigned_to", None)
+    if user_id:
+        memberships = {str(p["user"]): p for p in project["memberships"]}
+        try:
+            return (memberships[str(user_id)]["color"] or default_color,
+                    memberships[str(user_id)]["full_name"])
+        except KeyError:
+            pass
+    return  (default_color, "Unassigned")
 
 # wiki_page - Wiki page
 
