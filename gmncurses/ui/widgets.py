@@ -675,9 +675,10 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
 class USTitleCell(urwid.WidgetWrap):
     def __init__(self, us, roles, values):
         left_description = urwid.Text("US #{0: <6} {1}".format(str(us["id"]), us["subject"]))
-        columns = [("weight", 0.6, left_description)]
+        columns = [("weight", 0.8, left_description)]
         for i, role in enumerate(roles):
             columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
+        columns.append(("weight", 0.1, urwid.Text("TOTAL: {}".format(us["total_points"]))))
         widget = urwid.AttrMap(urwid.LineBox(urwid.AttrMap(urwid.Columns(columns), "cyan", "focus-header")), "green")
         super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
