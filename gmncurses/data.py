@@ -224,6 +224,20 @@ def task_assigned_to_with_color(task, project, default_color="#ffffff"):
             pass
     return  (default_color, "Unassigned")
 
+def task_status_with_color(task, project, default_color="#ffffff"):
+    # FIXME: Improvement, get tasks_statuses from a project constant
+    # TODO: Check that the color is in hex format
+    status_id = task.get("status", None)
+    if status_id:
+        task_statuses = {str(p["id"]): p for p in project["task_statuses"]}
+        try:
+            return (task_statuses[str(status_id)]["color"] or default_color,
+                    task_statuses[str(status_id)]["name"])
+        except KeyError:
+            pass
+        return str(status)
+    return (default_color, "---")
+
 # wiki_page - Wiki page
 
 def slug(wiki_page):

@@ -646,10 +646,10 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
             us_tasks = [t for t in milestone_tasks if t["user_story"] == us["id"]]
             for us_t in us_tasks:
                 hex_color, username =  data.task_assigned_to_with_color(us_t, self.project)
-                color = x256.from_hex(color_to_hex(hex_color))
-                attr = urwid.AttrSpec("h{0}".format(color), "default")
-                text = ("weight", 0.15, ListText((attr, username)))
-                self.widget.contents.append((UserStoryTask(us_t, text), ("weight", 0.1)))
+                hex_status_color, status = data.task_status_with_color(us_t, self.project)
+                text = self.HexToText(hex_color, username)
+                text_status = self.HexToText(hex_status_color, status)
+                self.widget.contents.append((UserStoryTask(us_t, text, text_status), ("weight", 0.1)))
 
         if len(self.widget.contents):
             self.widget.contents.focus = 0
@@ -657,6 +657,10 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
     def reset(self):
         self.widget.contents = []
 
+    def HexToText(self, hex_color, text):
+        color = x256.from_hex(color_to_hex(hex_color))
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        return ("weight", 0.2, ListText((attr, text)))
 
 class USTitleCell(urwid.WidgetWrap):
     def __init__(self, us, roles, values):
@@ -671,10 +675,11 @@ class USTitleCell(urwid.WidgetWrap):
         return True
 
 class UserStoryTask(urwid.WidgetWrap):
-    def __init__(self, us_task, text):
+    def __init__(self, us_task, text, text_status):
         widget = urwid.Columns([
                 ListText("#%d %s" % (us_task["id"], us_task["subject"]), align="left"),
                 text,
+                text_status,
                 ])
         super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
