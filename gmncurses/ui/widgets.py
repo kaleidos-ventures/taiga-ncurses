@@ -642,8 +642,10 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
         for us in user_stories:
             points_by_role = data.us_points_by_role(us, self.project, self.roles.values())
             self.widget.contents.append((USTitleCell(us, self.roles.values(), points_by_role),
-            ("weight", 0.1)))
-            self.widget.contents.append((UserStoryTasks(us["id"], milestone_tasks),("weight", 0.1)))
+                                    ("weight", 0.1)))
+            us_tasks = [t for t in milestone_tasks if t["user_story"] == us["id"]]
+            for us_t in us_tasks:
+                self.widget.contents.append((UserStoryTask(us_t), ("weight", 0.1)))
 
         if len(self.widget.contents):
             self.widget.contents.focus = 0
@@ -658,21 +660,17 @@ class USTitleCell(urwid.WidgetWrap):
         columns = [("weight", 0.6, left_description)]
         for i, role in enumerate(roles):
             columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
-        widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(columns)), "green")
+        widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(columns)), "green", "focus")
         super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
     def selectable(self):
         return True
 
-class UserStoryTasks(urwid.WidgetWrap):
-    def __init__(self, us_id, tasks):
-        us_tasks = [t for t in tasks if t["user_story"] == us_id]
-        rows = []
-        for us_t in us_tasks:
-            rows.append(urwid.Columns([
-                urwid.Text("#%d %s" % (us_t["id"], us_t["subject"])),
-                ]))
-        widget = urwid.Pile(rows)
+class UserStoryTask(urwid.WidgetWrap):
+    def __init__(self, us_task):
+        widget = urwid.Columns([
+                ListText("#%d %s" % (us_task["id"], us_task["subject"]), align="left"),
+                ])
         super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
     def selectable(self):
