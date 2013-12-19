@@ -59,6 +59,7 @@ class Keys(metaclass=KeyConfigMeta):
 
 
 class ProjectKeys(metaclass=KeyConfigMeta):
+    PROJECTS = "esc"
     BACKLOG = "B"
     SPRINT = "S"
     ISSUES = "I"

@@ -120,6 +120,9 @@ class StateMachine(metaclass=StateMeta):
         self._core.set_auth_config(auth_data)
         self._core.projects_view()
 
+    def projects(self):
+        self._core.projects_view()
+
     def project_detail(self, project):
         self._core.project_view(project)
 

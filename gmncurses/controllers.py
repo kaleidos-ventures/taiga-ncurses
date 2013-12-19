@@ -483,5 +483,7 @@ class ProjectDetailController(Controller):
         elif key == ProjectKeys.ADMIN:
             self.view.admin_view()
             self.subcontroller = self.admin
+        elif key == ProjectKeys.PROJECTS:
+            self.state_machine.projects()
         else:
             self.subcontroller.handle(key)
