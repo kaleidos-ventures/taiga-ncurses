@@ -38,6 +38,13 @@ class Executor(object):
     def create_user_story(self, data):
         return self.pool.submit(self.client.create_user_story, data_dict=data)
 
+    def update_user_stories_order(self, user_stories, project):
+        data = {
+            "projectId": project["id"],
+            "bulkStories": [[v["id"], i] for i, v in enumerate(user_stories)]
+        }
+        return self.pool.submit(self.client.update_user_stories_order, data_dict=data)
+
     def unassigned_user_stories(self, project):
         return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
                                                                       "milestone__isnull": True})

@@ -97,8 +97,12 @@ class ProjectBacklogSubController(Controller):
     def handle(self, key):
         if key == ProjectBacklogKeys.CREATE_USER_STORY:
             self.new_user_story_form()
-        if key == ProjectBacklogKeys.RELOAD:
+        elif key == ProjectBacklogKeys.RELOAD:
             self.load()
+        elif key == ProjectBacklogKeys.US_UP:
+            self.move_current_us_up()
+        elif key == ProjectBacklogKeys.US_DOWN:
+            self.move_current_us_down()
         return super().handle(key)
 
     def load(self):
@@ -121,6 +125,26 @@ class ProjectBacklogSubController(Controller):
 
     def cancel_user_story_form(self):
         self.view.user_stories_list()
+
+    def move_current_us_up(self):
+        current_focus = self.user_stories.index(self.view.user_stories.widget.get_focus().user_story)
+        if current_focus > 0 and len(self.user_stories) > 2:
+            aux = self.user_stories[current_focus]
+            self.user_stories[current_focus] = self.user_stories[current_focus - 1]
+            self.user_stories[current_focus - 1] = aux
+
+            uss_post_f = self.executor.update_user_stories_order(self.user_stories, self.view.project)
+            uss_post_f.add_done_callback(self.handler_update_user_stories_order_response)
+
+    def move_current_us_down(self):
+        current_focus = self.user_stories.index(self.view.user_stories.widget.get_focus().user_story)
+        if current_focus < len(self.user_stories) - 1 and len(self.user_stories) > 2:
+            aux = self.user_stories[current_focus]
+            self.user_stories[current_focus] = self.user_stories[current_focus + 1]
+            self.user_stories[current_focus + 1] = aux
+
+            uss_post_f = self.executor.update_user_stories_order(self.user_stories, self.view.project)
+            uss_post_f.add_done_callback(self.handler_update_user_stories_order_response)
 
     def handle_project_stats(self, future):
         self.project_stats = future.result()
@@ -168,6 +192,28 @@ class ProjectBacklogSubController(Controller):
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
             futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
+    def handler_update_user_stories_order_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Error moving user_story")
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+        else:
+            self.view.notifier.info_msg("Moved user_story")
+
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
 
 
 class ProjectSprintSubController(Controller):
@@ -360,5 +406,5 @@ class ProjectDetailController(Controller):
         elif key == ProjectKeys.ADMIN:
             self.view.admin_view()
             self.subcontroller = self.admin
-
-        return self.subcontroller.handle(key)
+        else:
+            self.subcontroller.handle(key)

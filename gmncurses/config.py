@@ -61,7 +61,10 @@ class ProjectKeys(metaclass=KeyConfigMeta):
 
 class ProjectBacklogKeys(metaclass=KeyConfigMeta):
     CREATE_USER_STORY = "i"
+    US_UP = "w"
+    US_DOWN = "s"
     RELOAD = "r"
+
 
 DEFAULTS = {
     "keys": ChainMap(Keys.config, ProjectKeys.config, ProjectBacklogKeys.config),

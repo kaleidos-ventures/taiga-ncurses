@@ -272,6 +272,8 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
 
 class UserStoryEntry(urwid.WidgetWrap):
     def __init__(self, us, project, roles, summation=0.0):
+        self.user_story = us
+
         us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
         colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
 
