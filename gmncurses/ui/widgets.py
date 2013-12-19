@@ -668,7 +668,7 @@ class USTitleCell(urwid.WidgetWrap):
         columns = [("weight", 0.6, left_description)]
         for i, role in enumerate(roles):
             columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
-        widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(columns)), "green", "focus")
+        widget = urwid.AttrMap(urwid.LineBox(urwid.AttrMap(urwid.Columns(columns), "cyan", "focus-header")), "green")
         super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
     def selectable(self):
