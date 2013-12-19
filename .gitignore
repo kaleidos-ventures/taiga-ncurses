@@ -37,3 +37,6 @@ nosetests.xml
 
 # Tags
 tags
+
+# Virtualenv
+.venv

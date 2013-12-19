@@ -228,15 +228,12 @@ class ProjectSprintSubController(Controller):
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
         res = gmncurses.data.current_sprint_id(self.view.project)
+
         milestone_stats_f = self.executor.milestone_stats(res, self.view.project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        #user_stories_f = self.executor.unassigned_user_stories(self.view.milestone)
-        #user_stories_f.add_done_callback(self.handle_user_stories)
-
-        #futures = (milestone_stats_f, user_stories_f)
-        #futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-        #futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+        user_stories_f = self.executor.user_stories(res, self.view.project)
+        user_stories_f.add_done_callback(self.handle_user_stories)
 
     def handle_milestone_stats(self, future):
         self.milestone_stats = future.result()
@@ -246,6 +243,9 @@ class ProjectSprintSubController(Controller):
 
     def handle_user_stories(self, future):
         self.user_stories = future.result()
+        if self.user_stories is not None:
+            self.view.user_stories_list.populate(self.user_stories)
+            self.state_machine.refresh()
 
     def when_backlog_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()

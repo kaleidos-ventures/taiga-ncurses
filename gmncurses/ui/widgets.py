@@ -442,6 +442,101 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
 
+class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+
+        contents = [
+            box_solid_fill(" ", 2),
+            self._subject_input(),
+            box_solid_fill(" ", 1),
+            self._points_input(),
+            box_solid_fill(" ", 1),
+            self._status_input(),
+            box_solid_fill(" ", 1),
+            self._tags_input(),
+            box_solid_fill(" ", 1),
+            self._description_input(),
+            box_solid_fill(" ", 2),
+            self._buttons(),
+            box_solid_fill(" ", 1),
+        ]
+
+        self.widget = urwid.Pile(contents)
+        super().__init__(urwid.Padding(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     "Create User Story"), right=6, left=6))
+
+    def _subject_input(self):
+        self.subject = urwid.Edit()
+
+        colum_items = [(17, urwid.Padding(ListText("Subject", align="right"), right=4))]
+        colum_items.append(self.subject)
+        return urwid.Columns(colum_items)
+
+    def _points_input(self):
+        roles = data.computable_roles(self.project)
+        points = data.points(self.project)
+        max_length = max([len(s["name"]) for s in points.values()])
+
+        points_pile = []
+
+        for role in roles.values():
+            points_colum = [(17, urwid.Text(role["name"]))]
+            points_group = []
+            for point in points.values():
+                urwid.RadioButton(points_group, point["name"])
+            points_colum.append(Grid(points_group, 4 + max_length, 2, 0, "left"))
+
+            points_pile.append(urwid.Columns(points_colum))
+
+        self.points = urwid.Pile(points_pile)
+
+        colum_items = [(17, urwid.Padding(ListText("Points", align="right"), right=4))]
+        colum_items.append(self.points)
+        return urwid.Columns(colum_items)
+
+    def _status_input(self):
+        us_statuses = data.us_statuses(self.project)
+        max_length = max([len(s["name"]) for s in us_statuses.values()])
+
+        self.us_status_group = []
+        for status in us_statuses.values():
+            urwid.RadioButton(self.us_status_group, status["name"])
+
+        colum_items = [(17, urwid.Padding(ListText("Status", align="right"), right=4))]
+        colum_items.append(Grid(self.us_status_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _tags_input(self):
+        self.tags = urwid.Edit()
+
+        colum_items = [(17, urwid.Padding(ListText("Tags", align="right"), right=4))]
+        colum_items.append(self.tags)
+        return urwid.Columns(colum_items)
+
+    def _description_input(self):
+        self.description = urwid.Edit(multiline=True)
+
+        colum_items = [(17, urwid.Padding(ListText("Description", align="right"), right=4))]
+        colum_items.append(self.description)
+        return urwid.Columns(colum_items)
+
+    def _buttons(self):
+        self.save_button = PlainButton("Save")
+        self.cancel_buton = PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(" "))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
+                                              "submit-button") ))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_buton, right=1, left=2),
+                                              "cancel-button") ))
+        return urwid.Columns(colum_items)
+
+    def data(self):
+        #TODO
+        return {}
+
 # Issues
 
 class ProjectIssuesStats(urwid.WidgetWrap):
@@ -594,13 +689,13 @@ class IssueEntry(urwid.WidgetWrap):
 class ProjectSprintsStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
-        widget = urwid.Columns([
+        self.widget = urwid.Columns([
                                 ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
                                 ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
                                 ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
                                 ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
                                 ])
-        super().__init__(widget)
+        super().__init__(self.widget)
 
     def populate(self, milestone_stats):
         completed_points = sum(milestone_stats["completed_points"])
@@ -613,44 +708,39 @@ class ProjectSprintsStats(urwid.WidgetWrap):
         init_date = milestone_stats["estimated_start"]
         finish_date = milestone_stats["estimated_finish"]
         self._w = urwid.Columns([
-                                 ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
-                                 ("weight", 0.30, Stack_1_3_1("Points", [total_points, completed_points, rem_points])),
-                                 ("weight", 0.30, Stack_1_3_1("Tasks", [total_tasks, completed_tasks, rem_tasks])),
-                                 ("weight", 0.30, Color_dates(init_date, finish_date)),
-                                 ])
+             ("weight", 0.20, urwid.Pile([urwid.Text("Completed points"), Color_text("cyan", str(percent_points_completed) + " %")])),
+             ("weight", 0.30, Stack_1_3_1("Points", [total_points, completed_points, rem_points])),
+             ("weight", 0.30, Stack_1_3_1("Tasks", [total_tasks, completed_tasks, rem_tasks])),
+             ("weight", 0.30, Color_dates(init_date, finish_date)),
+         ])
 
-class Color_dates(urwid.Pile):
-    def __init__(self, init_date, finish_date):
-        dates_col = [
-                 urwid.Pile([urwid.Text("Start"), Color_text("green", init_date)]),
-                 urwid.Pile([urwid.Text("Finish"), Color_text("red", finish_date)])
-                 ]
-        dates = [urwid.Text("Dates", align="center"), urwid.Columns(dates_col)]
-        super().__init__(dates)
+class ProjectSprintsUserStories(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        self.roles = data.computable_roles(project)
+        self.widget = urwid.Pile([ListText("Fetching data")])
+        super().__init__(self.widget)
 
-class Color_text(urwid.Text):
-    def __init__(self, color, text):
-        text = [(color, text)]
-        super().__init__(text)
+    def populate(self, user_stories):
+        if user_stories:
+            self.reset()
+        for us in user_stories:
+            points_by_role = data.us_points_by_role(us, self.project, self.roles.values())
+            self.widget.contents.append((USTitleCell(us, self.roles.values(), points_by_role),
+                                             ("weight", 0.1)))
 
-class Stack_1_3_1(urwid.Pile):
-    def __init__(self, title, values):
-        titles = ["Total", "Completed", "Remaining"]
-        columns = []
-        for i, name in enumerate(titles):
-            columns.append(("weight", 0.33, urwid.Pile([urwid.Text(name), Color_by_value(values[i])])))
-        pile = [urwid.Text(title, align="center"), urwid.Columns(columns)]
-        super().__init__(pile)
+    def reset(self):
+        del self.widget.contents[0]
 
-class Color_by_value(urwid.Text):
-    def __init__(self, value, max_value=100.0):
-        color = "cyan"
-        if int(value) == 0.0:
-            color = "red"
-        elif int(value) == max_value:
-            color = "green"
-        text = [(color, str(value))]
-        super().__init__(text)
+
+class USTitleCell(urwid.WidgetWrap):
+    def __init__(self, us, roles, values):
+        left_description = urwid.Text("#%d - %s" % (us["id"], us["subject"])) 
+        columns = [("weight", 0.6, left_description)]
+        for i, role in enumerate(roles):
+            columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
+        widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(columns)), "green")
+        super().__init__(widget)
 
 
 # Wiki
@@ -709,4 +799,35 @@ def color_to_hex(color):
     else:
         return x256.from_html_name(str(color))
 
+class Color_text(urwid.Text):
+    def __init__(self, color, text):
+        text = [(color, text)]
+        super().__init__(text)
 
+class Stack_1_3_1(urwid.Pile):
+    def __init__(self, title, values):
+        titles = ["Total", "Completed", "Remaining"]
+        columns = []
+        for i, name in enumerate(titles):
+            columns.append(("weight", 0.33, urwid.Pile([urwid.Text(name), Color_by_value(values[i])])))
+        pile = [urwid.Text(title, align="center"), urwid.Columns(columns)]
+        super().__init__(pile)
+
+class Color_by_value(urwid.Text):
+    def __init__(self, value, max_value=100.0):
+        color = "cyan"
+        if int(value) == 0.0:
+            color = "red"
+        elif int(value) == max_value:
+            color = "green"
+        text = [(color, str(value))]
+        super().__init__(text)
+
+class Color_dates(urwid.Pile):
+    def __init__(self, init_date, finish_date):
+        dates_col = [
+                 urwid.Pile([urwid.Text("Start"), Color_text("green", init_date)]),
+                 urwid.Pile([urwid.Text("Finish"), Color_text("red", finish_date)])
+                 ]
+        dates = [urwid.Text("Dates", align="center"), urwid.Columns(dates_col)]
+        super().__init__(dates)

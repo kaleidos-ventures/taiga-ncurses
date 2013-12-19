@@ -49,6 +49,10 @@ class Executor(object):
         return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
                                                                       "milestone__isnull": True})
 
+    def user_stories(self, id,  project):
+        return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
+                                                                      "milestone": id})
+
     # Task
     #TODO
 
