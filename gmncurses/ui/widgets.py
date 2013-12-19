@@ -313,8 +313,9 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
     _status = None
     _points = {}
 
-    def __init__(self, project):
+    def __init__(self, project, user_story={}):
         self.project = project
+        self.user_story = user_story
 
         contents = [
             box_solid_fill(" ", 2),
@@ -333,10 +334,11 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
             self._buttons(),
             box_solid_fill(" ", 1),
         ]
-
         self.widget = urwid.Pile(contents)
+
+        title = "Edit User Story" if self.user_story else "Create User Story"
         super().__init__(urwid.Padding(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
-                                                     "Create User Story"), right=6, left=6))
+                                                     title), right=6, left=6))
 
     @property
     def subject(self):
@@ -368,7 +370,7 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         return self._client_requirement_checkbox.get_state()
 
     def _subject_input(self):
-        self._subject_edit = urwid.Edit()
+        self._subject_edit = urwid.Edit(edit_text=self.user_story.get("subject", ""))
 
         colum_items = [(17, urwid.Padding(ListText("Subject", align="right"), right=4))]
         colum_items.append(self._subject_edit)
@@ -383,12 +385,17 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
 
         points_pile = []
         for r_id, role in roles.items():
+            self._points[r_id] = (self.user_story.get("points", {}).get(r_id, None) or
+                                  self.project.get("default_points", None))
+
             points_colum = [(17, urwid.Text(role["name"]))]
             points_group = []
             for p_id, point in points.items():
-                urwid.RadioButton(points_group, point["name"], state=False,
+                urwid.RadioButton(points_group, point["name"],
+                                  state=(int(p_id) == self.user_story.get("points", {}).get(r_id, None) or
+                                         int(p_id) == self.project.get("default_points", None)),
                                   on_state_change=self._handler_point_radiobutton_change,
-                                  user_data={r_id:p_id})
+                                  user_data={r_id:point["id"]})
 
             points_colum.append(Grid(points_group, 4 + max_length, 2, 0, "left"))
             points_pile.append(urwid.Columns(points_colum))
@@ -402,42 +409,50 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _handler_point_radiobutton_change(self, radio_button, new_state, user_data):
-        self._points.update(user_data)
+        if new_state:
+            self._points.update(user_data)
 
     def _status_input(self):
+        self._status = self.user_story.get("status", None) or self.project.get("default_us_status", None)
+
         us_statuses = data.us_statuses(self.project)
         max_length = max([len(s["name"]) for s in us_statuses.values()])
 
         self._us_status_group = []
         for s_id, status in us_statuses.items():
-            urwid.RadioButton(self._us_status_group, status["name"], state=False,
+            urwid.RadioButton(self._us_status_group, status["name"],
+                              state=(status["id"] == self.user_story.get("status", None) or
+                                     status["id"] == self.project.get("default_us_status", None)),
                               on_state_change=self._handler_status_radiobutton_change,
-                              user_data=s_id)
+                              user_data=status["id"])
 
         colum_items = [(17, urwid.Padding(ListText("Status", align="right"), right=4))]
         colum_items.append(Grid(self._us_status_group, 4 + max_length, 3, 0, "left"))
         return urwid.Columns(colum_items)
 
     def _handler_status_radiobutton_change(self, radio_button, new_state, user_data):
-        self._status = user_data
+        if new_state:
+            self._status = user_data
 
     def _tags_input(self):
-        self._tags_edit = urwid.Edit()
+        self._tags_edit = urwid.Edit(edit_text=", ".join(self.user_story.get("tags", [])))
 
         colum_items = [(17, urwid.Padding(ListText("Tags", align="right"), right=4))]
         colum_items.append(self._tags_edit)
         return urwid.Columns(colum_items)
 
     def _description_input(self):
-        self._description_edit = urwid.Edit(multiline=True)
+        self._description_edit = urwid.Edit(multiline=True, edit_text=self.user_story.get("subject", ""))
 
         colum_items = [(17, urwid.Padding(ListText("Description", align="right"), right=4))]
         colum_items.append(self._description_edit)
         return urwid.Columns(colum_items)
 
     def _requirements_input(self):
-        self._client_requirement_checkbox = urwid.CheckBox("Client's requirement")
-        self._team_requirement_checkbox = urwid.CheckBox("Team's requirement")
+        self._client_requirement_checkbox = urwid.CheckBox("Client's requirement",
+                state=self.user_story.get("client_requirement", False))
+        self._team_requirement_checkbox = urwid.CheckBox("Team's requirement",
+                state=self.user_story.get("team_requirement", False))
 
         colum_items = [(17, urwid.Text(" "))]
         colum_items.append(self._client_requirement_checkbox)

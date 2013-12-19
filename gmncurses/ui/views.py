@@ -131,7 +131,6 @@ class ProjectBacklogSubView(SubView):
 
         self.stats = widgets.ProjectBacklogStats(project)
         self.user_stories = widgets.UserStoryList(project)
-        self.user_story_form = widgets.UserStoryForm(project)
 
         list_walker = urwid.SimpleFocusListWalker([
             tabs,
@@ -143,10 +142,11 @@ class ProjectBacklogSubView(SubView):
         list_walker.set_focus(4)
         self.widget = urwid.ListBox(list_walker)
 
-    def new_user_story_form(self):
+    def open_user_story_form(self, user_story={}):
+        self.user_story_form = widgets.UserStoryForm(self.project, user_story=user_story)
         self.widget.body[4] = self.user_story_form
 
-    def user_stories_list(self):
+    def show_user_stories_list(self):
         self.widget.body[4] = self.user_stories
 
     def get_user_story_form_data(self):
