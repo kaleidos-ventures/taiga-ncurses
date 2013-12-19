@@ -653,6 +653,13 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
                 text_status = self.HexToText(hex_status_color, status)
                 self.widget.contents.append((UserStoryTask(us_t, text, text_status), ("weight", 0.1)))
 
+        us_unassig = [t for t in milestone_tasks if t["user_story"] == None]
+        if us_unassig:
+            self.widget.contents.append((urwid.AttrMap(urwid.LineBox(urwid.AttrMap(ListText("Unassigned tasks"),
+                "cyan", "focus-header")), "green"), ("weight", 0.1)))
+            for una in us_unassig:
+                self.widget.contents.append((UserStoryTask(una, text, text_status), ("weight", 0.1)))
+
         if len(self.widget.contents):
             self.widget.contents.focus = 0
 
