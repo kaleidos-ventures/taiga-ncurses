@@ -718,42 +718,29 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
-        self.widget = urwid.Pile([ListCell("Fetching data")])
+        self.widget = urwid.Pile([ListText("Fetching data")])
         super().__init__(self.widget)
 
     def populate(self, user_stories):
-        us = user_stories[0]
-        self.widget.contents.append((UserStorySprint(us, self.project, self.roles),
-                                         ("weight", 0.1)))
+        if user_stories:
+            self.reset()
+        for us in user_stories:
+            points_by_role = data.us_points_by_role(us, self.project, self.roles.values())
+            self.widget.contents.append((USTitleCell(us, self.roles.values(), points_by_role),
+                                             ("weight", 0.1)))
 
-class UserStorySprint(urwid.WidgetWrap):
-    def __init__(self, us, project, roles):
-        points_by_role = data.us_points_by_role(us, project, roles.values())
-        colum_items = [("weight", 0.6, ListText("User Story dummy", align="left"))]
-        for point in points_by_role:
-            colum_items.append(("weight", 0.05, ListText(str(point))))
+    def reset(self):
+        del self.widget.contents[0]
 
-        #import pdb; pdb.set_trace();
-        #us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
-        #colum_items = [("weight", 0.6, ListText(us_ref_and_name, align="left"))]
 
-        #hex_color, status = data.us_status_with_color(us, project)
-        #color = x256.from_hex(color_to_hex(hex_color))
-        #attr = urwid.AttrSpec("h{0}".format(color), "default")
-        #colum_items.append(("weight", 0.08, ListText( (attr, status) )))
-
-        #points_by_role = data.us_points_by_role(us, project, roles.values())
-        #for point in points_by_role:
-            #colum_items.append(("weight", 0.05, ListText(str(point))))
-        #colum_items.append(("weight", 0.05, ListText(("green", "{0:.1f}".format(data.us_total_points(us))))))
-        #colum_items.append(("weight", 0.05, ListText(("cyan", "{0:.1f}".format(summation)))))
-
-        self.widget = urwid.Columns(colum_items)
-        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
-
-    #def selectable(self):
-        #return True
-
+class USTitleCell(urwid.WidgetWrap):
+    def __init__(self, us, roles, values):
+        left_description = urwid.Text("#%d - %s" % (us["id"], us["subject"])) 
+        columns = [("weight", 0.6, left_description)]
+        for i, role in enumerate(roles):
+            columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
+        widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(columns)), "green")
+        super().__init__(widget)
 
 
 # Wiki
