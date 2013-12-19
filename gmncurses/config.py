@@ -26,6 +26,7 @@ PALETTE = [
     ("info", "white", "dark blue"),
     ("green", "dark green", "default"),
     ("red", "dark red", "default"),
+    ("yellow", "yellow", "default"),
     ("cyan", "dark cyan", "default"),
     ("green-bg", "white", "dark green"),
     ("projects-button", "black", "dark green"),

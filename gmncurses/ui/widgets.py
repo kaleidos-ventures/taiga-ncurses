@@ -257,7 +257,7 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
             summation += data.us_total_points(us)
 
             if not doomline and summation > self.doomline_limit:
-                self.widget.contents.append((RowDivider("red"), ("weight", 0.1)))
+                self.widget.contents.append((RowDivider("red", div_char="☠"), ("weight", 0.1)))
                 doomline = True
 
             self.widget.contents.append((UserStoryEntry(us, self.project, self.roles, summation),
@@ -655,7 +655,7 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
 
         us_unassig = [t for t in milestone_tasks if t["user_story"] == None]
         if us_unassig:
-            self.widget.contents.append((urwid.AttrMap(urwid.LineBox(urwid.AttrMap(ListText("Unassigned tasks"),
+            self.widget.contents.append((urwid.AttrMap(urwid.LineBox(AttrMap(ListText("Unassigned tasks"),
                 "cyan", "focus-header")), "green"), ("weight", 0.1)))
             for una in us_unassig:
                 self.widget.contents.append((UserStoryTask(una, text, text_status), ("weight", 0.1)))
@@ -674,11 +674,16 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
 
 class USTitleCell(urwid.WidgetWrap):
     def __init__(self, us, roles, values):
-        left_description = urwid.Text("US #{0: <6} {1}".format(str(us["id"]), us["subject"]))
-        columns = [("weight", 0.8, left_description)]
+        is_closed = urwid.AttrMap(ListText("☑"), "green", "focus-header") if us.get("is_closed", False) else urwid.AttrMap(ListText("☒"), "red", "focus-header")
+        columns = [("weight", 0.05, is_closed)]
+
+        left_description = urwid.Text("US #{0: <4} {1}".format(str(us["id"]), us["subject"]))
+        columns.append(("weight", 0.8, left_description))
+
         for i, role in enumerate(roles):
-            columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
-        columns.append(("weight", 0.1, urwid.Text("TOTAL: {}".format(us["total_points"]))))
+            columns.append(("weight", 0.1, ListText("%s: %s" % (role["name"], values[i]))))
+
+        columns.append(("weight", 0.1, ListText("TOTAL: {}".format(us["total_points"]))))
         widget = urwid.AttrMap(urwid.LineBox(urwid.AttrMap(urwid.Columns(columns), "cyan", "focus-header")), "green")
         super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
@@ -687,8 +692,11 @@ class USTitleCell(urwid.WidgetWrap):
 
 class UserStoryTask(urwid.WidgetWrap):
     def __init__(self, us_task, text, text_status):
+        is_closed = urwid.AttrMap(ListText("☑"), "green", "focus") if us_task.get("finished_date", None) else urwid.AttrMap(ListText("☒"), "red", "focus")
+
         widget = urwid.Columns([
-                ListText("Task #{0: <6} {1}".format(str(us_task["ref"]), us_task["subject"]), align="left"),
+                ("weight", 0.05, is_closed),
+                ("weight", 1, ListText("Task #{0: <4} {1}".format(str(us_task["ref"]), us_task["subject"]), align="left")),
                 text,
                 text_status,
                 ])
@@ -770,10 +778,10 @@ class Stack_1_3_1(urwid.Pile):
 class Color_by_value(ListText):
     # TODO: Improve me
     def __init__(self, value, max_value=100.0):
-        color = "cyan"
-        if int(value) == 0.0:
+        color = "yellow"
+        if int(value) < int(max_value) * 0.2:
             color = "red"
-        elif int(value) == max_value:
+        elif int(value) == int(max_value):
             color = "green"
         text = [(color, str(value))]
         super().__init__(text)
