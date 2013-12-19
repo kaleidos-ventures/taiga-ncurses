@@ -634,16 +634,22 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
         self.widget = urwid.Pile([ListText("Fetching data")])
         super().__init__(self.widget)
 
-    def populate(self, user_stories):
+    def populate(self, user_stories, milestone_tasks):
         if user_stories:
             self.reset()
+
+        #import ipdb; ipdb.set_trace()
         for us in user_stories:
             points_by_role = data.us_points_by_role(us, self.project, self.roles.values())
             self.widget.contents.append((USTitleCell(us, self.roles.values(), points_by_role),
-                                             ("weight", 0.1)))
+            ("weight", 0.1)))
+            self.widget.contents.append((UserStoryTasks(us["id"], milestone_tasks),("weight", 0.1)))
+
+        if len(self.widget.contents):
+            self.widget.contents.focus = 0
 
     def reset(self):
-        del self.widget.contents[0]
+        self.widget.contents = []
 
 
 class USTitleCell(urwid.WidgetWrap):
@@ -653,8 +659,24 @@ class USTitleCell(urwid.WidgetWrap):
         for i, role in enumerate(roles):
             columns.append(("weight", 0.1, urwid.Text("%s: %s" % (role["name"], values[i]))))
         widget = urwid.AttrMap(urwid.LineBox(urwid.Columns(columns)), "green")
-        super().__init__(widget)
+        super().__init__(urwid.AttrMap(widget, "default", "focus"))
 
+    def selectable(self):
+        return True
+
+class UserStoryTasks(urwid.WidgetWrap):
+    def __init__(self, us_id, tasks):
+        us_tasks = [t for t in tasks if t["user_story"] == us_id]
+        rows = []
+        for us_t in us_tasks:
+            rows.append(urwid.Columns([
+                urwid.Text("#%d %s" % (us_t["id"], us_t["subject"])),
+                ]))
+        widget = urwid.Pile(rows)
+        super().__init__(urwid.AttrMap(widget, "default", "focus"))
+
+    def selectable(self):
+        return True
 
 # Wiki
 

@@ -54,7 +54,9 @@ class Executor(object):
                                                                       "milestone": id})
 
     # Task
-    #TODO
+    def milestone_tasks(self, id,  project):
+        return self.pool.submit(self.client.get_tasks, params={"project": project["id"],
+                                                              "milestone": id})
 
     # Issues
     def issues(self, project, order_by=[]):
