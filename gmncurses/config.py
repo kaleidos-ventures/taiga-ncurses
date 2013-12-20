@@ -70,6 +70,7 @@ class ProjectKeys(metaclass=KeyConfigMeta):
 class ProjectBacklogKeys(metaclass=KeyConfigMeta):
     CREATE_USER_STORY = "i"
     EDIT_USER_STORY = "e"
+    DELETE_USER_STORY = "delete"
     UPDATE_USER_STORIES_ORDER = "w"
     US_UP = "K"
     US_DOWN = "J"

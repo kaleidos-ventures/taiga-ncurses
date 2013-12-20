@@ -41,6 +41,9 @@ class Executor(object):
     def update_user_story(self, user_story, data):
         return self.pool.submit(self.client.update_user_story, id=user_story["id"], data_dict=data)
 
+    def delete_user_story(self, user_story):
+        return self.pool.submit(self.client.delete_user_story, id=user_story["id"])
+
     def update_user_stories_order(self, user_stories, project):
         data = {
             "projectId": project["id"],
@@ -51,7 +54,6 @@ class Executor(object):
     def unassigned_user_stories(self, project):
         return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
                                                                       "milestone__isnull": True})
-
     def user_stories(self, id,  project):
         return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
                                                                       "milestone": id})

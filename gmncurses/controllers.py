@@ -94,14 +94,16 @@ class ProjectBacklogSubController(Controller):
             self.new_user_story()
         elif key == ProjectBacklogKeys.EDIT_USER_STORY:
             self.edit_user_story()
-        elif key == ProjectBacklogKeys.RELOAD:
-            self.load()
+        elif key == ProjectBacklogKeys.DELETE_USER_STORY:
+            self.delete_user_story()
         elif key == ProjectBacklogKeys.US_UP:
             self.move_current_us_up()
         elif key == ProjectBacklogKeys.US_DOWN:
             self.move_current_us_down()
         elif key == ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER:
             self.update_user_stories_order()
+        elif key == ProjectBacklogKeys.RELOAD:
+            self.load()
         return super().handle(key)
 
     def load(self):
@@ -141,6 +143,12 @@ class ProjectBacklogSubController(Controller):
 
     def cancel_user_story_form(self):
         self.view.show_user_stories_list()
+
+    def delete_user_story(self):
+        user_story = self.view.user_stories.widget.get_focus().user_story
+
+        uss_delete_f = self.executor.delete_user_story(user_story)
+        uss_delete_f.add_done_callback(self.handler_delete_user_story_response)
 
     def move_current_us_up(self):
         current_focus = self.user_stories.index(self.view.user_stories.widget.get_focus().user_story)
@@ -228,8 +236,8 @@ class ProjectBacklogSubController(Controller):
         if not data.get("subject", None):
             self.view.notifier.error_msg("Subject is required")
         else:
-            us_post_f = self.executor.update_user_story(user_story, data)
-            us_post_f.add_done_callback(self.handler_edit_user_story_response)
+            us_patch_f = self.executor.update_user_story(user_story, data)
+            us_patch_f.add_done_callback(self.handler_edit_user_story_response)
 
     def handler_edit_user_story_response(self, future):
         response = future.result()
@@ -239,6 +247,27 @@ class ProjectBacklogSubController(Controller):
         else:
             self.view.notifier.info_msg("Edit succesful!")
             self.view.show_user_stories_list()
+
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+
+    def handler_delete_user_story_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Error deleting user_story")
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+        else:
+            self.view.notifier.info_msg("Delete user story")
 
             project_stats_f = self.executor.project_stats(self.view.project)
             project_stats_f.add_done_callback(self.handle_project_stats)
