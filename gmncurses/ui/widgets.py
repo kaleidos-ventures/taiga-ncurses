@@ -737,15 +737,31 @@ class WikiPage(urwid.WidgetWrap):
         super().__init__(self.widget)
 
     def populate(self, wiki_page):
-        slug_widget = ListText(data.slug(wiki_page))
-        content_widget = urwid.Edit(edit_text=data.content(wiki_page), multiline=True, wrap='any',
+        self.slug_widget = ListText(data.slug(wiki_page))
+        self.content_widget = urwid.Edit(edit_text=data.content(wiki_page), multiline=True, wrap='any',
                                      allow_tab=True)
         self.widget.contents = [
-            (slug_widget, ('weight', 1)),
             (RowDivider(div_char=" "), ("weight", 0.1)),
-            (content_widget, ('pack', None))
+            (self.slug_widget, ('weight', 1)),
+            (RowDivider(div_char=" "), ("weight", 0.1)),
+            (self.content_widget, ('pack', None)),
+            (RowDivider(div_char=" "), ("weight", 0.1)),
+            (urwid.Padding(self._buttons(), right=2, left=2), ('weight', 1)),
+            (RowDivider(div_char=" "), ("weight", 0.1))
         ]
-        self.widget.contents.focus = 2
+        self.widget.contents.focus = 3
+
+    def _buttons(self):
+        self.save_button = PlainButton("Save")
+        self.reset_button = PlainButton("Reset")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
+                                              "submit-button") ))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.reset_button, right=1, left=2),
+                                              "cancel-button") ))
+        return urwid.Columns(colum_items)
 
 # Misc
 
