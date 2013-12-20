@@ -625,10 +625,10 @@ class ProjectSprintsStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
         self.widget = urwid.Columns([
-            ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
-            ("weight", 0.25, urwid.Pile([urwid.Text("testing")])),
-            ("weight", 0.20, urwid.Pile([urwid.Text("testing")])),
-            ("weight", 0.30, urwid.Pile([urwid.Text("testing")])),
+            ("weight", 0.25, urwid.Pile([ListText("testing")])),
+            ("weight", 0.25, urwid.Pile([ListText("testing")])),
+            ("weight", 0.20, urwid.Pile([ListText("testing")])),
+            ("weight", 0.30, urwid.Pile([ListText("testing")])),
         ])
         super().__init__(self.widget)
 
@@ -643,7 +643,7 @@ class ProjectSprintsStats(urwid.WidgetWrap):
         finish_date = milestone_stats["estimated_finish"]
 
         self._w = urwid.Columns([
-            ("weight", 0.2, urwid.LineBox(urwid.Pile([urwid.Text(""),
+            ("weight", 0.2, urwid.LineBox(urwid.Pile([ListText(""),
                     urwid.ProgressBar("progressbar-normal", "progressbar-complete", completed_points,
                                       total_points, "progressbar-smooth")]), "Status")),
             ("weight", 0.3, urwid.LineBox(Stack_1_3_1([total_points, completed_points, rem_points]), "Points")),
