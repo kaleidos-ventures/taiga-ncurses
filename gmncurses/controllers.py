@@ -45,6 +45,7 @@ class LoginController(Controller):
         response = future.result()
         if response is None:
             self.view.notifier.error_msg("Login error")
+            self.state_machine.refresh()
         else:
             self.view.notifier.info_msg("Login succesful!")
             self.state_machine.logged_in(response)
