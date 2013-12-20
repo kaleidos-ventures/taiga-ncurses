@@ -194,7 +194,7 @@ class ClosedPoints(urwid.Columns):
                                         data.closed_points(project_stats), data.total_points(project_stats),
                                         "progressbar-smooth")
 
-        widget_list = [("weight", 0.3, text),
+        widget_list = [("weight", 0.4, text),
                        ("weight", 0.6, urwid.Padding(progressbar, align='center', left=2, right=2))]
         super().__init__(widget_list, **kwargs)
 
@@ -212,7 +212,7 @@ class DefinedPoints(urwid.Columns):
                                         data.defined_points(project_stats), data.total_points(project_stats),
                                         "progressbar-smooth-red")
 
-        widget_list = [("weight", 0.3, text),
+        widget_list = [("weight", 0.4, text),
                        ("weight", 0.6, urwid.Padding(progressbar, align='center', left=2, right=2))]
         super().__init__(widget_list, **kwargs)
 
