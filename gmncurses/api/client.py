@@ -47,6 +47,8 @@ class BaseClient(object):
             return data
         elif response.status_code == 204: # No content
             return True
+        else:
+            data = json.loads(response.content.decode())
 
         self.last_error = {
             "status_code": response.status_code,
