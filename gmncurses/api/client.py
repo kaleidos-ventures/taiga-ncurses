@@ -71,10 +71,11 @@ class BaseClient(object):
 
     def _delete(self, url, params):
         response = requests.delete(url, params=params, headers=self._headers)
-        data = json.loads(response.content.decode())
 
         if response.status_code == 204:
             return True
+
+        data = json.loads(response.content.decode())
 
         self.last_error = {
             "status_code": response.status_code,
