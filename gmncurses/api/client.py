@@ -42,7 +42,7 @@ class BaseClient(object):
 
         response = requests.post(url, data=rdata, params=params, headers=self._headers)
 
-        if response.status_code == 201:
+        if response.status_code in [200, 201]:
             data = json.loads(response.content.decode())
             return data
         elif response.status_code == 204: # No content
