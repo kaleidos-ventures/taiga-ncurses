@@ -624,12 +624,7 @@ class IssueEntry(urwid.WidgetWrap):
 class ProjectSprintsStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
-        self.widget = urwid.Columns([
-            ("weight", 0.25, urwid.Pile([ListText("testing")])),
-            ("weight", 0.25, urwid.Pile([ListText("testing")])),
-            ("weight", 0.20, urwid.Pile([ListText("testing")])),
-            ("weight", 0.30, urwid.Pile([ListText("testing")])),
-        ])
+        self.widget = urwid.Columns([ ])
         super().__init__(self.widget)
 
     def populate(self, milestone_stats):
