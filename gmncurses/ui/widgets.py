@@ -677,7 +677,7 @@ class ProjectSprintsUserStories(urwid.WidgetWrap):
 
         us_unassig = [t for t in milestone_tasks if t["user_story"] == None]
         if us_unassig:
-            self.widget.contents.append((urwid.AttrMap(urwid.LineBox(AttrMap(ListText("Unassigned tasks"),
+            self.widget.contents.append((urwid.AttrMap(urwid.LineBox(urwid.AttrMap(ListText("Unassigned tasks"),
                 "cyan", "focus-header")), "green"), ("weight", 0.1)))
             for una in us_unassig:
                 self.widget.contents.append((UserStoryTask(una, text, text_status), ("weight", 0.1)))
