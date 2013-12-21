@@ -18,5 +18,10 @@ Just execute these commands in your virtualenv(wrapper):
     $ python setup.py develop
     $ py.test
 
+Obviously you need the `greenmine backend`_ and, if you consider yourself a loser,
+you can use the `greenmine web client`_, sometimes. ;-)
 
 Note: greenmine-ncurses only runs with python 3.3+.
+
+.. _greenmine backend: https://github.com/kaleidos/greenmine-back
+.. _greenmine web client: https://github.com/kaleidos/greenmine-front
