@@ -17,8 +17,8 @@ DEFAULT_AUTH_FILE = os.path.join(DEFAULT_CONFIG_DIR, "auth.ini")
 
 PALETTE = [
     ("default", "white", "default"),
-    ("editor", "white", "black"),
-    ("password-editor", "light red", "black"),
+    ("editor", "white,underline", "black", ),
+    ("password-editor", "light red,underline", "black"),
     ("save-button", "white", "default"),
     ("submit-button", "white", "dark green"),
     ("cancel-button", "black", "dark gray"),

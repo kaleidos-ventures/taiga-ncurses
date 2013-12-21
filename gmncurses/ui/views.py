@@ -43,7 +43,14 @@ class LoginView(View):
         # Notifier
         self.notifier = widgets.Notifier("")
 
-        login_widget = widgets.Login([header, username_prompt, password_prompt, login_button_widget,
+        login_widget = widgets.Login([header,
+                                      widgets.box_solid_fill(" ", 2),
+                                      username_prompt,
+                                      widgets.box_solid_fill(" ", 1),
+                                      password_prompt,
+                                      widgets.box_solid_fill(" ", 2),
+                                      login_button_widget,
+                                      widgets.box_solid_fill(" ", 1),
                                       self.notifier])
         self.widget = widgets.center(login_widget)
 
