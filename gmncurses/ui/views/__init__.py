@@ -9,7 +9,7 @@ import functools
 
 import urwid
 
-from . import widgets
+from gmncurses.ui import widgets
 
 
 class View(object):

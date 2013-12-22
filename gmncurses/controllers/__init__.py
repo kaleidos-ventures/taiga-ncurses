@@ -8,8 +8,8 @@ gmncurses.controllers
 from concurrent.futures import wait
 import functools
 
-from .config import ProjectKeys, ProjectBacklogKeys, ProjectSprintKeys, ProjectIssuesKeys
-from .ui import signals
+from gmncurses.config import ProjectKeys, ProjectBacklogKeys, ProjectSprintKeys, ProjectIssuesKeys
+from gmncurses.ui import signals
 
 import gmncurses.data
 

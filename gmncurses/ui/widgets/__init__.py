@@ -8,8 +8,8 @@ gmncurses.ui.widgets
 import urwid
 from x256 import x256
 
-from . import mixins
 from gmncurses import data
+from gmncurses.ui import mixins
 
 
 def box_solid_fill(char, height):
