@@ -73,21 +73,21 @@ class GreenMineCore(object):
         self.configuration.config_dict["auth"]["token"] = auth_data["auth_token"]
 
     def _build_login_controller(self):
-        login_view = views.LoginView('username', 'password')
+        login_view = views.auth.LoginView('username', 'password')
         login_controller = controllers.auth.LoginController(login_view,
                                                             self.executor,
                                                             self.state_machine)
         return login_controller
 
     def _build_projects_controller(self):
-        projects_view = views.ProjectsView()
+        projects_view = views.projects.ProjectsView()
         projects_controller = controllers.projects.ProjectsController(projects_view,
                                                                       self.executor,
                                                                       self.state_machine)
         return projects_controller
 
     def _build_project_controller(self, project):
-        project_view = views.ProjectDetailView(project)
+        project_view = views.projects.ProjectDetailView(project)
         project_controller = controllers.projects.ProjectDetailController(project_view,
                                                                           self.executor,
                                                                           self.state_machine)

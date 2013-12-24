@@ -47,7 +47,7 @@ def test_login_controller_transitions_to_projects_on_successful_login():
 
 def test_projects_controller_click_on_project_requests_the_project_detail():
     projects = factories.projects()
-    projects_view = views.ProjectsView()
+    projects_view = views.projects.ProjectsView()
     executor = factories.patched_executor()
     _ = mock.Mock()
     projects_controller = controllers.projects.ProjectsController(projects_view, executor, _)
@@ -58,7 +58,7 @@ def test_projects_controller_click_on_project_requests_the_project_detail():
 
 def test_projects_controller_when_requesting_a_project_info_message_is_shown():
     projects = factories.projects()
-    projects_view = views.ProjectsView()
+    projects_view = views.projects.ProjectsView()
     projects_view.notifier = mock.Mock()
     executor = factories.patched_executor()
     _ = mock.Mock()
@@ -71,7 +71,7 @@ def test_projects_controller_when_requesting_a_project_info_message_is_shown():
 def test_projects_controller_click_on_project_when_project_is_fetched_transitions_to_project_detail():
     projects = factories.projects()
     fetched_project = projects[0]
-    projects_view = views.ProjectsView()
+    projects_view = views.projects.ProjectsView()
     executor = factories.patched_executor(project_detail=factories.future(fetched_project))
     state_machine = mock.Mock()
     projects_controller = controllers.projects.ProjectsController(projects_view, executor, state_machine)
@@ -83,7 +83,7 @@ def test_projects_controller_click_on_project_when_project_is_fetched_transition
 def test_projects_controller_when_project_fetching_fails_a_error_message_is_shown():
     projects = factories.projects()
     fetched_project = projects[0]
-    projects_view = views.ProjectsView()
+    projects_view = views.projects.ProjectsView()
     projects_view.notifier = mock.Mock()
     executor = factories.patched_executor(project_detail=factories.future(None))
     _ = mock.Mock()
@@ -95,7 +95,7 @@ def test_projects_controller_when_project_fetching_fails_a_error_message_is_show
 
 def test_project_detail_controller_fetches_user_stories_and_transitions_to_backlog():
     project = factories.project()
-    project_view = views.ProjectDetailView(project)
+    project_view = views.projects.ProjectDetailView(project)
     executor = factories.patched_executor()
     state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, state_machine)

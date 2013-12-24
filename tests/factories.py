@@ -9,7 +9,7 @@ from . import fixtures
 
 
 def login_view(username, password):
-    login_view = views.LoginView("username", "password")
+    login_view = views.auth.LoginView("username", "password")
     login_view._username_editor.set_edit_text(username)
     login_view._password_editor.set_edit_text(password)
     return login_view
