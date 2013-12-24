@@ -74,22 +74,23 @@ class GreenMineCore(object):
 
     def _build_login_controller(self):
         login_view = views.LoginView('username', 'password')
-        login_controller = controllers.LoginController(login_view,
-                self.executor, self.state_machine)
+        login_controller = controllers.auth.LoginController(login_view,
+                                                            self.executor,
+                                                            self.state_machine)
         return login_controller
 
     def _build_projects_controller(self):
         projects_view = views.ProjectsView()
-        projects_controller = controllers.ProjectsController(projects_view,
-                                                             self.executor,
-                                                             self.state_machine)
+        projects_controller = controllers.projects.ProjectsController(projects_view,
+                                                                      self.executor,
+                                                                      self.state_machine)
         return projects_controller
 
     def _build_project_controller(self, project):
         project_view = views.ProjectDetailView(project)
-        project_controller = controllers.ProjectDetailController(project_view,
-                                                                 self.executor,
-                                                                 self.state_machine)
+        project_controller = controllers.projects.ProjectDetailController(project_view,
+                                                                          self.executor,
+                                                                          self.state_machine)
         return project_controller
 
 

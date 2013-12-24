@@ -12,14 +12,14 @@ def test_if_client_is_not_authenticated_the_login_view_is_shown_on_startup():
     executor = factories.patched_executor()
     configuration = Configuration()
     core = GreenMineCore(executor, configuration, authenticated=False)
-    assert isinstance(core.controller, controllers.LoginController)
+    assert isinstance(core.controller, controllers.auth.LoginController)
     assert core.state_machine.state == StateMachine.LOGIN
 
 def test_if_client_is_authenticated_the_projects_view_is_shown_on_startup():
     executor = factories.patched_executor()
     configuration = Configuration()
     core = GreenMineCore(executor, configuration, authenticated=True, draw=False)
-    assert isinstance(core.controller, controllers.ProjectsController)
+    assert isinstance(core.controller, controllers.projects.ProjectsController)
     assert core.state_machine.state == StateMachine.PROJECTS
 
 def test_transitioning_from_projects_to_project_detail_and_project_backlog():
@@ -33,12 +33,12 @@ def test_transitioning_from_projects_to_project_detail_and_project_backlog():
                                           project_stats=stats,)
     configuration = Configuration()
     core = GreenMineCore(executor, configuration, authenticated=True, draw=False)
-    assert isinstance(core.controller, controllers.ProjectsController)
+    assert isinstance(core.controller, controllers.projects.ProjectsController)
     assert core.state_machine.state == StateMachine.PROJECTS
     core.state_machine.project_detail(project)
     project_f.set_result(project)
     us.set_result([])
     stats.set_result(factories.project_stats())
-    assert isinstance(core.controller, controllers.ProjectDetailController)
+    assert isinstance(core.controller, controllers.projects.ProjectDetailController)
     assert core.state_machine.state == StateMachine.PROJECT_BACKLOG
 
