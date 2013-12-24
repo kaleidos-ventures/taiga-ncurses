@@ -9,7 +9,7 @@ import urwid
 from x256 import x256
 
 from gmncurses import data
-from gmncurses.ui import mixins
+from . import mixins
 
 
 def box_solid_fill(char, height):

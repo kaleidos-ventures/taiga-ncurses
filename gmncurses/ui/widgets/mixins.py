@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-gmncurses.ui.mixins
-~~~~~~~~~~~~~~~~~~~
+gmncurses.ui.widgets.mixins
+~~~~~~~~~~~~~~~~~--------~~
 """
 
 import urwid
