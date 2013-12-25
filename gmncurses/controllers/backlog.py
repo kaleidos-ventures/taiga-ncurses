@@ -2,7 +2,7 @@
 
 """
 gmncurses.controllers.backlog
-~~~~~~~~~~~~~~~~~~~~~--------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait

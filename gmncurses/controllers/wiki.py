@@ -2,7 +2,7 @@
 
 """
 gmncurses.controllers.wiki
-~~~~~~~~~~~~~~~~~~~~~-----
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait

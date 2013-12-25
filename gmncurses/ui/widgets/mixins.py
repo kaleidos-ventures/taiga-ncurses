@@ -2,7 +2,7 @@
 
 """
 gmncurses.ui.widgets.mixins
-~~~~~~~~~~~~~~~~~--------~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid

@@ -2,7 +2,7 @@
 
 """
 gmncurses.ui.views.auth
------~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from gmncurses.ui import widgets

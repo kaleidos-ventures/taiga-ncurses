@@ -2,7 +2,7 @@
 
 """
 gmncurses.ui.views.projects
----------~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import functools

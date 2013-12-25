@@ -2,7 +2,7 @@
 
 """
 gmncurses.controllers.projects
-~~~~~~~~~~~~~~~~~~~~~---------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import functools

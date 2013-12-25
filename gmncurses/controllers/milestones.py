@@ -2,7 +2,7 @@
 
 """
 gmncurses.controllers.milestone
-~~~~~~~~~~~~~~~~~~~~~----------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait

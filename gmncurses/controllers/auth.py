@@ -2,7 +2,7 @@
 
 """
 gmncurses.controllers.auth
-~~~~~~~~~~~~~~~~~~~~~-----
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from gmncurses.ui import signals
