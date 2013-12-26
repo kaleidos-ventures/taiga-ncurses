@@ -13,7 +13,9 @@ from . import base
 
 
 class ProjectBacklogSubView(base.SubView):
-    def __init__(self, project, notifier, tabs):
+    def __init__(self, parent_view, project, notifier, tabs):
+        super().__init__(parent_view)
+
         self.project = project
         self.notifier = notifier
 
@@ -32,10 +34,11 @@ class ProjectBacklogSubView(base.SubView):
 
     def open_user_story_form(self, user_story={}):
         self.user_story_form = widgets.UserStoryForm(self.project, user_story=user_story)
-        self.widget.body[4] = self.user_story_form
+        # FIXME: Calculate the form size
+        self.parent.show_widget_on_top(self.user_story_form, 150, 22)
 
-    def show_user_stories_list(self):
-        self.widget.body[4] = self.user_stories
+    def close_user_story_form(self):
+        self.parent.hide_widget_on_top()
 
     def get_user_story_form_data(self):
         data = {

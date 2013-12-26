@@ -52,11 +52,11 @@ class ProjectDetailView(base.View):
         self.tabs = widgets.Tabs(self.TABS)
 
         # Subviews
-        self.backlog = ProjectBacklogSubView(project, self.notifier, self.tabs)
-        self.sprint = ProjectMilestoneSubView(project, self.notifier, self.tabs)
-        self.issues = ProjectIssuesSubView(project, self.notifier, self.tabs)
-        self.wiki = ProjectWikiSubView(project, self.notifier, self.tabs)
-        self.admin = ProjectAdminSubView(project, self.notifier, self.tabs)
+        self.backlog = ProjectBacklogSubView(self, project, self.notifier, self.tabs)
+        self.sprint = ProjectMilestoneSubView(self, project, self.notifier, self.tabs)
+        self.issues = ProjectIssuesSubView(self, project, self.notifier, self.tabs)
+        self.wiki = ProjectWikiSubView(self, project, self.notifier, self.tabs)
+        self.admin = ProjectAdminSubView(self, project, self.notifier, self.tabs)
 
         self.widget = urwid.Frame(self.backlog.widget,
                                   header=widgets.ProjectDetailHeader(project),
@@ -84,7 +84,9 @@ class ProjectDetailView(base.View):
 
 
 class ProjectAdminSubView(base.SubView):
-    def __init__(self, project, notifier, tabs):
+    def __init__(self, parent_view, project, notifier, tabs):
+        super().__init__(parent_view)
+
         self.project = project
         self.notifier = notifier
 

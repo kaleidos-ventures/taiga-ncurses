@@ -73,7 +73,7 @@ class ProjectBacklogSubController(base.Controller):
                 lambda _: self.handler_edit_user_story_request(user_story))
 
     def cancel_user_story_form(self):
-        self.view.show_user_stories_list()
+        self.view.close_user_story_form()
 
     def delete_user_story(self):
         user_story = self.view.user_stories.widget.get_focus().user_story
@@ -149,7 +149,7 @@ class ProjectBacklogSubController(base.Controller):
             self.view.notifier.error_msg("Create error")
         else:
             self.view.notifier.info_msg("Create succesful!")
-            self.view.show_user_stories_list()
+            self.view.close_user_story_form()
 
             project_stats_f = self.executor.project_stats(self.view.project)
             project_stats_f.add_done_callback(self.handle_project_stats)
@@ -177,7 +177,7 @@ class ProjectBacklogSubController(base.Controller):
             self.view.notifier.error_msg("Edit error")
         else:
             self.view.notifier.info_msg("Edit succesful!")
-            self.view.show_user_stories_list()
+            self.view.close_user_story_form()
 
             project_stats_f = self.executor.project_stats(self.view.project)
             project_stats_f.add_done_callback(self.handle_project_stats)

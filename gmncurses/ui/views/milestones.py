@@ -13,7 +13,9 @@ from . import base
 
 
 class ProjectMilestoneSubView(base.SubView):
-    def __init__(self, project, notifier, tabs):
+    def __init__(self, parent_view, project, notifier, tabs):
+        super().__init__(parent_view)
+
         self.project = project
         self.notifier = notifier
 

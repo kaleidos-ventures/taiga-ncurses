@@ -47,7 +47,7 @@ def password_prompt(password_text, editor, max_prompt_padding):
 
 
 def wrap_login_button(button):
-    return urwid.AttrWrap(urwid.LineBox(button), "save-button")
+    return urwid.LineBox(button)
 
 
 def button(text, align=None):
@@ -337,8 +337,8 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         self.widget = urwid.Pile(contents)
 
         title = "Edit User Story" if self.user_story else "Create User Story"
-        super().__init__(urwid.Padding(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
-                                                     title), right=6, left=6))
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup-form"))
 
     @property
     def subject(self):
@@ -373,7 +373,7 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         self._subject_edit = urwid.Edit(edit_text=self.user_story.get("subject", ""))
 
         colum_items = [(17, urwid.Padding(ListText("Subject", align="right"), right=4))]
-        colum_items.append(urwid.AttrMap(self._subject_edit, "editor"))
+        colum_items.append(urwid.AttrMap(self._subject_edit, "popup-editor"))
         return urwid.Columns(colum_items)
 
     def _points_input(self):
@@ -438,14 +438,14 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
         self._tags_edit = urwid.Edit(edit_text=", ".join(self.user_story.get("tags", [])))
 
         colum_items = [(17, urwid.Padding(ListText("Tags", align="right"), right=4))]
-        colum_items.append(urwid.AttrMap(self._tags_edit, "editor"))
+        colum_items.append(urwid.AttrMap(self._tags_edit, "popup-editor"))
         return urwid.Columns(colum_items)
 
     def _description_input(self):
         self._description_edit = urwid.Edit(multiline=True, edit_text=self.user_story.get("subject", ""))
 
         colum_items = [(17, urwid.Padding(ListText("Description", align="right"), right=4))]
-        colum_items.append(urwid.AttrMap(self._description_edit, "editor"))
+        colum_items.append(urwid.AttrMap(self._description_edit, "popup-editor"))
         return urwid.Columns(colum_items)
 
     def _requirements_input(self):
@@ -465,10 +465,10 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
 
         colum_items = [("weight", 1, urwid.Text(""))]
         colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
-                                              "submit-button") ))
+                                              "popup-submit-button")))
         colum_items.append((2, urwid.Text(" ")))
         colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
-                                              "cancel-button") ))
+                                              "popup-cancel-button")))
         return urwid.Columns(colum_items)
 
 
