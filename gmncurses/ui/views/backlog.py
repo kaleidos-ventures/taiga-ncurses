@@ -13,6 +13,23 @@ from . import base
 
 
 class ProjectBacklogSubView(base.SubView):
+    help_info = (
+       ( "Backlog Movements:", (
+           ("↑ | k | ctrl p", "Move Up"),
+           ("↓ | j | ctrl n", "Move Down"),
+           ("← | h | ctrl b", "Move Left"),
+           ("→ | l | ctrl f", "Move Right"),
+       )),
+       ( "User Stories Actions:", (
+           ("i", "Create new US"),
+           ("e", "Edit selected US"),
+           ("Supr", "Delete selected US"),
+           ("K", "Move selected US up"),
+           ("J", "Move selected US down"),
+           ("w", "Save the position of all USs"),
+       )),
+    )
+
     def __init__(self, parent_view, project, notifier, tabs):
         super().__init__(parent_view)
 
@@ -53,3 +70,10 @@ class ProjectBacklogSubView(base.SubView):
         }
         return data
 
+    def open_help_popup(self):
+        self.help_popup = widgets.HelpPopup("Backlog Help Info", self.help_info)
+        # FIXME: Calculate the popup size
+        self.parent.show_widget_on_top(self.help_popup, 60, 23)
+
+    def close_help_popup(self):
+        self.parent.hide_widget_on_top()

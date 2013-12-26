@@ -21,7 +21,8 @@ PALETTE = [
     ("password-editor", "light red,underline", "black"),
     ("submit-button", "white", "dark green"),
     ("cancel-button", "black", "light gray"),
-    ("popup-form", "white", "dark gray"),
+    ("popup", "white", "dark gray"),
+    ("popup-section-title", "white,underline,bold", "dark gray"),
     ("popup-editor", "white,underline", "dark gray"),
     ("popup-submit-button", "white", "dark green"),
     ("popup-cancel-button", "black", "light gray"),
@@ -78,14 +79,17 @@ class ProjectBacklogKeys(metaclass=KeyConfigMeta):
     US_UP = "K"
     US_DOWN = "J"
     RELOAD = "r"
+    HELP = "?"
 
 
 class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
     RELOAD = "r"
+    HELP = "?"
 
 
 class ProjectIssuesKeys(metaclass=KeyConfigMeta):
     RELOAD = "r"
+    HELP = "?"
 
 
 DEFAULTS = {

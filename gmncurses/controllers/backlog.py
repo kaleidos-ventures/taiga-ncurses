@@ -35,6 +35,8 @@ class ProjectBacklogSubController(base.Controller):
             self.update_user_stories_order()
         elif key == ProjectBacklogKeys.RELOAD:
             self.load()
+        elif key == ProjectBacklogKeys.HELP:
+            self.help_info()
         return super().handle(key)
 
     def load(self):
@@ -108,6 +110,15 @@ class ProjectBacklogSubController(base.Controller):
     def update_user_stories_order(self):
         uss_post_f = self.executor.update_user_stories_order(self.user_stories, self.view.project)
         uss_post_f.add_done_callback(self.handler_update_user_stories_order_response)
+
+    def help_info(self):
+        self.view.open_help_popup()
+
+        signals.connect(self.view.help_popup.close_button, "click",
+                lambda _: self.close_help_info())
+
+    def close_help_info(self):
+        self.view.close_help_popup()
 
     def handle_project_stats(self, future):
         self.project_stats = future.result()

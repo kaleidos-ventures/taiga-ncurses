@@ -156,6 +156,41 @@ class Tabs(mixins.NonSelectableMixin, urwid.WidgetWrap):
         return urwid.LineBox(urwid.Text(text + " "))
 
 
+class HelpPopup(urwid.WidgetWrap):
+    # FIXME: Remove solid_fill and use the Fill decorator
+    def __init__(self, title="Help", content={}):
+        contents = [box_solid_fill(" ", 1)]
+
+        for name, actions in content:
+            contents += self._section(name, actions)
+            contents.append(box_solid_fill(" ", 2))
+
+        contents.append(self._buttons())
+        contents.append(box_solid_fill(" ", 1))
+
+        self.widget = urwid.Pile(contents)
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+    def _section(self, name, actions):
+        items = [urwid.Text(("popup-section-title", name))]
+        items.append(box_solid_fill(" ", 1))
+
+        for keys, description in actions:
+            colum_items = [(18, urwid.Padding(ListText(keys, align="center"), right=2))]
+            colum_items.append(urwid.Text(description))
+            items.append(urwid.Padding(urwid.Columns(colum_items), left=2))
+
+        return items
+
+    def _buttons(self):
+        self.close_button = PlainButton("Close")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.close_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)
+
+
 class ProjectBacklogStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
@@ -338,7 +373,7 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
 
         title = "Edit User Story" if self.user_story else "Create User Story"
         super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
-                                                     title), "popup-form"))
+                                                     title), "popup"))
 
     @property
     def subject(self):
