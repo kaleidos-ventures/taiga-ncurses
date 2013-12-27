@@ -1,7 +1,6 @@
 urwid==1.1.1
 requests==2.0.1
 x256==0.0.3
-coverage==3.7.1
 
 # For debug only
 #ipdb
