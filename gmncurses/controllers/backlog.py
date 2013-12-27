@@ -37,7 +37,8 @@ class ProjectBacklogSubController(base.Controller):
             self.load()
         elif key == ProjectBacklogKeys.HELP:
             self.help_info()
-        return super().handle(key)
+        else:
+            super().handle(key)
 
     def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_BACKLOG)

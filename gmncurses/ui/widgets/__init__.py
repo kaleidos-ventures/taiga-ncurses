@@ -163,7 +163,7 @@ class HelpPopup(urwid.WidgetWrap):
 
         for name, actions in content:
             contents += self._section(name, actions)
-            contents.append(box_solid_fill(" ", 2))
+            contents.append(box_solid_fill(" ", 1))
 
         contents.append(self._buttons())
         contents.append(box_solid_fill(" ", 1))

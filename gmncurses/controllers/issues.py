@@ -23,7 +23,10 @@ class ProjectIssuesSubController(base.Controller):
     def handle(self, key):
         if key == ProjectIssuesKeys.RELOAD:
             self.load()
-        return super().handle(key)
+        elif key == ProjectIssuesKeys.HELP:
+            self.help_info()
+        else:
+            super().handle(key)
 
 
     def load(self):
@@ -40,6 +43,15 @@ class ProjectIssuesSubController(base.Controller):
         futures = (issues_stats_f, issues_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def help_info(self):
+        self.view.open_help_popup()
+
+        signals.connect(self.view.help_popup.close_button, "click",
+                lambda _: self.close_help_info())
+
+    def close_help_info(self):
+        self.view.close_help_popup()
 
     def handle_issues_stats(self, future):
         self.issues_stats = future.result()
