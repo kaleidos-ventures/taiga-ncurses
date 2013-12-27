@@ -2,5 +2,15 @@ language: python
 python:
   - "3.3"
 # dependencies
-install: pip install -r dev-requirements.txt --use-mirrors
-script: py.test
+install:
+  - pip install -r dev-requirements.txt --use-mirrors
+script:
+  - coverage run --source=gmncurses --omit='*tests*' py.test
+notifications:
+  email:
+    recipients:
+      - bameda@dbarragan.com
+    on_success: change
+    on_failure: change
+after_success:
+  - coveralls
