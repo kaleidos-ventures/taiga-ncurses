@@ -103,15 +103,26 @@ def test_project_detail_controller_fetches_user_stories_and_transitions_to_backl
 
     assert state_machine.state == state_machine.PROJECT_BACKLOG
 
-def test_project_detail_controller_fetches_issues_and_transitions_to_backlog():
+def test_project_detail_controller_fetches_issues_and_transitions_to_issues():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
     executor = factories.patched_executor()
     state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor,
                                                                              state_machine)
-
     assert state_machine.state == state_machine.PROJECT_BACKLOG
 
     project_detail_controller.handle(config.ProjectKeys.ISSUES)
     assert state_machine.state == state_machine.PROJECT_ISSUES
+
+def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskboard():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor,
+                                                                             state_machine)
+    assert state_machine.state == state_machine.PROJECT_BACKLOG
+
+    project_detail_controller.handle(config.ProjectKeys.SPRINT)
+    assert state_machine.state == state_machine.PROJECT_SPRINT

@@ -234,7 +234,6 @@ def task_status_with_color(task, project, default_color="#ffffff"):
                     task_statuses[str(status_id)]["name"])
         except KeyError:
             pass
-        return str(status)
     return (default_color, "---")
 
 # wiki_page - Wiki page

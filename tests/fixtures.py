@@ -347,7 +347,7 @@ PROJECTS = """
 ]
 """
 
-USER_STORIES = """
+UNASSIGNED_USER_STORIES = """
 [
     {
         "tags": [
@@ -1952,6 +1952,416 @@ ISSUES = """
         "subject": "Lighttpd x-sendfile support",
         "description": "Eligendi quidem delectus aliquid dolorum placeat minus suscipit quisquam, quo illo repudiandae, autem pariatur modi sapiente totam fuga eum? Repudiandae explicabo animi nisi nesciunt enim odit architecto, reiciendis maiores alias at magni iusto commodi atque sint, consequatur enim ipsa optio officiis, quos deserunt eos fugiat nam numquam ullam necessitatibus cum distinctio incidunt, doloribus amet sapiente sunt fugiat magni ea praesentium. Ex voluptas magnam vitae, velit aliquam maxime repudiandae nam fugiat atque libero possimus vero doloribus. Suscipit vitae cumque ipsa.",
         "assigned_to": 10,
+        "watchers": []
+    }
+]
+"""
+
+MILESTONE_STATS = """
+{
+    "estimated_finish": "2013-12-25",
+    "name": "Sprint 2013-12-10",
+    "days": [
+        {
+            "name": 10,
+            "day": "2013-12-10",
+            "optimal_points": 75.5,
+            "open_points": 75.5
+        },
+        {
+            "name": 11,
+            "day": "2013-12-11",
+            "optimal_points": 70.46666666666667,
+            "open_points": 75.5
+        },
+        {
+            "name": 12,
+            "day": "2013-12-12",
+            "optimal_points": 65.43333333333334,
+            "open_points": 75.5
+        },
+        {
+            "name": 13,
+            "day": "2013-12-13",
+            "optimal_points": 60.400000000000006,
+            "open_points": 75.5
+        },
+        {
+            "name": 14,
+            "day": "2013-12-14",
+            "optimal_points": 55.366666666666674,
+            "open_points": 75.5
+        },
+        {
+            "name": 15,
+            "day": "2013-12-15",
+            "optimal_points": 50.33333333333334,
+            "open_points": 75.5
+        },
+        {
+            "name": 16,
+            "day": "2013-12-16",
+            "optimal_points": 45.30000000000001,
+            "open_points": 75.5
+        },
+        {
+            "name": 17,
+            "day": "2013-12-17",
+            "optimal_points": 40.26666666666668,
+            "open_points": 75.5
+        },
+        {
+            "name": 18,
+            "day": "2013-12-18",
+            "optimal_points": 35.23333333333335,
+            "open_points": 75.5
+        },
+        {
+            "name": 19,
+            "day": "2013-12-19",
+            "optimal_points": 30.200000000000017,
+            "open_points": 75.5
+        },
+        {
+            "name": 20,
+            "day": "2013-12-20",
+            "optimal_points": 25.166666666666686,
+            "open_points": 75.5
+        },
+        {
+            "name": 21,
+            "day": "2013-12-21",
+            "optimal_points": 20.133333333333354,
+            "open_points": 75.5
+        },
+        {
+            "name": 22,
+            "day": "2013-12-22",
+            "optimal_points": 15.100000000000021,
+            "open_points": 75.5
+        },
+        {
+            "name": 23,
+            "day": "2013-12-23",
+            "optimal_points": 10.066666666666688,
+            "open_points": 75.5
+        },
+        {
+            "name": 24,
+            "day": "2013-12-24",
+            "optimal_points": 5.0333333333333545,
+            "open_points": 75.5
+        },
+        {
+            "name": 25,
+            "day": "2013-12-25",
+            "optimal_points": 2.1316282072803006e-14,
+            "open_points": 75.5
+        }
+    ],
+    "total_tasks": 10,
+    "total_userstories": 3,
+    "completed_tasks": 8,
+    "total_points": {
+        "1": 35.0,
+        "2": 10.5,
+        "3": 10.0,
+        "4": 20.0
+    },
+    "completed_points": [
+        0.5,
+        5.0,
+        15.0
+    ],
+    "estimated_start": "2013-12-10",
+    "completed_userstories": 1
+}
+"""
+
+USER_STORIES = """
+[
+    {
+        "tags": [
+            "itaque"
+        ],
+        "points": {
+            "4": 7,
+            "1": 11,
+            "3": 2,
+            "2": 8
+        },
+        "total_points": 33.0,
+        "comment": "",
+        "id": 16,
+        "ref": 17,
+        "milestone": 4,
+        "project": 1,
+        "owner": 9,
+        "status": 2,
+        "is_closed": false,
+        "order": 100,
+        "created_date": "2013-12-20T09:53:53.225Z",
+        "modified_date": "2013-12-20T11:00:32.566Z",
+        "finish_date": null,
+        "subject": "Lighttpd x-sendfile support",
+        "description": "Minima nisi commodi et exercitationem corrupti est, explicabo illum sit perspiciatis minima natus omnis labore ducimus laudantium, reiciendis totam dicta, ut explicabo velit, odit quibusdam repellendus eaque adipisci a necessitatibus pariatur delectus corrupti dolorem? Fugiat ab impedit delectus iste voluptatibus asperiores ea at dignissimos mollitia quidem? Perferendis fugiat neque modi similique est? Nostrum nam saepe qui neque soluta eveniet, dolorum in earum porro officiis ex officia necessitatibus aperiam modi?",
+        "client_requirement": false,
+        "team_requirement": false,
+        "watchers": []
+    },
+    {
+        "tags": [
+            "alias"
+        ],
+        "points": {
+            "4": 2,
+            "1": 10,
+            "3": 7,
+            "2": 5
+        },
+        "total_points": 22.0,
+        "comment": "",
+        "id": 17,
+        "ref": 18,
+        "milestone": 4,
+        "project": 1,
+        "owner": 9,
+        "status": 1,
+        "is_closed": false,
+        "order": 100,
+        "created_date": "2013-12-20T09:53:53.920Z",
+        "modified_date": "2013-12-20T09:53:53.920Z",
+        "finish_date": null,
+        "subject": "Experimental: modular file types",
+        "description": "Dolorum similique ipsum perspiciatis porro libero expedita sapiente. Cupiditate neque dolorum nobis soluta rem voluptates labore, consectetur provident blanditiis officiis rem tempore id alias voluptatum libero fugiat, veniam omnis repellendus adipisci eaque nihil ducimus reprehenderit dolorem mollitia possimus eveniet, ab reiciendis temporibus omnis ducimus, magni quia vel voluptatum voluptates veniam dolore aspernatur rem. Animi facere beatae odio fugit itaque repellat obcaecati? Ipsum nobis sed, totam doloribus est deserunt, sint non et cupiditate repellat, tempora ex asperiores error earum perferendis assumenda, repellat nostrum aliquam earum delectus culpa dolores velit fugit blanditiis corrupti labore?",
+        "client_requirement": false,
+        "team_requirement": false,
+        "watchers": []
+    },
+    {
+        "tags": [
+            "molestias",
+            "dolor",
+            "voluptate"
+        ],
+        "points": {
+            "4": 10,
+            "1": 2,
+            "3": 7,
+            "2": 3
+        },
+        "total_points": 20.5,
+        "comment": "",
+        "id": 18,
+        "ref": 19,
+        "milestone": 4,
+        "project": 1,
+        "owner": 4,
+        "status": 2,
+        "is_closed": true,
+        "order": 100,
+        "created_date": "2013-12-20T09:53:54.406Z",
+        "modified_date": "2013-12-20T11:00:29.361Z",
+        "finish_date": "2013-12-26T16:53:43.979Z",
+        "subject": "get_actions() does not check for 'delete_selected' in actions",
+        "description": "Excepturi quod itaque at eos nisi aspernatur neque. Iure iusto quod non assumenda et, fugit qui reprehenderit quasi exercitationem quidem consequuntur obcaecati similique ratione, iusto obcaecati reprehenderit voluptatibus nemo minima cupiditate voluptatum quam et, corrupti laboriosam nemo excepturi laborum temporibus iste dolor aspernatur.",
+        "client_requirement": false,
+        "team_requirement": false,
+        "watchers": []
+    }
+]
+"""
+
+MILESTONE_TASKS = """
+[
+    {
+        "tags": "",
+        "comment": "",
+        "id": 35,
+        "user_story": 16,
+        "ref": 36,
+        "owner": 3,
+        "status": 1,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:53.462Z",
+        "modified_date": "2013-12-26T16:54:54.931Z",
+        "finished_date": null,
+        "subject": "Experimental: modular file types",
+        "description": "Praesentium tempora molestias quis autem iste. Esse perspiciatis eos odio nemo, accusamus adipisci doloremque nesciunt temporibus consequatur dolore tempora dolorum, necessitatibus fugiat non veniam mollitia adipisci nesciunt quibusdam accusamus quidem quis consequuntur, error sunt fugit dolorem suscipit, rem numquam dicta nemo sapiente.",
+        "assigned_to": 9,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 36,
+        "user_story": 16,
+        "ref": 37,
+        "owner": 11,
+        "status": 3,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:53.631Z",
+        "modified_date": "2013-12-26T16:53:45.988Z",
+        "finished_date": "2013-12-26T16:53:43.960Z",
+        "subject": "Create the user model",
+        "description": "Id reiciendis repudiandae, quisquam aut eaque dolorem dignissimos quidem perferendis aliquam ea necessitatibus soluta, amet tenetur aliquid cumque alias eligendi qui quos deserunt, earum odio deleniti itaque magnam rerum ratione eaque maiores in, corporis magni ut perspiciatis numquam expedita commodi. Sapiente praesentium mollitia possimus, exercitationem ex quia delectus labore dolorum nesciunt, eaque tempora nesciunt at ducimus commodi recusandae, debitis ipsa officia iure illo. Voluptas accusantium omnis ex sed molestiae dicta quaerat, labore iure deserunt sed, quibusdam deleniti consequatur totam vero, unde fugiat dolorum iure odit voluptatum suscipit dolor? Voluptate reiciendis dicta quo debitis beatae aut id vel, natus accusantium eaque assumenda ipsa cum quibusdam illo fuga ullam ut, ad iure quis dolorum illo non, nulla officia maxime mollitia distinctio eligendi dolorem fugit exercitationem vitae expedita ex.",
+        "assigned_to": 10,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 37,
+        "user_story": 16,
+        "ref": 38,
+        "owner": 7,
+        "status": 3,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:53.793Z",
+        "modified_date": "2013-12-26T16:53:20.646Z",
+        "finished_date": "2013-12-26T16:53:20.641Z",
+        "subject": "Feature/improved image admin",
+        "description": "Reprehenderit perferendis molestiae velit, natus deserunt soluta porro saepe quos sunt illum?",
+        "assigned_to": 11,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 38,
+        "user_story": 17,
+        "ref": 39,
+        "owner": 2,
+        "status": 4,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:54.138Z",
+        "modified_date": "2013-12-20T09:53:54.138Z",
+        "finished_date": "2013-12-20T09:53:54.064Z",
+        "subject": "Feature/improved image admin",
+        "description": "Aspernatur quibusdam mollitia eum similique non nemo, saepe quidem quos velit dolorem illum. Possimus quasi voluptas rem optio, a sunt voluptates modi pariatur suscipit ipsam eos velit distinctio illo sed, molestiae esse doloribus, rem minima molestiae sit optio ea ipsam sed alias, veniam eos quos molestias corporis ab doloribus vero. Reiciendis corrupti delectus praesentium similique.",
+        "assigned_to": 1,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 39,
+        "user_story": 17,
+        "ref": 40,
+        "owner": 4,
+        "status": 1,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:54.281Z",
+        "modified_date": "2013-12-20T09:53:54.281Z",
+        "finished_date": null,
+        "subject": "Create the user model",
+        "description": "Ducimus nulla at, atque impedit ullam ab fugit deserunt excepturi, quaerat vero consequuntur quis eum iste explicabo. Vitae optio ipsum, quasi quod autem cumque earum aspernatur eveniet perferendis officiis soluta consequuntur, delectus temporibus quis molestias eos ipsa atque sit. Aperiam iste minus esse quae nesciunt impedit, quas expedita facilis illo quia maxime voluptates a aperiam odio, voluptatibus consequuntur repellat ullam eum? Debitis porro sed, dicta quos minima veritatis optio ipsam et?",
+        "assigned_to": 4,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 40,
+        "user_story": 18,
+        "ref": 41,
+        "owner": 2,
+        "status": 4,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:54.615Z",
+        "modified_date": "2013-12-20T09:53:54.615Z",
+        "finished_date": "2013-12-20T09:53:54.532Z",
+        "subject": "Exception is thrown if trying to add a folder with existing name",
+        "description": "Consectetur hic labore assumenda quo deserunt iusto asperiores est eum, nesciunt illo earum ducimus temporibus modi blanditiis facilis libero autem rerum dolor, illo facilis neque labore quo maiores odio molestias recusandae?",
+        "assigned_to": 5,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 41,
+        "user_story": 18,
+        "ref": 42,
+        "owner": 4,
+        "status": 4,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:54.795Z",
+        "modified_date": "2013-12-20T09:53:54.795Z",
+        "finished_date": "2013-12-20T09:53:54.714Z",
+        "subject": "Feature/improved image admin",
+        "description": "Repellat nam maiores porro sit pariatur quo quia, temporibus dolorem pariatur, rerum magni cupiditate, sapiente maiores exercitationem ex doloribus quis distinctio totam sit nisi esse, quia ducimus in iste distinctio pariatur impedit similique sequi molestias quo?",
+        "assigned_to": 9,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 42,
+        "user_story": 18,
+        "ref": 43,
+        "owner": 2,
+        "status": 4,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:54.915Z",
+        "modified_date": "2013-12-20T09:53:54.915Z",
+        "finished_date": "2013-12-20T09:53:54.833Z",
+        "subject": "Support for bulk actions",
+        "description": "Voluptatum ducimus animi fuga atque facere reprehenderit debitis molestias. Sed velit voluptatum quibusdam enim perspiciatis commodi quam quod necessitatibus iste iure, nesciunt tempore corporis illo distinctio ipsum error nulla, numquam quidem sint ipsum perferendis et voluptatum fuga quod recusandae, maiores ut amet laboriosam, rem repellat necessitatibus odit pariatur ut a veniam. Impedit perspiciatis maiores aliquid, ipsum asperiores laudantium, molestias cumque hic, culpa ipsum deleniti enim? Facere incidunt eligendi neque accusantium voluptatum inventore, laborum fugiat debitis nobis, pariatur laboriosam obcaecati ducimus eos expedita facilis excepturi nemo recusandae, dolorem doloribus fuga officiis laborum cumque voluptatibus quam pariatur incidunt ea, sit aliquid quo?",
+        "assigned_to": 7,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 43,
+        "user_story": 18,
+        "ref": 44,
+        "owner": 11,
+        "status": 3,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:55.122Z",
+        "modified_date": "2013-12-26T16:53:40.157Z",
+        "finished_date": "2013-12-26T16:53:40.150Z",
+        "subject": "Implement the form",
+        "description": "Dolores voluptatibus magnam dolorem quaerat velit, saepe fuga harum vero alias veritatis placeat? Facere molestias quis sed qui magni adipisci placeat, consequatur nulla enim hic neque pariatur minus necessitatibus, iure voluptas quos illum aliquid numquam molestiae doloremque fugiat. Repellendus enim fugit quod fugiat veritatis quibusdam ipsam sapiente, eaque nulla nesciunt obcaecati pariatur consequuntur, eaque quo aperiam dolor?",
+        "assigned_to": 8,
+        "is_iocaine": false,
+        "watchers": []
+    },
+    {
+        "tags": "",
+        "comment": "",
+        "id": 44,
+        "user_story": 18,
+        "ref": 45,
+        "owner": 3,
+        "status": 3,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:55.326Z",
+        "modified_date": "2013-12-26T16:53:44.415Z",
+        "finished_date": "2013-12-26T16:53:43.971Z",
+        "subject": "Lighttpd support",
+        "description": "Velit aut sint tenetur ut fugit unde reprehenderit repellat? Vel cupiditate quibusdam veniam inventore rerum quam illo sapiente voluptates, temporibus sint voluptatum vitae consectetur, architecto enim iusto velit assumenda esse magni libero natus, nesciunt tempora hic quam. Distinctio incidunt corporis voluptate sed aperiam maxime itaque ea delectus nisi, excepturi nam nesciunt enim facere magni minus?",
+        "assigned_to": 9,
+        "is_iocaine": false,
         "watchers": []
     }
 ]

@@ -51,17 +51,18 @@ def project_issues_stats():
 
 # Milestones
 def milestone_stats():
-    # TODO
-    pass
+    return json.loads(fixtures.MILESTONE_STATS)
 
 # User Stories
 def unassigned_user_stories():
+    return json.loads(fixtures.UNASSIGNED_USER_STORIES)
+
+def user_stories():
     return json.loads(fixtures.USER_STORIES)
 
 # Tasks
 def milestone_tasks():
-    # TODO
-    pass
+    return json.loads(fixtures.MILESTONE_TASKS)
 
 # Issues
 def issues():
@@ -82,6 +83,9 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      project_detail=future(project()),
                      project_stats=future(project_stats()),
                      unassigned_user_stories=future(unassigned_user_stories()),
+                     milestone_stats=future(milestone_stats()),
+                     user_stories=future(user_stories()),
+                     milestone_tasks=future(milestone_tasks()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues())):
     executor = Executor(mock.Mock())
@@ -90,6 +94,9 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.project_detail = mock.Mock(return_value=project_detail)
     executor.project_stats = mock.Mock(return_value=project_stats)
     executor.unassigned_user_stories = mock.Mock(return_value=unassigned_user_stories)
+    executor.milestone_stats = mock.Mock(return_value=milestone_stats)
+    executor.user_stories = mock.Mock(return_value=user_stories)
+    executor.milestone_tasks = mock.Mock(return_value=milestone_tasks)
     executor.project_issues_stats = mock.Mock(return_value=project_issues_stats)
     executor.issues = mock.Mock(return_value=issues)
 
