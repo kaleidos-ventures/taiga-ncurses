@@ -2,7 +2,7 @@ from concurrent.futures import Future
 from unittest import mock
 
 from gmncurses.ui import signals, views
-from gmncurses import controllers
+from gmncurses import controllers, config
 from gmncurses.executor import Executor
 from gmncurses.core import StateMachine
 
@@ -98,6 +98,20 @@ def test_project_detail_controller_fetches_user_stories_and_transitions_to_backl
     project_view = views.projects.ProjectDetailView(project)
     executor = factories.patched_executor()
     state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
-    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, state_machine)
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor,
+                                                                             state_machine)
 
     assert state_machine.state == state_machine.PROJECT_BACKLOG
+
+def test_project_detail_controller_fetches_issues_and_transitions_to_backlog():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor,
+                                                                             state_machine)
+
+    assert state_machine.state == state_machine.PROJECT_BACKLOG
+
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    assert state_machine.state == state_machine.PROJECT_ISSUES

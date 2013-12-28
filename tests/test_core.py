@@ -29,7 +29,7 @@ def test_transitioning_from_projects_to_project_detail_and_project_backlog():
     us = Future()
     stats = Future()
     executor = factories.patched_executor(project_detail=project_f,
-                                          user_stories=us,
+                                          unassigned_user_stories=us,
                                           project_stats=stats,)
     configuration = Configuration()
     core = GreenMineCore(executor, configuration, authenticated=True, draw=False)

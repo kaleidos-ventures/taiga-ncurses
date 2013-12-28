@@ -168,7 +168,6 @@ def issue_status_with_color(issue, project, default_color="#ffffff"):
                     issue_statuses[str(status_id)]["name"])
         except KeyError:
             pass
-        return str(status)
     return (default_color, "---")
 
 def issue_priority_with_color(issue, project, default_color="#ffffff"):

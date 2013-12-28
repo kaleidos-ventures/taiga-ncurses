@@ -7,7 +7,7 @@ from gmncurses.executor import Executor
 
 from . import fixtures
 
-
+# Auth
 def login_view(username, password):
     login_view = views.auth.LoginView("username", "password")
     login_view._username_editor.set_edit_text(username)
@@ -34,6 +34,7 @@ def successful_login_response(username):
         'username': username,
     }
 
+# Projects
 def projects():
     return json.loads(fixtures.PROJECTS)
 
@@ -42,11 +43,34 @@ def project(**kwargs):
     defaults.update(kwargs)
     return defaults
 
-def user_stories():
-    return json.loads(fixtures.USER_STORIES)
-
 def project_stats():
     return json.loads(fixtures.PROJECT_STATS)
+
+def project_issues_stats():
+    return json.loads(fixtures.PROJECT_ISSUES_STATS)
+
+# Milestones
+def milestone_stats():
+    # TODO
+    pass
+
+# User Stories
+def unassigned_user_stories():
+    return json.loads(fixtures.USER_STORIES)
+
+# Tasks
+def milestone_tasks():
+    # TODO
+    pass
+
+# Issues
+def issues():
+    return json.loads(fixtures.ISSUES)
+
+# Wiki
+def wiki_pages():
+    # TODO
+    pass
 
 def future(value):
     f = Future()
@@ -57,11 +81,16 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      projects=future(projects()),
                      project_detail=future(project()),
                      project_stats=future(project_stats()),
-                     user_stories=future([])):
+                     unassigned_user_stories=future(unassigned_user_stories()),
+                     project_issues_stats=future(project_issues_stats()),
+                     issues=future(issues())):
     executor = Executor(mock.Mock())
     executor.login = mock.Mock(return_value=login_response)
     executor.projects = mock.Mock(return_value=projects)
     executor.project_detail = mock.Mock(return_value=project_detail)
     executor.project_stats = mock.Mock(return_value=project_stats)
-    executor.unassigned_user_stories = mock.Mock(return_value=user_stories)
+    executor.unassigned_user_stories = mock.Mock(return_value=unassigned_user_stories)
+    executor.project_issues_stats = mock.Mock(return_value=project_issues_stats)
+    executor.issues = mock.Mock(return_value=issues)
+
     return executor
