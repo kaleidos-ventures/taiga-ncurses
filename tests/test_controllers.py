@@ -126,3 +126,16 @@ def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskbo
 
     project_detail_controller.handle(config.ProjectKeys.SPRINT)
     assert state_machine.state == state_machine.PROJECT_SPRINT
+
+
+def test_project_detail_controller_fetches_wiki_pages_and_transitions_to_wiki():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    state_machine = StateMachine(mock.Mock(), StateMachine.PROJECTS)
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor,
+                                                                             state_machine)
+    assert state_machine.state == state_machine.PROJECT_BACKLOG
+
+    project_detail_controller.handle(config.ProjectKeys.WIKI)
+    assert state_machine.state == state_machine.PROJECT_WIKI

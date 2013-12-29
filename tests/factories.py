@@ -70,8 +70,7 @@ def issues():
 
 # Wiki
 def wiki_pages():
-    # TODO
-    pass
+    return json.loads(fixtures.WIKI_PAGES)
 
 def future(value):
     f = Future()
@@ -87,7 +86,8 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      user_stories=future(user_stories()),
                      milestone_tasks=future(milestone_tasks()),
                      project_issues_stats=future(project_issues_stats()),
-                     issues=future(issues())):
+                     issues=future(issues()),
+                     wiki_pages=future(wiki_pages())):
     executor = Executor(mock.Mock())
     executor.login = mock.Mock(return_value=login_response)
     executor.projects = mock.Mock(return_value=projects)
@@ -99,5 +99,6 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.milestone_tasks = mock.Mock(return_value=milestone_tasks)
     executor.project_issues_stats = mock.Mock(return_value=project_issues_stats)
     executor.issues = mock.Mock(return_value=issues)
+    executor.wiki_pages = mock.Mock(return_value=wiki_pages)
 
     return executor

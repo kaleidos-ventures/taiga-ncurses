@@ -2366,3 +2366,19 @@ MILESTONE_TASKS = """
     }
 ]
 """
+
+
+WIKI_PAGES = """
+[
+    {
+        "id": 1,
+        "project": 1,
+        "slug": "home",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        "owner": 4,
+        "created_date": "2013-12-20T09:54:00.843Z",
+        "modified_date": "2013-12-20T09:54:00.843Z",
+        "watchers": []
+    }
+]
+"""
