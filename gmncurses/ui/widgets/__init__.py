@@ -663,17 +663,10 @@ class ProjectMilestoneStats(urwid.WidgetWrap):
         super().__init__(self.widget)
 
     def populate(self, milestone_stats):
-        completed_points = sum(milestone_stats["completed_points"])
-        total_points = sum(milestone_stats["total_points"].values())
-        rem_points = total_points - completed_points
-        completed_tasks = milestone_stats["completed_tasks"]
-        total_tasks = milestone_stats["total_tasks"]
-        rem_tasks = total_tasks - completed_tasks
-
         self._w = urwid.Columns([
             ("weight", 0.2, urwid.LineBox(MilestoneStatsStatus(milestone_stats), "Status")),
-            ("weight", 0.3, urwid.LineBox(Stack_1_3_1([total_points, completed_points, rem_points]), "Points")),
-            ("weight", 0.3, urwid.LineBox(Stack_1_3_1( [total_tasks, completed_tasks, rem_tasks]), "Tasks")),
+            ("weight", 0.3, urwid.LineBox(MilestoneStatsPoints(milestone_stats), "Points")),
+            ("weight", 0.3, urwid.LineBox(MilestoneStatsTasks(milestone_stats), "Tasks")),
             ("weight", 0.3, urwid.LineBox(MilestoneStatsDates(milestone_stats), "Dates")),
          ])
 
@@ -689,10 +682,33 @@ class MilestoneStatsStatus(urwid.Pile):
         super().__init__(items)
 
 
-#class MilestoneStatsPoints(urwid.Pile):
-#    def __init__(self):
-#class MilestoneStatsTasks(urwid.Pile):
-#    def __init__(self):
+class MilestoneStatsPoints(urwid.Pile):
+    def __init__(self, milestone_stats):
+        total = data.milestone_total_tasks(milestone_stats)
+        completed = data.milestone_completed_tasks(milestone_stats)
+        remaining = total - completed
+
+        items = [
+            urwid.Pile([ListText("Total"), SemaphorePercentText(total, max_value=total)]),
+            urwid.Pile([ListText("Completed"), SemaphorePercentText(completed, max_value=total)]),
+            urwid.Pile([ListText("Remaining"), SemaphorePercentText(remaining, max_value=total, invert=True)])
+        ]
+        super().__init__([urwid.Columns(items)])
+
+
+class MilestoneStatsTasks(urwid.Pile):
+    def __init__(self, milestone_stats):
+        total = data.milestone_total_points(milestone_stats)
+        completed = data.milestone_completed_points(milestone_stats)
+        remaining = total - completed
+
+        items = [
+            urwid.Pile([ListText("Total"), SemaphorePercentText(total, max_value=total)]),
+            urwid.Pile([ListText("Completed"), SemaphorePercentText(completed, max_value=total)]),
+            urwid.Pile([ListText("Remaining"), SemaphorePercentText(remaining, max_value=total, invert=True)])
+        ]
+        super().__init__([urwid.Columns(items)])
+
 
 class MilestoneStatsDates(urwid.Pile):
     def __init__(self, milestone_stats):
@@ -853,6 +869,19 @@ class RowDivider(urwid.WidgetWrap):
         widget = urwid.AttrMap(urwid.Divider(div_char), attr_map)
         super().__init__(widget)
 
+
+class SemaphorePercentText(ListText):
+    def __init__(self, value, max_value=100.0, invert=False):
+        color = "yellow"
+        if value <= max_value * 0.2:
+            color = "red" if not invert else "green"
+        elif value == max_value:
+            color = "green" if not invert else "red"
+        text = [(color, str(value))]
+
+        super().__init__(text)
+
+
 def color_to_hex(color):
     """
     Given either an hexadecimal or HTML color name, return a the hex
@@ -862,25 +891,4 @@ def color_to_hex(color):
         return x256.from_hex(color.strip("#"))
     else:
         return x256.from_html_name(color)
-
-
-class Stack_1_3_1(urwid.Pile):
-    def __init__(self, values):
-        titles = ["Total", "Completed", "Remaining"]
-        columns = []
-        for i, name in enumerate(titles):
-            columns.append(("weight", 0.33, urwid.Pile([ListText(name), Color_by_value(values[i], values[0])])))
-        pile = [urwid.Columns(columns)]
-        super().__init__(pile)
-
-class Color_by_value(ListText):
-    # TODO: Improve me
-    def __init__(self, value, max_value=100.0):
-        color = "yellow"
-        if int(value) < int(max_value) * 0.2:
-            color = "red"
-        elif int(value) == int(max_value):
-            color = "green"
-        text = [(color, str(value))]
-        super().__init__(text)
 

@@ -216,6 +216,12 @@ def milestone_total_points(milestone_stats):
 def milestone_completed_points(milestone_stats):
     return sum(milestone_stats["completed_points"])
 
+def milestone_total_tasks(milestone_stats):
+    return milestone_stats["total_tasks"]
+
+def milestone_completed_tasks(milestone_stats):
+    return milestone_stats["completed_tasks"]
+
 def milestone_estimated_start(milestone_stats):
     return milestone_stats["estimated_start"]
 
