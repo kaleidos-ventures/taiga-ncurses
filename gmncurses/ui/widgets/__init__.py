@@ -655,6 +655,16 @@ class IssueEntry(urwid.WidgetWrap):
 
 
 # Milestone
+class ProjectMilestoneInfo(urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+        self.widget = urwid.Columns([])
+        super().__init__(self.widget)
+
+    def populate(self, milestone):
+        self._w = urwid.Columns([
+            ("weight", 1, ListText(data.milestone_name(milestone))),
+        ])
 
 class ProjectMilestoneStats(urwid.WidgetWrap):
     def __init__(self, project):

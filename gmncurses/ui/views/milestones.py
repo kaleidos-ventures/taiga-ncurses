@@ -33,11 +33,14 @@ class ProjectMilestoneSubView(base.SubView):
         self.project = project
         self.notifier = notifier
 
+        self.info = widgets.ProjectMilestoneInfo(project)
         self.stats = widgets.ProjectMilestoneStats(project)
         self.taskboard = widgets.ProjectMilestoneTaskboardList(project)
 
         self.widget = urwid.ListBox(urwid.SimpleListWalker([
             tabs,
+            widgets.box_solid_fill(" ", 1),
+            self.info,
             widgets.box_solid_fill(" ", 1),
             self.stats,
             widgets.box_solid_fill(" ", 1),

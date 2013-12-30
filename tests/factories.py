@@ -50,6 +50,9 @@ def project_issues_stats():
     return json.loads(fixtures.PROJECT_ISSUES_STATS)
 
 # Milestones
+def milestone():
+    return json.loads(fixtures.MILESTONE)
+
 def milestone_stats():
     return json.loads(fixtures.MILESTONE_STATS)
 
@@ -82,6 +85,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      project_detail=future(project()),
                      project_stats=future(project_stats()),
                      unassigned_user_stories=future(unassigned_user_stories()),
+                     milestone=future(milestone_stats()),
                      milestone_stats=future(milestone_stats()),
                      user_stories=future(user_stories()),
                      milestone_tasks=future(milestone_tasks()),
@@ -94,6 +98,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.project_detail = mock.Mock(return_value=project_detail)
     executor.project_stats = mock.Mock(return_value=project_stats)
     executor.unassigned_user_stories = mock.Mock(return_value=unassigned_user_stories)
+    executor.milestone = mock.Mock(return_value=milestone)
     executor.milestone_stats = mock.Mock(return_value=milestone_stats)
     executor.user_stories = mock.Mock(return_value=user_stories)
     executor.milestone_tasks = mock.Mock(return_value=milestone_tasks)

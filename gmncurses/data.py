@@ -215,6 +215,9 @@ def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
 
 # Milestone
 
+def milestone_name(milestone):
+    return milestone.get("name", "------")
+
 def milestone_total_points(milestone_stats):
     return sum(milestone_stats["total_points"].values())
 

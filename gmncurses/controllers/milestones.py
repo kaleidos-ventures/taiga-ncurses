@@ -37,6 +37,9 @@ class ProjectMilestoneSubController(base.Controller):
 
         last_milestone_id = gmncurses.data.current_sprint_id(self.view.project)
 
+        milestone_f = self.executor.milestone(last_milestone_id, self.view.project)
+        milestone_f.add_done_callback(self.handle_milestone)
+
         milestone_stats_f = self.executor.milestone_stats(last_milestone_id, self.view.project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
@@ -59,9 +62,15 @@ class ProjectMilestoneSubController(base.Controller):
     def close_help_info(self):
         self.view.close_help_popup()
 
+    def handle_milestone(self, future):
+        self.milestone = future.result()
+        if self.milestone:
+            self.view.info.populate(self.milestone)
+            self.state_machine.refresh()
+
     def handle_milestone_stats(self, future):
         self.milestone_stats = future.result()
-        if self.milestone_stats is not None:
+        if self.milestone_stats:
             self.view.stats.populate(self.milestone_stats)
             self.state_machine.refresh()
 
@@ -79,4 +88,4 @@ class ProjectMilestoneSubController(base.Controller):
             self.state_machine.refresh()
         else:
             # TODO retry failed operations
-            self.view.notifier.error_msg("Failed to fetch milestone data")
+            self.view.notifier.error_msg("Failed to fetch milestone data (user stories or task)")

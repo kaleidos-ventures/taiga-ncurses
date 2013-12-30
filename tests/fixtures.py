@@ -1957,6 +1957,132 @@ ISSUES = """
 ]
 """
 
+MILESTONE = """
+{
+    "user_stories": [
+        {
+            "tags": [
+                "itaque"
+            ],
+            "points": {
+                "4": 7,
+                "1": 11,
+                "2": 8,
+                "3": 2
+            },
+            "total_points": 33.0,
+            "comment": "",
+            "id": 16,
+            "ref": 17,
+            "milestone": 4,
+            "project": 1,
+            "owner": 9,
+            "status": 2,
+            "is_closed": true,
+            "order": 100,
+            "created_date": "2013-12-20T09:53:53.225Z",
+            "modified_date": "2013-12-20T11:00:32.566Z",
+            "finish_date": "2013-12-30T13:59:25.588Z",
+            "subject": "Lighttpd x-sendfile support",
+            "description": "Minima nisi commodi et exercitationem corrupti est, explicabo illum sit perspiciatis minima natus omnis labore ducimus laudantium, reiciendis totam dicta, ut explicabo velit, odit quibusdam repellendus eaque adipisci a necessitatibus pariatur delectus corrupti dolorem? Fugiat ab impedit delectus iste voluptatibus asperiores ea at dignissimos mollitia quidem? Perferendis fugiat neque modi similique est? Nostrum nam saepe qui neque soluta eveniet, dolorum in earum porro officiis ex officia necessitatibus aperiam modi?",
+            "client_requirement": false,
+            "team_requirement": false,
+            "watchers": []
+        },
+        {
+            "tags": [
+                "molestias",
+                "dolor",
+                "voluptate"
+            ],
+            "points": {
+                "4": 10,
+                "1": 2,
+                "2": 3,
+                "3": 7
+            },
+            "total_points": 20.5,
+            "comment": "",
+            "id": 18,
+            "ref": 19,
+            "milestone": 4,
+            "project": 1,
+            "owner": 4,
+            "status": 2,
+            "is_closed": false,
+            "order": 100,
+            "created_date": "2013-12-20T09:53:54.406Z",
+            "modified_date": "2013-12-20T11:00:29.361Z",
+            "finish_date": null,
+            "subject": "get_actions() does not check for 'delete_selected' in actions",
+            "description": "Excepturi quod itaque at eos nisi aspernatur neque. Iure iusto quod non assumenda et, fugit qui reprehenderit quasi exercitationem quidem consequuntur obcaecati similique ratione, iusto obcaecati reprehenderit voluptatibus nemo minima cupiditate voluptatum quam et, corrupti laboriosam nemo excepturi laborum temporibus iste dolor aspernatur.",
+            "client_requirement": false,
+            "team_requirement": false,
+            "watchers": []
+        },
+        {
+            "tags": [
+                "alias"
+            ],
+            "points": {
+                "4": 2,
+                "1": 10,
+                "2": 5,
+                "3": 7
+            },
+            "total_points": 22.0,
+            "comment": "",
+            "id": 17,
+            "ref": 18,
+            "milestone": 4,
+            "project": 1,
+            "owner": 9,
+            "status": 1,
+            "is_closed": true,
+            "order": 100,
+            "created_date": "2013-12-20T09:53:53.920Z",
+            "modified_date": "2013-12-20T09:53:53.920Z",
+            "finish_date": "2013-12-30T13:59:24.130Z",
+            "subject": "Experimental: modular file types",
+            "description": "Dolorum similique ipsum perspiciatis porro libero expedita sapiente. Cupiditate neque dolorum nobis soluta rem voluptates labore, consectetur provident blanditiis officiis rem tempore id alias voluptatum libero fugiat, veniam omnis repellendus adipisci eaque nihil ducimus reprehenderit dolorem mollitia possimus eveniet, ab reiciendis temporibus omnis ducimus, magni quia vel voluptatum voluptates veniam dolore aspernatur rem. Animi facere beatae odio fugit itaque repellat obcaecati? Ipsum nobis sed, totam doloribus est deserunt, sint non et cupiditate repellat, tempora ex asperiores error earum perferendis assumenda, repellat nostrum aliquam earum delectus culpa dolores velit fugit blanditiis corrupti labore?",
+            "client_requirement": false,
+            "team_requirement": false,
+            "watchers": []
+        }
+    ],
+    "closed_points": {
+        "1": 35.0,
+        "2": 10.0,
+        "3": 5.0,
+        "4": 5.0
+    },
+    "client_increment_points": {
+        "1": 2.5,
+        "2": 1.0,
+        "3": 2.5,
+        "4": 1.0
+    },
+    "team_increment_points": {
+        "1": 2.5,
+        "2": 1.0,
+        "3": 2.5,
+        "4": 1.0
+    },
+    "id": 4,
+    "name": "Sprint 2013-12-10",
+    "slug": "sprint-2013-12-10",
+    "owner": 10,
+    "project": 1,
+    "estimated_start": "2013-12-10",
+    "estimated_finish": "2014-01-01",
+    "created_date": "2013-12-20T09:53:53.217Z",
+    "modified_date": "2013-12-30T13:01:26.944Z",
+    "closed": false,
+    "disponibility": 0.0,
+    "order": 10
+}
+"""
+
 MILESTONE_STATS = """
 {
     "estimated_finish": "2013-12-25",
