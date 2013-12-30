@@ -871,6 +871,14 @@ class RowDivider(urwid.WidgetWrap):
 
 
 class SemaphorePercentText(ListText):
+    """
+    Get a number and a max_value and print it with a concrete color:
+        * red: value <= 20%
+        * yellos: 20% < vale < max_value
+        * green: vale == max_vale
+
+    If invert value is True red will be green and viceversa
+    """
     def __init__(self, value, max_value=100.0, invert=False):
         color = "yellow"
         if value <= max_value * 0.2:
