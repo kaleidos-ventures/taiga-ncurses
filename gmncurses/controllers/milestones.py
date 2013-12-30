@@ -35,20 +35,20 @@ class ProjectMilestoneSubController(base.Controller):
 
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
-        res = gmncurses.data.current_sprint_id(self.view.project)
+        last_milestone_id = gmncurses.data.current_sprint_id(self.view.project)
 
-        milestone_stats_f = self.executor.milestone_stats(res, self.view.project)
+        milestone_stats_f = self.executor.milestone_stats(last_milestone_id, self.view.project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        user_stories_f = self.executor.user_stories(res, self.view.project)
+        user_stories_f = self.executor.user_stories(last_milestone_id, self.view.project)
         user_stories_f.add_done_callback(self.handle_user_stories)
 
-        milestone_tasks_f = self.executor.milestone_tasks(res, self.view.project)
+        milestone_tasks_f = self.executor.milestone_tasks(last_milestone_id, self.view.project)
         milestone_tasks_f.add_done_callback(self.handle_milestone_tasks)
 
         futures = (milestone_tasks_f, user_stories_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-        futures_completed_f.add_done_callback(self.user_stories_info_fetched)
+        futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
 
     def help_info(self):
         self.view.open_help_popup()
@@ -67,21 +67,16 @@ class ProjectMilestoneSubController(base.Controller):
 
     def handle_user_stories(self, future):
         self.user_stories = future.result()
-        #if self.user_stories is not None:
-            #self.view.user_stories_list.populate(self.user_stories)
-            #self.state_machine.refresh()
 
     def handle_milestone_tasks(self, future):
         self.milestone_tasks = future.result()
 
-    def user_stories_info_fetched(self, future_with_results):
+    def handle_user_stories_and_task_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()
         if len(done) == 2:
             self.view.user_stories_list.populate(self.user_stories, self.milestone_tasks)
-            self.view.notifier.info_msg("user stories and tasks fetched")
+            self.view.notifier.info_msg("User stories and tasks fetched")
             self.state_machine.refresh()
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch milestone data")
-
-
