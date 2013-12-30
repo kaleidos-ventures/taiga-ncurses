@@ -684,8 +684,8 @@ class MilestoneStatsStatus(urwid.Pile):
 
 class MilestoneStatsPoints(urwid.Pile):
     def __init__(self, milestone_stats):
-        total = data.milestone_total_tasks(milestone_stats)
-        completed = data.milestone_completed_tasks(milestone_stats)
+        total = data.milestone_total_points(milestone_stats)
+        completed = data.milestone_completed_points(milestone_stats)
         remaining = total - completed
 
         items = [
@@ -698,8 +698,8 @@ class MilestoneStatsPoints(urwid.Pile):
 
 class MilestoneStatsTasks(urwid.Pile):
     def __init__(self, milestone_stats):
-        total = data.milestone_total_points(milestone_stats)
-        completed = data.milestone_completed_points(milestone_stats)
+        total = data.milestone_total_tasks(milestone_stats)
+        completed = data.milestone_completed_tasks(milestone_stats)
         remaining = total - completed
 
         items = [
@@ -731,7 +731,7 @@ class MilestoneStatsDates(urwid.Pile):
         super().__init__([urwid.Columns(items)])
 
 
-class ProjectMilestoneTaskboard(urwid.WidgetWrap):
+class ProjectMilestoneTaskboardList(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
@@ -742,25 +742,17 @@ class ProjectMilestoneTaskboard(urwid.WidgetWrap):
         if user_stories:
             self.reset()
 
-        #import ipdb; ipdb.set_trace()
+        # Task with user stories
         for us in user_stories:
-            points_by_role = data.us_points_by_role(us, self.project, self.roles.values())
-            self.widget.contents.append((USTitleCell(us, self.roles.values(), points_by_role),
-                                    ("weight", 0.1)))
-            us_tasks = [t for t in milestone_tasks if t["user_story"] == us["id"]]
-            for us_t in us_tasks:
-                hex_color, username =  data.task_assigned_to_with_color(us_t, self.project)
-                hex_status_color, status = data.task_status_with_color(us_t, self.project)
-                text = self.HexToText(hex_color, username)
-                text_status = self.HexToText(hex_status_color, status)
-                self.widget.contents.append((UserStoryTask(us_t, text, text_status), ("weight", 0.1)))
+            self.widget.contents.append((TaskboardUserStoryEntry(us, self.project, self.roles),
+                                         ("weight", 0.1)))
+            for task in data.tasks_per_user_story(milestone_tasks, us):
+                self.widget.contents.append((TaskboardTaskEntry(task, self.project), ("weight", 0.1)))
 
-        us_unassig = [t for t in milestone_tasks if t["user_story"] == None]
-        if us_unassig:
-            self.widget.contents.append((urwid.AttrMap(urwid.LineBox(urwid.AttrMap(ListText("Unassigned tasks"),
-                "cyan", "focus-header")), "green"), ("weight", 0.1)))
-            for una in us_unassig:
-                self.widget.contents.append((UserStoryTask(una, text, text_status), ("weight", 0.1)))
+        # Unasigned task
+        self.widget.contents.append((TaskboardUnasignedTasksHeaderEntry(), ("weight", 0.1)))
+        for task in data.unassigned_tasks(milestone_tasks):
+            self.widget.contents.append((TaskboardTaskEntry(task, self.project), ("weight", 0.1)))
 
         if len(self.widget.contents):
             self.widget.contents.focus = 0
@@ -768,44 +760,74 @@ class ProjectMilestoneTaskboard(urwid.WidgetWrap):
     def reset(self):
         self.widget.contents = []
 
-    def HexToText(self, hex_color, text):
+
+class TaskboardUserStoryEntry(urwid.WidgetWrap):
+    def __init__(self, us, project, roles):
+        if us.get("is_closed", False):
+            is_closed = urwid.AttrMap(ListText("☑"), "green", "focus-header")
+        else:
+            is_closed = urwid.AttrMap(ListText("☒"), "red", "focus-header")
+        colum_items = [("weight", 0.05, is_closed)]
+
+        us_ref_and_name = "US #{0: <4} {1}".format(str(data.us_ref(us)), data.us_subject(us))
+        colum_items.append(("weight", 0.6, ListText(us_ref_and_name, align="left")))
+
+        hex_color, status = data.us_status_with_color(us, project)
         color = color_to_hex(hex_color)
         attr = urwid.AttrSpec("h{0}".format(color), "default")
-        return ("weight", 0.2, ListText((attr, text)))
+        colum_items.append(("weight", 0.15, ListText( (attr, status) )))
 
+        points_by_role = data.us_points_by_role_whith_names(us, project, roles.values())
+        for role, point in points_by_role:
+            colum_items.append(("weight", 0.1, ListText("{}: {}".format(role, str(point)))))
+        colum_items.append(("weight", 0.1, ListText(("green", "TOTAL: {0:.1f}".format(
+                                                              data.us_total_points(us))))))
 
-class USTitleCell(urwid.WidgetWrap):
-    def __init__(self, us, roles, values):
-        is_closed = urwid.AttrMap(ListText("☑"), "green", "focus-header") if us.get("is_closed", False) else urwid.AttrMap(ListText("☒"), "red", "focus-header")
-        columns = [("weight", 0.05, is_closed)]
-
-        left_description = urwid.Text("US #{0: <4} {1}".format(str(us["id"]), us["subject"]))
-        columns.append(("weight", 0.8, left_description))
-
-        for i, role in enumerate(roles):
-            columns.append(("weight", 0.1, ListText("%s: %s" % (role["name"], values[i]))))
-
-        columns.append(("weight", 0.1, ListText("TOTAL: {}".format(us["total_points"]))))
-        widget = urwid.AttrMap(urwid.LineBox(urwid.AttrMap(urwid.Columns(columns), "cyan", "focus-header")), "green")
-        super().__init__(urwid.AttrMap(widget, "default", "focus"))
+        self.widget = urwid.Columns(colum_items)
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.AttrMap(self.widget, "cyan", "focus-header")),
+                                       "green"))
 
     def selectable(self):
         return True
 
-class UserStoryTask(urwid.WidgetWrap):
-    def __init__(self, us_task, text, text_status):
-        is_closed = urwid.AttrMap(ListText("☑"), "green", "focus") if us_task.get("finished_date", None) else urwid.AttrMap(ListText("☒"), "red", "focus")
 
-        widget = urwid.Columns([
-                ("weight", 0.05, is_closed),
-                ("weight", 1, ListText("Task #{0: <4} {1}".format(str(us_task["ref"]), us_task["subject"]), align="left")),
-                text,
-                text_status,
-                ])
-        super().__init__(urwid.AttrMap(widget, "default", "focus"))
+class TaskboardUnasignedTasksHeaderEntry(urwid.WidgetWrap):
+    def __init__(self):
+        self.widget = urwid.Columns([ListText("Unassigned tasks")])
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.AttrMap(self.widget, "cyan", "focus-header")),
+                                       "green"))
 
     def selectable(self):
         return True
+
+
+class TaskboardTaskEntry(urwid.WidgetWrap):
+    def __init__(self, task, project):
+        if data.task_finished_date(task):
+            is_closed = urwid.AttrMap(ListText("☑"), "green", "focus")
+        else:
+            is_closed = urwid.AttrMap(ListText("☒"), "red", "focus")
+        colum_items = [("weight", 0.05, is_closed)]
+
+        task_ref_and_subject = "Task #{0: <4} {1}".format(data.task_ref(task), data.task_subject(task))
+        colum_items.append(("weight", 1, ListText(task_ref_and_subject, align="left")))
+
+        hex_color, assigned_to = data.task_assigned_to_with_color(task, project)
+        color = color_to_hex(hex_color)
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        colum_items.append(("weight", 0.2, ListText((attr, assigned_to))))
+
+        hex_color, status = data.task_status_with_color(task, project)
+        color = color_to_hex(hex_color)
+        attr = urwid.AttrSpec("h{0}".format(color), "default")
+        colum_items.append(("weight", 0.2, ListText((attr, status))))
+
+        self.widget = urwid.Columns(colum_items)
+        super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
+
+    def selectable(self):
+        return True
+
 
 # Wiki
 

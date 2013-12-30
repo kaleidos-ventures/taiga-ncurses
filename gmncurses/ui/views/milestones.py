@@ -34,7 +34,7 @@ class ProjectMilestoneSubView(base.SubView):
         self.notifier = notifier
 
         self.stats = widgets.ProjectMilestoneStats(project)
-        self.taskboard = widgets.ProjectMilestoneTaskboard(project)
+        self.taskboard = widgets.ProjectMilestoneTaskboardList(project)
 
         self.widget = urwid.ListBox(urwid.SimpleListWalker([
             tabs,

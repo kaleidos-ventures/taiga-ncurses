@@ -9,7 +9,7 @@ from datetime import datetime
 from collections import OrderedDict
 from operator import itemgetter
 
-# project_stats - Points
+# Project
 
 def total_points(project_stats):
     return project_stats.get("total_points", 0)
@@ -38,12 +38,9 @@ def closed_points_percentage(project_stats):
 def doomline_limit_points(project_stats):
     return total_points(project_stats) - assigned_points(project_stats)
 
-
 def points(project):
     dc = {str(p["id"]): p for p in project.get("points", [])}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
-
-# project_stats - Sprints
 
 def total_sprints(project_stats):
     return project_stats.get("total_milestones", 0)
@@ -52,9 +49,6 @@ def completed_sprints(project):
     milestones = project.get("list_of_milestones", [])
     now = datetime.now()
     return [m for m in milestones if date(m["finish_date"]) < now]
-
-
-# project - Sprints
 
 def current_sprint(project):
     milestones = project.get("list_of_milestones", [])
@@ -81,7 +75,7 @@ def computable_roles(project):
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
 
 
-# User Stories data
+# User Stories
 
 def us_ref(us):
     return us.get("ref", "--")
@@ -110,8 +104,6 @@ def us_status_with_color(us, project, default_color="#ffffff"):
     return (default_color, "---")
 
 
-# us, project, computable roles - US points
-
 def us_points_by_role(us, project, roles):
     # FIXME: Improvement, get project_points from a project constant
     # FIXME: Improvement, get rolesofrom a project constant
@@ -127,8 +119,23 @@ def us_points_by_role(us, project, roles):
             points.append(project_points[str(default_point)]["name"])
     return points
 
+def us_points_by_role_whith_names(us, project, roles):
+    # FIXME: Improvement, get project_points from a project constant
+    # FIXME: Improvement, get rolesofrom a project constant
+    us_points = us.get("points", [])
+    project_points = {str(p["id"]): p for p in project["points"]}
+    default_point = project["default_points"]
 
-# issues stats - issues
+    points = []
+    for role in roles:
+        try:
+            points.append((role["name"], project_points[str(us_points[str(role["id"])])]["name"]))
+        except KeyError:
+            points.append((role["name"], project_points[str(default_point)]["name"]))
+    return points
+
+
+# Issues
 
 def total_issues(issues_stats):
     return issues_stats.get("total_issues", 0)
@@ -147,9 +154,6 @@ def issues_priorities_stats(issues_stats):
 
 def issues_severities_stats(issues_stats):
     return issues_stats.get("issues_per_severity", {})
-
-
-# issue - issues
 
 def issue_ref(issue):
     return issue.get("ref", "--")
@@ -210,6 +214,7 @@ def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
     return  (default_color, "Unassigned")
 
 # Milestone
+
 def milestone_total_points(milestone_stats):
     return sum(milestone_stats["total_points"].values())
 
@@ -232,6 +237,15 @@ def milestone_remaining_days(milestone_stats):
    return (date(milestone_stats["estimated_finish"]) - datetime.now()).days + 1
 
 # Tasks
+
+def task_ref(task):
+    return task.get("ref", "--")
+
+def task_subject(task):
+    return task.get("subject", "------")
+
+def task_finished_date(task):
+    return task.get("finished_date", None)
 
 def task_assigned_to_with_color(task, project, default_color="#ffffff"):
     # FIXME: Improvement, get memberships and users from a project constant
@@ -259,7 +273,14 @@ def task_status_with_color(task, project, default_color="#ffffff"):
             pass
     return (default_color, "---")
 
-# wiki_page - Wiki page
+def tasks_per_user_story(tasks, user_story):
+    return [t for t in tasks if t["user_story"] == user_story["id"]]
+
+def unassigned_tasks(tasks):
+    return [t for t in tasks if t["user_story"] == None]
+
+
+# Wiki page
 
 def slug(wiki_page):
     return wiki_page.get("slug", "")
