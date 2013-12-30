@@ -209,7 +209,24 @@ def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
             pass
     return  (default_color, "Unassigned")
 
+# Milestone
+def milestone_total_points(milestone_stats):
+    return sum(milestone_stats["total_points"].values())
+
+def milestone_completed_points(milestone_stats):
+    return sum(milestone_stats["completed_points"])
+
+def milestone_estimated_start(milestone_stats):
+    return milestone_stats["estimated_start"]
+
+def milestone_estimated_finish(milestone_stats):
+    return milestone_stats["estimated_finish"]
+
+def milestone_remaining_days(milestone_stats):
+   return (date(milestone_stats["estimated_finish"]) - datetime.now()).days + 1
+
 # Tasks
+
 def task_assigned_to_with_color(task, project, default_color="#ffffff"):
     # FIXME: Improvement, get memberships and users from a project constant
     # TODO: Check that the color is in hex format

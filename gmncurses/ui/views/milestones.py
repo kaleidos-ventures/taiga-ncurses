@@ -33,15 +33,15 @@ class ProjectMilestoneSubView(base.SubView):
         self.project = project
         self.notifier = notifier
 
-        self.stats = widgets.ProjectSprintsStats(project)
-        self.user_stories_list = widgets.ProjectSprintsUserStories(project)
+        self.stats = widgets.ProjectMilestoneStats(project)
+        self.taskboard = widgets.ProjectMilestoneTaskboard(project)
 
         self.widget = urwid.ListBox(urwid.SimpleListWalker([
             tabs,
             widgets.box_solid_fill(" ", 1),
             self.stats,
             widgets.box_solid_fill(" ", 1),
-            self.user_stories_list,
+            self.taskboard,
         ]))
 
     def open_help_popup(self):

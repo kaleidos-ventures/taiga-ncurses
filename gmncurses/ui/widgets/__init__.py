@@ -654,12 +654,12 @@ class IssueEntry(urwid.WidgetWrap):
 
 
 
-# Sprints
+# Milestone
 
-class ProjectSprintsStats(urwid.WidgetWrap):
+class ProjectMilestoneStats(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
-        self.widget = urwid.Columns([ ])
+        self.widget = urwid.Columns([])
         super().__init__(self.widget)
 
     def populate(self, milestone_stats):
@@ -669,19 +669,53 @@ class ProjectSprintsStats(urwid.WidgetWrap):
         completed_tasks = milestone_stats["completed_tasks"]
         total_tasks = milestone_stats["total_tasks"]
         rem_tasks = total_tasks - completed_tasks
-        init_date = milestone_stats["estimated_start"]
-        finish_date = milestone_stats["estimated_finish"]
 
         self._w = urwid.Columns([
-            ("weight", 0.2, urwid.LineBox(urwid.Pile([ListText(""),
-                    urwid.ProgressBar("progressbar-normal", "progressbar-complete", completed_points,
-                                      total_points, "progressbar-smooth")]), "Status")),
+            ("weight", 0.2, urwid.LineBox(MilestoneStatsStatus(milestone_stats), "Status")),
             ("weight", 0.3, urwid.LineBox(Stack_1_3_1([total_points, completed_points, rem_points]), "Points")),
             ("weight", 0.3, urwid.LineBox(Stack_1_3_1( [total_tasks, completed_tasks, rem_tasks]), "Tasks")),
-            ("weight", 0.3, urwid.LineBox(Color_dates(init_date, finish_date), "Dates")),
+            ("weight", 0.3, urwid.LineBox(MilestoneStatsDates(milestone_stats), "Dates")),
          ])
 
-class ProjectSprintsUserStories(urwid.WidgetWrap):
+
+class MilestoneStatsStatus(urwid.Pile):
+    def __init__(self, milestone_stats):
+        items = [box_solid_fill(" ", 1)]
+        items.append(urwid.ProgressBar("progressbar-normal",
+                                       "progressbar-complete",
+                                       data.milestone_completed_points(milestone_stats),
+                                       data.milestone_total_points(milestone_stats),
+                                       "progressbar-smooth"))
+        super().__init__(items)
+
+
+#class MilestoneStatsPoints(urwid.Pile):
+#    def __init__(self):
+#class MilestoneStatsTasks(urwid.Pile):
+#    def __init__(self):
+
+class MilestoneStatsDates(urwid.Pile):
+    def __init__(self, milestone_stats):
+        items = [
+            urwid.Pile([ListText("Start"), ListText(("cyan", data.milestone_estimated_start(
+                                                                               milestone_stats)))]),
+            urwid.Pile([ListText("Finish"), ListText(("cyan", data.milestone_estimated_finish(
+                                                                                milestone_stats)))])
+        ]
+        remaining_days = data.milestone_remaining_days(milestone_stats)
+        if remaining_days > 1 :
+            items.append(urwid.Pile([ListText("Remaining"), ListText(("green", "{} days".format(
+                                                                                  remaining_days)))]))
+        elif remaining_days == 1:
+            items.append(urwid.Pile([ListText("Remaining"), ListText(("green", "{} day".format(
+                                                                                  remaining_days)))]))
+        else:
+            items.append(urwid.Pile([ListText("Remaining"), ListText(("red", "0 days"))]))
+
+        super().__init__([urwid.Columns(items)])
+
+
+class ProjectMilestoneTaskboard(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
@@ -829,10 +863,6 @@ def color_to_hex(color):
     else:
         return x256.from_html_name(color)
 
-class Color_text(ListText):
-    def __init__(self, color, text):
-        text = [(color, text)]
-        super().__init__(text)
 
 class Stack_1_3_1(urwid.Pile):
     def __init__(self, values):
@@ -854,11 +884,3 @@ class Color_by_value(ListText):
         text = [(color, str(value))]
         super().__init__(text)
 
-class Color_dates(urwid.Pile):
-    def __init__(self, init_date, finish_date):
-        dates_col = [
-            urwid.Pile([ListText("Start"), Color_text("green", init_date)]),
-            urwid.Pile([ListText("Finish"), Color_text("red", finish_date)])
-        ]
-        dates = [urwid.Columns(dates_col)]
-        super().__init__(dates)

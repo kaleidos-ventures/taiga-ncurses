@@ -74,7 +74,7 @@ class ProjectMilestoneSubController(base.Controller):
     def handle_user_stories_and_task_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()
         if len(done) == 2:
-            self.view.user_stories_list.populate(self.user_stories, self.milestone_tasks)
+            self.view.taskboard.populate(self.user_stories, self.milestone_tasks)
             self.view.notifier.info_msg("User stories and tasks fetched")
             self.state_machine.refresh()
         else:
