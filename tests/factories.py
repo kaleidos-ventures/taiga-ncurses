@@ -63,6 +63,31 @@ def unassigned_user_stories():
 def user_stories():
     return json.loads(fixtures.USER_STORIES)
 
+
+def successful_create_user_story_response(subject):
+    return {
+        "tags": [],
+        "points": {"4": 1, "1": 1, "2": 1, "3": 1},
+        "total_points": 0.0,
+        "comment": "",
+        "id": 114,
+        "ref": 30,
+        "milestone": None,
+        "project": 1,
+        "owner": 1,
+        "status": 1,
+        "is_closed": False,
+        "order": 100,
+        "created_date": "2013-12-31T16:56:38.115Z",
+        "modified_date": "2013-12-31T16:56:38.115Z",
+        "finish_date": None,
+        "subject": subject,
+        "description": "",
+        "client_requirement": False,
+        "team_requirement": False,
+        "watchers": []
+    }
+
 # Tasks
 def milestone_tasks():
     return json.loads(fixtures.MILESTONE_TASKS)
@@ -88,6 +113,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      milestone=future(milestone_stats()),
                      milestone_stats=future(milestone_stats()),
                      user_stories=future(user_stories()),
+                     create_user_story_response=future(successful_create_user_story_response("Create us"),),
                      milestone_tasks=future(milestone_tasks()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues()),
@@ -98,6 +124,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.project_detail = mock.Mock(return_value=project_detail)
     executor.project_stats = mock.Mock(return_value=project_stats)
     executor.unassigned_user_stories = mock.Mock(return_value=unassigned_user_stories)
+    executor.create_user_story = mock.Mock(return_value=create_user_story_response)
     executor.milestone = mock.Mock(return_value=milestone)
     executor.milestone_stats = mock.Mock(return_value=milestone_stats)
     executor.user_stories = mock.Mock(return_value=user_stories)
