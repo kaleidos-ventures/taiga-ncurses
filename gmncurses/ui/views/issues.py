@@ -7,7 +7,7 @@ gmncurses.ui.views.issues
 
 import urwid
 
-from gmncurses.ui import widgets
+from gmncurses.ui.widgets import generic, issues
 
 from . import base
 
@@ -33,21 +33,21 @@ class ProjectIssuesSubView(base.SubView):
         self.project = project
         self.notifier = notifier
 
-        self.stats = widgets.ProjectIssuesStats(project)
-        self.issues = widgets.IssuesList(project)
+        self.stats = issues.IssuesStats(project)
+        self.issues = issues.IssuesList(project)
 
         list_walker = urwid.SimpleFocusListWalker([
             tabs,
-            widgets.box_solid_fill(" ", 1),
+            generic.box_solid_fill(" ", 1),
             self.stats,
-            widgets.box_solid_fill(" ", 1),
+            generic.box_solid_fill(" ", 1),
             self.issues
         ])
         list_walker.set_focus(4)
         self.widget = urwid.ListBox(list_walker)
 
     def open_help_popup(self):
-        self.help_popup = widgets.HelpPopup("Issues Help Info", self.help_info)
+        self.help_popup = generic.HelpPopup("Issues Help Info", self.help_info)
         # FIXME: Calculate the popup size
         self.parent.show_widget_on_top(self.help_popup, 60, 17)
 

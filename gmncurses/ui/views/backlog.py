@@ -7,7 +7,7 @@ gmncurses.ui.views.backlog
 
 import urwid
 
-from gmncurses.ui import widgets
+from gmncurses.ui.widgets import generic, backlog
 
 from . import base
 
@@ -36,21 +36,21 @@ class ProjectBacklogSubView(base.SubView):
         self.project = project
         self.notifier = notifier
 
-        self.stats = widgets.ProjectBacklogStats(project)
-        self.user_stories = widgets.UserStoryList(project)
+        self.stats = backlog.BacklogStats(project)
+        self.user_stories = backlog.UserStoryList(project)
 
         list_walker = urwid.SimpleFocusListWalker([
             tabs,
-            widgets.box_solid_fill(" ", 1),
+            generic.box_solid_fill(" ", 1),
             self.stats,
-            widgets.box_solid_fill(" ", 1),
+            generic.box_solid_fill(" ", 1),
             self.user_stories
         ])
         list_walker.set_focus(4)
         self.widget = urwid.ListBox(list_walker)
 
     def open_user_story_form(self, user_story={}):
-        self.user_story_form = widgets.UserStoryForm(self.project, user_story=user_story)
+        self.user_story_form = backlog.UserStoryForm(self.project, user_story=user_story)
         # FIXME: Calculate the form size
         self.parent.show_widget_on_top(self.user_story_form, 150, 22)
 
@@ -71,7 +71,7 @@ class ProjectBacklogSubView(base.SubView):
         return data
 
     def open_help_popup(self):
-        self.help_popup = widgets.HelpPopup("Backlog Help Info", self.help_info)
+        self.help_popup = generic.HelpPopup("Backlog Help Info", self.help_info)
         # FIXME: Calculate the popup size
         self.parent.show_widget_on_top(self.help_popup, 60, 20)
 

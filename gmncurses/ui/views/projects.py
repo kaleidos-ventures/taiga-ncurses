@@ -9,7 +9,7 @@ import functools
 
 import urwid
 
-from gmncurses.ui import widgets
+from gmncurses.ui.widgets import generic, projects
 
 from . import base
 
@@ -26,18 +26,18 @@ class ProjectsView(base.View):
     def __init__(self):
         self.projects = []
         self.project_buttons = []
-        grid = widgets.Grid([], 4, 2, 2, 'center')
+        grid = generic.Grid([], 4, 2, 2, 'center')
         fill = urwid.Filler(grid, min_height=40)
-        self.notifier = widgets.FooterNotifier("")
+        self.notifier = generic.FooterNotifier("")
         self.widget = urwid.Frame(fill,
-                                  header=widgets.ProjectsHeader(),
-                                  footer=widgets.Footer(self.notifier))
+                                  header=generic.Header(),
+                                  footer=generic.Footer(self.notifier))
 
     def populate(self, projects):
         self.projects = projects
         self.project_buttons = [urwid.Button(p['name']) for p in projects]
         min_width = functools.reduce(max, (len(p['name']) for p in projects), 0)
-        grid = widgets.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
+        grid = generic.Grid(self.project_buttons, min_width * 4, 2, 2, 'center')
         self.widget.set_body(urwid.Filler(grid, min_height=40))
 
 
@@ -47,9 +47,9 @@ class ProjectDetailView(base.View):
     def __init__(self, project):
         self.project = project
 
-        self.notifier = widgets.FooterNotifier("")
+        self.notifier = generic.FooterNotifier("")
 
-        self.tabs = widgets.Tabs(self.TABS)
+        self.tabs = generic.Tabs(self.TABS)
 
         # Subviews
         self.backlog = ProjectBacklogSubView(self, project, self.notifier, self.tabs)
@@ -59,8 +59,8 @@ class ProjectDetailView(base.View):
         self.admin = ProjectAdminSubView(self, project, self.notifier, self.tabs)
 
         self.widget = urwid.Frame(self.backlog.widget,
-                                  header=widgets.ProjectDetailHeader(project),
-                                  footer=widgets.Footer(self.notifier))
+                                  header=projects.ProjectDetailHeader(project),
+                                  footer=generic.Footer(self.notifier))
 
     def backlog_view(self):
         self.tabs.tab_list.focus = 0
@@ -92,5 +92,5 @@ class ProjectAdminSubView(base.SubView):
 
         self.widget = urwid.ListBox(urwid.SimpleListWalker([
             tabs,
-            widgets.box_solid_fill(" ", 1),
+            generic.box_solid_fill(" ", 1),
         ]))
