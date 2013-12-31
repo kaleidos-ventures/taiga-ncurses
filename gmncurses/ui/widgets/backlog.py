@@ -9,9 +9,7 @@ import urwid
 
 from gmncurses import data
 
-from . import mixins
-from . import generic
-from . import utils
+from . import mixins, generic, utils
 
 
 class BacklogStats(urwid.WidgetWrap):
@@ -28,7 +26,7 @@ class BacklogStats(urwid.WidgetWrap):
         self._w = urwid.Columns([
             ("weight", 0.2, urwid.Pile([TotalPoints(project_stats), TotalSprints(self.project)])),
             ("weight", 0.3, urwid.Pile([CompletedSprints(self.project), CurrentSprint(self.project)])),
-            ("weight", 0.6, urwid.Pile([ClosedPoints(project_stats), DefinedPoints(project_stats), ])),
+            ("weight", 0.6, urwid.Pile([ClosedPoints(project_stats), DefinedPoints(project_stats)])),
         ])
 
 

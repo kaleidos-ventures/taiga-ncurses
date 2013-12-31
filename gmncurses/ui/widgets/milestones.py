@@ -9,8 +9,7 @@ import urwid
 
 from gmncurses import data
 
-from . import generic
-from . import utils
+from . import generic, utils
 
 
 class MilestoneInfo(urwid.WidgetWrap):

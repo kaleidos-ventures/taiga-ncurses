@@ -5,10 +5,10 @@ gmncurses.ui.widgets
 ~~~~~~~~~~~~~~~~~~~~
 """
 
-from . import generic
-from . import auth
-from . import projects
-from . import backlog
-from . import milestones
-from . import issues
-from . import wiki
+from . import (generic,
+               auth,
+               projects,
+               backlog,
+               milestones,
+               issues,
+               wiki)

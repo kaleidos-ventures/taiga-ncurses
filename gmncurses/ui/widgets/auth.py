@@ -9,6 +9,7 @@ import urwid
 
 from . import mixins
 
+
 def username_prompt(username_text, editor, max_prompt_padding):
     username = urwid.Text(username_text, "center")
     return urwid.Columns([(len(username_text), username),

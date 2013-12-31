@@ -9,9 +9,7 @@ import urwid
 
 from gmncurses import data
 
-from . import mixins
-from . import generic
-from . import utils
+from . import mixins, generic, utils
 
 
 class IssuesStats(urwid.WidgetWrap):

@@ -7,8 +7,7 @@ gmncurses.ui.widgets.projects
 
 import urwid
 
-from . import generic
-from . import mixins
+from . import generic, mixins
 
 
 class ProjectDetailHeader(mixins.NonSelectableMixin, urwid.WidgetWrap):
