@@ -127,7 +127,7 @@ def test_project_detail_backlog_controller_submit_new_user_story_form_with_error
     signals.emit(form.save_button, "click")
     assert project_view.backlog.notifier.error_msg.call_count == 1
 
-def test_project_detail_backlog_controller_submit_new_user_story_form_with_errors():
+def test_project_detail_backlog_controller_submit_new_user_story_form_successfully():
     us_subject = "Create a new user story"
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
@@ -172,6 +172,27 @@ def test_project_detail_backlog_controller_show_the_edit_user_story_form():
     form._subject_edit.set_edit_text("")
     signals.emit(form.save_button, "click")
     assert project_view.backlog.notifier.error_msg.call_count == 1
+
+def test_project_detail_backlog_controller_submit_edit_user_story_form_successfully():
+    us_subject = "Update a user story"
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor(update_user_story_response=factories.future(
+                           factories.successful_update_user_story_response(us_subject)))
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    form = project_detail_controller.view.backlog.user_story_form
+
+    form._subject_edit.set_edit_text(us_subject)
+    signals.emit(form.save_button, "click")
+    assert project_view.backlog.notifier.info_msg.call_count == 3
+    assert (executor.update_user_story.call_args.call_list()[0][0][0]["id"] ==
+            project_detail_controller.view.backlog.user_story_form.user_story["id"])
+    assert executor.update_user_story.call_args.call_list()[0][0][1]["subject"] == us_subject
+    assert executor.update_user_story.call_count == 1
+    assert executor.update_user_story.return_value.result()["subject"] == us_subject
 
 def test_project_detail_controller_fetches_issues_and_transitions_to_issues():
     project = factories.project()
