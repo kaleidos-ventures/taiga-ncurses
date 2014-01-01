@@ -52,4 +52,5 @@ class ProjectIssuesSubView(base.SubView):
         self.parent.show_widget_on_top(self.help_popup, 60, 17)
 
     def close_help_popup(self):
+        del self.help_popup
         self.parent.hide_widget_on_top()

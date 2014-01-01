@@ -55,6 +55,7 @@ class ProjectBacklogSubView(base.SubView):
         self.parent.show_widget_on_top(self.user_story_form, 150, 22)
 
     def close_user_story_form(self):
+        del self.user_story_form
         self.parent.hide_widget_on_top()
 
     def get_user_story_form_data(self):
@@ -76,4 +77,5 @@ class ProjectBacklogSubView(base.SubView):
         self.parent.show_widget_on_top(self.help_popup, 60, 20)
 
     def close_help_popup(self):
+        del self.help_popup
         self.parent.hide_widget_on_top()
