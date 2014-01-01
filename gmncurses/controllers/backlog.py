@@ -33,6 +33,8 @@ class ProjectBacklogSubController(base.Controller):
             self.move_current_us_down()
         elif key == ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER:
             self.update_user_stories_order()
+        elif key == ProjectBacklogKeys.MOVE_US_TO_MILESTONE:
+            self.move_user_story_to_milestone()
         elif key == ProjectBacklogKeys.RELOAD:
             self.load()
         elif key == ProjectBacklogKeys.HELP:
@@ -111,6 +113,16 @@ class ProjectBacklogSubController(base.Controller):
     def update_user_stories_order(self):
         uss_post_f = self.executor.update_user_stories_order(self.user_stories, self.view.project)
         uss_post_f.add_done_callback(self.handler_update_user_stories_order_response)
+
+    def move_user_story_to_milestone(self):
+        user_story = self.view.user_stories.widget.get_focus().user_story
+        self.view.open_milestones_selector_popup(user_story=user_story)
+
+        signals.connect(self.view.milestone_selector_popup.cancel_button, "click",
+                        lambda _: self.cancel_milestone_selector_popup())
+
+    def cancel_milestone_selector_popup(self):
+        self.view.close_milestone_selector_popup()
 
     def help_info(self):
         self.view.open_help_popup()

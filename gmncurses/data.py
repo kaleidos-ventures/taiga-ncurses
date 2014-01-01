@@ -62,12 +62,12 @@ def current_sprint_id(project):
         return milestones[-1].get("id", None)
     return "-----"
 
-# project - Roles
-
 def computable_roles(project):
     dc = {str(r["id"]): r for r in project.get("roles", []) if r["computable"]} if "roles" in project else {}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
 
+def list_of_milestones(project, reverse=True):
+    return sorted(project.get("list_of_milestones", []), key=lambda m: m["finish_date"], reverse=reverse)
 
 # User Stories
 
@@ -218,6 +218,9 @@ def milestone_total_points(milestone_stats):
 def milestone_completed_points(milestone_stats):
     return sum(milestone_stats["completed_points"])
 
+def milestone_closed_points(milestone):
+    return sum(milestone["closed_points"].values())
+
 def milestone_total_tasks(milestone_stats):
     return milestone_stats["total_tasks"]
 
@@ -226,6 +229,9 @@ def milestone_completed_tasks(milestone_stats):
 
 def milestone_estimated_start(milestone_stats):
     return milestone_stats["estimated_start"]
+
+def milestone_finish_date(milestone):
+    return milestone["finish_date"]
 
 def milestone_estimated_finish(milestone_stats):
     return milestone_stats["estimated_finish"]

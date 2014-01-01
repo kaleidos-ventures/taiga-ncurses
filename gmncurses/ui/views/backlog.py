@@ -27,6 +27,7 @@ class ProjectBacklogSubView(base.SubView):
            ("K", "Move selected US up"),
            ("J", "Move selected US down"),
            ("w", "Save the position of all USs"),
+           ("m", "Move selected US to a Milestone"),
        )),
     )
 
@@ -70,6 +71,15 @@ class ProjectBacklogSubView(base.SubView):
             "project": self.project["id"],
         }
         return data
+
+    def open_milestones_selector_popup(self, user_story={}):
+        self.milestone_selector_popup = backlog.MIlestoneSelectorPopup(self.project, user_story)
+        # FIXME: Calculate the popup size
+        self.parent.show_widget_on_top(self.milestone_selector_popup, 100, 28)
+
+    def close_milestone_selector_popup(self):
+        del self.milestone_selector_popup
+        self.parent.hide_widget_on_top()
 
     def open_help_popup(self):
         self.help_popup = generic.HelpPopup("Backlog Help Info", self.help_info)

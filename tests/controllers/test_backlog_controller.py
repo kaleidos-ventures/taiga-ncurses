@@ -259,3 +259,27 @@ def test_backlog_controller_delete_user_story_order_with_success():
     assert project_view.backlog.notifier.info_msg.call_count == 1
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.backlog.user_stories[0]["id"])
+
+def test_backlog_controller_show_the_milestone_selector_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+
+    assert not hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")
+    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
+    assert hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")
+
+def test_backlog_controller_close_the_milestone_selector_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
+
+    assert hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")
+    milestone_selector_popup = project_detail_controller.view.backlog.milestone_selector_popup
+    signals.emit(milestone_selector_popup.cancel_button, "click")
+    assert not hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")

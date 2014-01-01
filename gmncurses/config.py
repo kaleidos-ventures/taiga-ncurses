@@ -77,6 +77,7 @@ class ProjectBacklogKeys(metaclass=KeyConfigMeta):
     EDIT_USER_STORY = "e"
     DELETE_USER_STORY = "delete"
     UPDATE_USER_STORIES_ORDER = "w"
+    MOVE_US_TO_MILESTONE = "m"
     US_UP = "K"
     US_DOWN = "J"
     RELOAD = "r"
