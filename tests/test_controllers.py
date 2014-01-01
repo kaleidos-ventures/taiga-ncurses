@@ -247,8 +247,8 @@ def test_project_detail_backlog_controller_update_user_stories_order_with_errors
     executor = factories.patched_executor(update_user_stories_order_response=factories.future(None))
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER)
 
+    project_detail_controller.handle(config.ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER)
     assert project_view.backlog.notifier.error_msg.call_count == 1
 
 def test_project_detail_backlog_controller_update_user_stories_order_with_success():
@@ -262,6 +262,33 @@ def test_project_detail_backlog_controller_update_user_stories_order_with_succes
 
     project_detail_controller.handle(config.ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER)
     assert project_view.backlog.notifier.info_msg.call_count == 1
+
+def test_project_detail_backlog_controller_delete_user_story_with_errors():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor(delete_user_story_response=factories.future(None))
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+
+    project_detail_controller.handle(config.ProjectBacklogKeys.DELETE_USER_STORY)
+    assert project_view.backlog.notifier.error_msg.call_count == 1
+    assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
+            project_detail_controller.backlog.user_stories[0]["id"])
+
+def test_project_detail_backlog_controller_delete_user_story_order_with_success():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_view.backlog.notifier.reset_mock()
+
+    project_detail_controller.handle(config.ProjectBacklogKeys.DELETE_USER_STORY)
+    assert project_view.backlog.notifier.info_msg.call_count == 1
+    assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
+            project_detail_controller.backlog.user_stories[0]["id"])
 
 def test_project_detail_controller_fetches_issues_and_transitions_to_issues():
     project = factories.project()

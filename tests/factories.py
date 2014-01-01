@@ -115,6 +115,9 @@ def successful_update_user_story_response(subject):
 def successful_update_user_stories_order_response():
     return True
 
+def successful_delete_user_story_response():
+    return True
+
 # Tasks
 def milestone_tasks():
     return json.loads(fixtures.MILESTONE_TASKS)
@@ -143,6 +146,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      create_user_story_response=future(successful_create_user_story_response("Create us")),
                      update_user_story_response=future(successful_update_user_story_response("Update us")),
                      update_user_stories_order_response=future(successful_update_user_stories_order_response()),
+                     delete_user_story_response=future(successful_delete_user_story_response()),
                      milestone_tasks=future(milestone_tasks()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues()),
@@ -156,6 +160,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.create_user_story = mock.Mock(return_value=create_user_story_response)
     executor.update_user_story = mock.Mock(return_value=update_user_story_response)
     executor.update_user_stories_order = mock.Mock(return_value=update_user_stories_order_response)
+    executor.delete_user_story = mock.Mock(return_value=delete_user_story_response)
     executor.milestone = mock.Mock(return_value=milestone)
     executor.milestone_stats = mock.Mock(return_value=milestone_stats)
     executor.user_stories = mock.Mock(return_value=user_stories)
