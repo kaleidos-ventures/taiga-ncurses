@@ -3,298 +3,557 @@
 PROJECT = """
 {
     "tags": "",
-    "list_of_milestones": [],
-    "memberships": [],
+    "list_of_milestones": [
+        {
+            "closed": true,
+            "id": 1,
+            "client_increment_points": {},
+            "name": "Sprint 2013-10-26",
+            "team_increment_points": {},
+            "finish_date": "2013-11-10",
+            "closed_points": {
+                "1": 8.0,
+                "2": 50.0,
+                "3": 15.0,
+                "4": 2.0
+            }
+        },
+        {
+            "closed": true,
+            "id": 2,
+            "client_increment_points": {},
+            "name": "Sprint 2013-11-10",
+            "team_increment_points": {},
+            "finish_date": "2013-11-25",
+            "closed_points": {
+                "1": 50.5,
+                "2": 32.0,
+                "3": 59.0,
+                "4": 62.0
+            }
+        },
+        {
+            "closed": true,
+            "id": 3,
+            "client_increment_points": {},
+            "name": "Sprint 2013-11-25",
+            "team_increment_points": {},
+            "finish_date": "2013-12-10",
+            "closed_points": {
+                "1": 47.0,
+                "2": 62.5,
+                "3": 53.0,
+                "4": 83.0
+            }
+        },
+        {
+            "closed": false,
+            "id": 4,
+            "client_increment_points": {
+                "1": 2.5,
+                "2": 1.0,
+                "3": 2.5,
+                "4": 1.0
+            },
+            "name": "Sprint 2013-12-10",
+            "team_increment_points": {
+                "1": 2.5,
+                "2": 1.0,
+                "3": 2.5,
+                "4": 1.0
+            },
+            "finish_date": "2014-01-01",
+            "closed_points": {
+                "1": 35.0,
+                "2": 10.0,
+                "3": 5.0,
+                "4": 5.0
+            }
+        }
+    ],
+    "roles": [
+        {
+            "order": 10,
+            "id": 3,
+            "slug": "ux",
+            "name": "UX",
+            "computable": true
+        },
+        {
+            "order": 20,
+            "id": 4,
+            "slug": "design",
+            "name": "Design",
+            "computable": true
+        },
+        {
+            "order": 30,
+            "id": 2,
+            "slug": "front",
+            "name": "Front",
+            "computable": true
+        },
+        {
+            "order": 40,
+            "id": 1,
+            "slug": "back",
+            "name": "Back",
+            "computable": true
+        },
+        {
+            "order": 50,
+            "id": 5,
+            "slug": "product-ouner",
+            "name": "Product Owner",
+            "computable": false
+        },
+        {
+            "order": 60,
+            "id": 6,
+            "slug": "stakeholder",
+            "name": "Stakeholder",
+            "computable": false
+        }
+    ],
+    "memberships": [
+        {
+            "role_name": "UX",
+            "full_name": "Josefina Reyes",
+            "color": "#FFFF00",
+            "id": 9,
+            "user": 9,
+            "project": 1,
+            "role": 3,
+            "email": "ab@maxime.org",
+            "created_at": "2013-12-20T09:53:46.452Z",
+            "token": null
+        },
+        {
+            "role_name": "UX",
+            "full_name": "Aitor Montero",
+            "color": "#002e33",
+            "id": 6,
+            "user": 6,
+            "project": 1,
+            "role": 3,
+            "email": "sit@magni.com",
+            "created_at": "2013-12-20T09:53:46.429Z",
+            "token": null
+        },
+        {
+            "role_name": "Design",
+            "full_name": "admin",
+            "color": "",
+            "id": 1,
+            "user": 1,
+            "project": 1,
+            "role": 4,
+            "email": "niwi@niwi.be",
+            "created_at": "2013-12-20T09:53:46.386Z",
+            "token": null
+        },
+        {
+            "role_name": "Design",
+            "full_name": "Aurora Calvo",
+            "color": "#4B0082",
+            "id": 7,
+            "user": 7,
+            "project": 1,
+            "role": 4,
+            "email": "voluptatibus@inventore.com",
+            "created_at": "2013-12-20T09:53:46.436Z",
+            "token": null
+        },
+        {
+            "role_name": "Design",
+            "full_name": "Purificacion Montero",
+            "color": "#FC8EAC",
+            "id": 3,
+            "user": 3,
+            "project": 1,
+            "role": 4,
+            "email": "voluptatem@placeat.com",
+            "created_at": "2013-12-20T09:53:46.406Z",
+            "token": null
+        },
+        {
+            "role_name": "Front",
+            "full_name": "Teresa Gallardo",
+            "color": "#FFCC00",
+            "id": 11,
+            "user": 11,
+            "project": 1,
+            "role": 2,
+            "email": "nihil@eligendi.net",
+            "created_at": "2013-12-20T09:53:46.467Z",
+            "token": null
+        },
+        {
+            "role_name": "Back",
+            "full_name": "Victoria Nu\u00f1ez",
+            "color": "#FFF8E7",
+            "id": 10,
+            "user": 10,
+            "project": 1,
+            "role": 1,
+            "email": "recusandae@facilis.org",
+            "created_at": "2013-12-20T09:53:46.460Z",
+            "token": null
+        },
+        {
+            "role_name": "Product Owner",
+            "full_name": "Carolina Mora",
+            "color": "#FC8EAC",
+            "id": 5,
+            "user": 5,
+            "project": 1,
+            "role": 5,
+            "email": "minima@quos.org",
+            "created_at": "2013-12-20T09:53:46.421Z",
+            "token": null
+        },
+        {
+            "role_name": "Product Owner",
+            "full_name": "Eugenio Herrera",
+            "color": "#FFFF00",
+            "id": 4,
+            "user": 4,
+            "project": 1,
+            "role": 5,
+            "email": "quasi@reprehenderit.net",
+            "created_at": "2013-12-20T09:53:46.413Z",
+            "token": null
+        },
+        {
+            "role_name": "Product Owner",
+            "full_name": "Susana Reyes",
+            "color": "#FC8EAC",
+            "id": 8,
+            "user": 8,
+            "project": 1,
+            "role": 5,
+            "email": "consectetur@impedit.net",
+            "created_at": "2013-12-20T09:53:46.444Z",
+            "token": null
+        },
+        {
+            "role_name": "Stakeholder",
+            "full_name": "Marina Medina",
+            "color": "#FFFF00",
+            "id": 2,
+            "user": 2,
+            "project": 1,
+            "role": 6,
+            "email": "ducimus@maiores.net",
+            "created_at": "2013-12-20T09:53:46.398Z",
+            "token": null
+        }
+    ],
     "us_statuses": [
         {
-            "id": 5,
+            "id": 1,
             "name": "Open",
             "order": 1,
             "is_closed": false,
-            "project": 3
+            "color": "#669933",
+            "project": 1
         },
         {
-            "id": 6,
+            "id": 2,
             "name": "Closed",
             "order": 2,
             "is_closed": true,
-            "project": 3
+            "color": "#999999",
+            "project": 1
         }
     ],
     "points": [
         {
-            "id": 25,
+            "id": 1,
             "name": "?",
             "order": 1,
             "value": null,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 26,
+            "id": 2,
             "name": "0",
             "order": 2,
             "value": 0.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 27,
+            "id": 3,
             "name": "1/2",
             "order": 3,
             "value": 0.5,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 28,
+            "id": 4,
             "name": "1",
             "order": 4,
             "value": 1.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 29,
+            "id": 5,
             "name": "2",
             "order": 5,
             "value": 2.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 30,
+            "id": 6,
             "name": "3",
             "order": 6,
             "value": 3.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 31,
+            "id": 7,
             "name": "5",
             "order": 7,
             "value": 5.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 32,
+            "id": 8,
             "name": "8",
             "order": 8,
             "value": 8.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 33,
+            "id": 9,
             "name": "10",
             "order": 9,
             "value": 10.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 34,
+            "id": 10,
             "name": "15",
             "order": 10,
             "value": 15.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 35,
+            "id": 11,
             "name": "20",
             "order": 11,
             "value": 20.0,
-            "project": 3
+            "project": 1
         },
         {
-            "id": 36,
+            "id": 12,
             "name": "40",
             "order": 12,
             "value": 40.0,
-            "project": 3
+            "project": 1
         }
     ],
     "task_statuses": [
         {
-            "id": 11,
+            "id": 1,
             "name": "New",
             "order": 1,
             "is_closed": false,
             "color": "#999999",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 12,
+            "id": 2,
             "name": "In progress",
             "order": 2,
             "is_closed": false,
             "color": "#ff9900",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 13,
+            "id": 3,
             "name": "Ready for test",
             "order": 3,
             "is_closed": true,
             "color": "#ffcc00",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 14,
+            "id": 4,
             "name": "Closed",
             "order": 4,
             "is_closed": true,
             "color": "#669900",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 15,
+            "id": 5,
             "name": "Needs Info",
             "order": 5,
             "is_closed": false,
             "color": "#999999",
-            "project": 3
+            "project": 1
         }
     ],
     "priorities": [
         {
-            "id": 7,
+            "id": 1,
             "name": "Low",
             "order": 1,
             "color": "#666666",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 8,
+            "id": 2,
             "name": "Normal",
             "order": 3,
             "color": "#669933",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 9,
+            "id": 3,
             "name": "High",
             "order": 5,
             "color": "#CC0000",
-            "project": 3
+            "project": 1
         }
     ],
     "severities": [
         {
-            "id": 11,
+            "id": 1,
             "name": "Wishlist",
             "order": 1,
             "color": "#666666",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 12,
+            "id": 2,
             "name": "Minor",
             "order": 2,
             "color": "#669933",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 13,
+            "id": 3,
             "name": "Normal",
             "order": 3,
-            "color": "blue",
-            "project": 3
+            "color": "#0000FF",
+            "project": 1
         },
         {
-            "id": 14,
+            "id": 4,
             "name": "Important",
             "order": 4,
-            "color": "orange",
-            "project": 3
+            "color": "#FFA500",
+            "project": 1
         },
         {
-            "id": 15,
+            "id": 5,
             "name": "Critical",
             "order": 5,
             "color": "#CC0000",
-            "project": 3
+            "project": 1
         }
     ],
     "issue_statuses": [
         {
-            "id": 15,
+            "id": 1,
             "name": "New",
             "order": 1,
             "is_closed": false,
             "color": "#8C2318",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 16,
+            "id": 2,
             "name": "In progress",
             "order": 2,
             "is_closed": false,
             "color": "#5E8C6A",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 17,
+            "id": 3,
             "name": "Ready for test",
             "order": 3,
             "is_closed": true,
             "color": "#88A65E",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 18,
+            "id": 4,
             "name": "Closed",
             "order": 4,
             "is_closed": true,
             "color": "#BFB35A",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 19,
+            "id": 5,
             "name": "Needs Info",
             "order": 5,
             "is_closed": false,
             "color": "#89BAB4",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 20,
+            "id": 6,
             "name": "Rejected",
             "order": 6,
             "is_closed": true,
             "color": "#CC0000",
-            "project": 3
+            "project": 1
         },
         {
-            "id": 21,
+            "id": 7,
             "name": "Postponed",
             "order": 7,
             "is_closed": false,
             "color": "#666666",
-            "project": 3
+            "project": 1
         }
     ],
     "issue_types": [
         {
-            "id": 3,
+            "id": 1,
             "name": "Bug",
             "order": 1,
             "color": "#89BAB4",
-            "project": 3
+            "project": 1
         }
     ],
-    "id": 3,
-    "name": "Bar",
-    "slug": "bar",
-    "description": "asdf",
-    "created_date": "2013-11-30T11:31:46.970Z",
-    "modified_date": "2013-11-30T11:31:46.990Z",
-    "owner": 1,
+    "id": 1,
+    "default_points": 1,
+    "default_us_status": 1,
+    "default_task_status": 1,
+    "default_priority": 2,
+    "default_severity": 3,
+    "default_issue_status": 1,
+    "default_issue_type": 1,
+    "default_question_status": 1,
+    "name": "Project Example 0",
+    "slug": "project-example-0",
+    "description": "Project example 0 description",
+    "created_date": "2013-12-20T09:53:46.361Z",
+    "modified_date": "2013-12-20T09:53:59.027Z",
+    "owner": 2,
     "public": true,
-    "total_milestones": 0,
-    "total_story_points": 123.0,
-    "default_points": 25,
-    "default_us_status": 5,
-    "default_task_status": 11,
-    "default_priority": 8,
-    "default_severity": 13,
-    "default_issue_status": 15,
-    "default_issue_type": 3,
-    "default_question_status": 7,
-    "members": []
+    "total_milestones": 5,
+    "total_story_points": 1062.0,
+    "domain": 1,
+    "members": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+    ]
 }
 """
 
