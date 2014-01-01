@@ -255,7 +255,6 @@ PROJECT = """
             "name": "Open",
             "order": 1,
             "is_closed": false,
-            "color": "#669933",
             "project": 1
         },
         {
@@ -359,7 +358,6 @@ PROJECT = """
             "name": "New",
             "order": 1,
             "is_closed": false,
-            "color": "#999999",
             "project": 1
         },
         {
@@ -400,7 +398,6 @@ PROJECT = """
             "id": 1,
             "name": "Low",
             "order": 1,
-            "color": "#666666",
             "project": 1
         },
         {
@@ -423,7 +420,6 @@ PROJECT = """
             "id": 1,
             "name": "Wishlist",
             "order": 1,
-            "color": "#666666",
             "project": 1
         },
         {
@@ -461,7 +457,6 @@ PROJECT = """
             "name": "New",
             "order": 1,
             "is_closed": false,
-            "color": "#8C2318",
             "project": 1
         },
         {
@@ -517,6 +512,12 @@ PROJECT = """
         {
             "id": 1,
             "name": "Bug",
+            "order": 1,
+            "project": 1
+        },
+        {
+            "id": 2,
+            "name": "Question",
             "order": 1,
             "color": "#89BAB4",
             "project": 1
@@ -1736,7 +1737,7 @@ ISSUES = """
         "status": 7,
         "severity": 5,
         "priority": 2,
-        "type": 1,
+        "type": 2,
         "milestone": null,
         "project": 1,
         "created_date": "2013-12-20T09:53:59.044Z",
