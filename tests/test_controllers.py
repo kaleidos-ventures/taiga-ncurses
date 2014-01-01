@@ -332,7 +332,7 @@ def test_project_detail_issues_controller_show_the_help_popup():
     project_detail_controller.handle(config.ProjectIssuesKeys.HELP)
     assert hasattr(project_detail_controller.view.issues, "help_popup")
 
-# MILESTONE
+# MILESTONES
 
 def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskboard():
     project = factories.project()
@@ -343,8 +343,8 @@ def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskbo
                                                                              state_machine)
     assert state_machine.state == state_machine.PROJECT_BACKLOG
 
-    project_detail_controller.handle(config.ProjectKeys.SPRINT)
-    assert state_machine.state == state_machine.PROJECT_SPRINT
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    assert state_machine.state == state_machine.PROJECT_MILESTONES
 
 def test_project_detail_sprints_controller_show_the_help_popup():
     project = factories.project()
@@ -352,7 +352,7 @@ def test_project_detail_sprints_controller_show_the_help_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.SPRINT)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
 
     assert not hasattr(project_detail_controller.view.sprint, "help_popup")
     project_detail_controller.handle(config.ProjectMilestoneKeys.HELP)

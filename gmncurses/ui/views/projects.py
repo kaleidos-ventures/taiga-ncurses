@@ -42,7 +42,7 @@ class ProjectsView(base.View):
 
 
 class ProjectDetailView(base.View):
-    TABS = ["Backlog", "Sprints", "Issues", "Wiki", "Admin"]
+    TABS = ["Backlog", "Milestones", "Issues", "Wiki", "Admin"]
 
     def __init__(self, project):
         self.project = project

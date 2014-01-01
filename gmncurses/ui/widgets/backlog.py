@@ -24,8 +24,8 @@ class BacklogStats(urwid.WidgetWrap):
 
     def populate(self, project_stats):
         self._w = urwid.Columns([
-            ("weight", 0.2, urwid.Pile([TotalPoints(project_stats), TotalSprints(self.project)])),
-            ("weight", 0.3, urwid.Pile([CompletedSprints(self.project), CurrentSprint(self.project)])),
+            ("weight", 0.2, urwid.Pile([TotalPoints(project_stats), TotalMilestones(self.project)])),
+            ("weight", 0.3, urwid.Pile([CompletedMilestones(self.project), CurrentMilestone(self.project)])),
             ("weight", 0.6, urwid.Pile([ClosedPoints(project_stats), DefinedPoints(project_stats)])),
         ])
 
@@ -36,7 +36,7 @@ class TotalPoints(urwid.Text):
         super().__init__(text)
 
 
-class TotalSprints(urwid.Text):
+class TotalMilestones(urwid.Text):
     def __init__(self, project):
         text = ["Total sprints: ", ("cyan", str(data.total_sprints(project)))]
         super().__init__(text)
@@ -73,7 +73,7 @@ class DefinedPoints(urwid.Columns):
         super().__init__(widget_list, **kwargs)
 
 
-class CurrentSprint(urwid.Text):
+class CurrentMilestone(urwid.Text):
     def __init__(self, project):
         text = [
             "Current sprint: ",
@@ -85,7 +85,7 @@ class CurrentSprint(urwid.Text):
         super().__init__(text)
 
 
-class CompletedSprints(urwid.Text):
+class CompletedMilestones(urwid.Text):
     def __init__(self, project):
         text = ["Completed sprints: ", ("green", str(len(data.completed_sprints(project))))]
         super().__init__(text)

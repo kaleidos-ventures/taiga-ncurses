@@ -841,7 +841,7 @@ PROJECT_STATS = """
             "optimal": 123.0,
             "evolution": 123.0,
             "client-increment": 0,
-            "name": "Sprint 1",
+            "name": "Milestone 1",
             "team-increment": 0
         },
         {
@@ -2069,7 +2069,7 @@ MILESTONE = """
         "4": 1.0
     },
     "id": 4,
-    "name": "Sprint 2013-12-10",
+    "name": "Milestone 2013-12-10",
     "slug": "sprint-2013-12-10",
     "owner": 10,
     "project": 1,
@@ -2086,7 +2086,7 @@ MILESTONE = """
 MILESTONE_STATS = """
 {
     "estimated_finish": "2013-12-25",
-    "name": "Sprint 2013-12-10",
+    "name": "Milestone 2013-12-10",
     "days": [
         {
             "name": 10,

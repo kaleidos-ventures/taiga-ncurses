@@ -72,7 +72,7 @@ class ProjectDetailController(base.Controller):
             self.view.backlog_view()
             self.subcontroller = self.backlog
             self.subcontroller.load()
-        elif key == ProjectKeys.SPRINT:
+        elif key == ProjectKeys.MILESTONES:
             self.view.sprint_view()
             self.subcontroller = self.sprint
             self.subcontroller.load()

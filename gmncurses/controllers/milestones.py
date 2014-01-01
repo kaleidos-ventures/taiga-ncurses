@@ -31,7 +31,7 @@ class ProjectMilestoneSubController(base.Controller):
             super().handle(key)
 
     def load(self):
-        self.state_machine.transition(self.state_machine.PROJECT_SPRINT)
+        self.state_machine.transition(self.state_machine.PROJECT_MILESTONES)
 
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
