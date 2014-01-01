@@ -9,6 +9,8 @@ from gmncurses.core import StateMachine
 from . import factories
 
 
+# AUTH
+
 def test_when_clicking_login_button_controllers_handle_login_method_is_called():
     login_view = factories.login_view("", "")
     _ = mock.Mock()
@@ -27,6 +29,8 @@ def test_login_controller_prints_an_error_message_on_unsuccessful_login():
     signals.emit(login_view.login_button, "click")
 
     assert login_view.notifier.error_msg.call_count == 1
+
+# PROJECTS
 
 def test_login_controller_transitions_to_projects_on_successful_login():
     username, password = "admin", "123123"
@@ -93,6 +97,8 @@ def test_projects_controller_when_project_fetching_fails_a_error_message_is_show
 
     assert projects_view.notifier.error_msg.call_count == 1
 
+# BACKLOG
+
 def test_project_detail_controller_fetches_user_stories_and_transitions_to_backlog():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
@@ -102,6 +108,17 @@ def test_project_detail_controller_fetches_user_stories_and_transitions_to_backl
                                                                              state_machine)
 
     assert state_machine.state == state_machine.PROJECT_BACKLOG
+
+def test_project_detail_backlog_controller_show_the_help_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+
+    assert not hasattr(project_detail_controller.view.backlog, "help_popup")
+    project_detail_controller.handle(config.ProjectBacklogKeys.HELP)
+    assert hasattr(project_detail_controller.view.backlog, "help_popup")
 
 def test_project_detail_backlog_controller_show_the_new_user_story_form():
     project = factories.project()
@@ -196,7 +213,6 @@ def test_project_detail_backlog_controller_submit_edit_user_story_form_successfu
     assert executor.update_user_story.call_count == 1
     assert executor.update_user_story.return_value.result()["subject"] == us_subject
 
-
 def test_project_detail_backlog_controller_move_user_story_down():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
@@ -290,6 +306,8 @@ def test_project_detail_backlog_controller_delete_user_story_order_with_success(
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.backlog.user_stories[0]["id"])
 
+# ISSUES
+
 def test_project_detail_controller_fetches_issues_and_transitions_to_issues():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
@@ -301,6 +319,20 @@ def test_project_detail_controller_fetches_issues_and_transitions_to_issues():
 
     project_detail_controller.handle(config.ProjectKeys.ISSUES)
     assert state_machine.state == state_machine.PROJECT_ISSUES
+
+def test_project_detail_issues_controller_show_the_help_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+
+    assert not hasattr(project_detail_controller.view.issues, "help_popup")
+    project_detail_controller.handle(config.ProjectIssuesKeys.HELP)
+    assert hasattr(project_detail_controller.view.issues, "help_popup")
+
+# MILESTONE
 
 def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskboard():
     project = factories.project()
@@ -314,6 +346,19 @@ def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskbo
     project_detail_controller.handle(config.ProjectKeys.SPRINT)
     assert state_machine.state == state_machine.PROJECT_SPRINT
 
+def test_project_detail_sprints_controller_show_the_help_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.SPRINT)
+
+    assert not hasattr(project_detail_controller.view.sprint, "help_popup")
+    project_detail_controller.handle(config.ProjectMilestoneKeys.HELP)
+    assert hasattr(project_detail_controller.view.sprint, "help_popup")
+
+# WIKI
 
 def test_project_detail_controller_fetches_wiki_pages_and_transitions_to_wiki():
     project = factories.project()
