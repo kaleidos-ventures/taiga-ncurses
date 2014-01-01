@@ -51,6 +51,7 @@ PALETTE = [
     ('progressbar-smooth-red', 'dark red','dark gray')
 ]
 
+
 class KeyConfigMeta(type):
     def __new__(cls, clsname, bases, dct):
         dct["config"] = {v: k.capitalize().replace("_", " ") for k, v in dct.items() if k.isupper()}
@@ -65,7 +66,7 @@ class Keys(metaclass=KeyConfigMeta):
 class ProjectKeys(metaclass=KeyConfigMeta):
     PROJECTS = "P"
     BACKLOG = "B"
-    MILESTONES = "S"
+    MILESTONES = "M"
     ISSUES = "I"
     WIKI = "W"
     ADMIN = "A"
@@ -104,6 +105,7 @@ DEFAULTS = {
         "port": "8000",
     },
 }
+
 
 class Configuration(object):
     def __init__(self,
