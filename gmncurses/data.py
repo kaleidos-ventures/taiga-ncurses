@@ -29,12 +29,6 @@ def defined_points_percentage(project_stats):
 def closed_points(project_stats):
     return  project_stats.get("closed_points", 0)
 
-def closed_points_percentage(project_stats):
-    try:
-        return closed_points(project_stats) * 100 / total_points(project_stats)
-    except ZeroDivisionError:
-        return 0
-
 def doomline_limit_points(project_stats):
     return total_points(project_stats) - assigned_points(project_stats)
 

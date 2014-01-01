@@ -236,7 +236,7 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
     def _points_input(self):
         roles = data.computable_roles(self.project)
         points = data.points(self.project)
-        max_length = max([len(s["name"]) for s in points.values()])
+        max_length = max([len(s.get("name", "")) for s in points.values()])
 
         self._role_points_groups = {}
 
@@ -248,7 +248,7 @@ class UserStoryForm( mixins.FormMixin, urwid.WidgetWrap):
             points_colum = [(17, urwid.Text(role["name"]))]
             points_group = []
             for p_id, point in points.items():
-                urwid.RadioButton(points_group, point["name"],
+                urwid.RadioButton(points_group, point.get("name", "") or str(point.get("value", 0)),
                                   state=(int(p_id) == self.user_story.get("points", {}).get(r_id, None) or
                                          int(p_id) == self.project.get("default_points", None)),
                                   on_state_change=self._handler_point_radiobutton_change,

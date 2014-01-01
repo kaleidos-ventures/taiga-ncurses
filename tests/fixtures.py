@@ -119,7 +119,6 @@ PROJECT = """
         {
             "role_name": "UX",
             "full_name": "Josefina Reyes",
-            "color": "#FFFF00",
             "id": 9,
             "user": 9,
             "project": 1,
@@ -166,7 +165,6 @@ PROJECT = """
         },
         {
             "role_name": "Design",
-            "full_name": "Purificacion Montero",
             "color": "#FC8EAC",
             "id": 3,
             "user": 3,
@@ -276,7 +274,6 @@ PROJECT = """
         },
         {
             "id": 2,
-            "name": "0",
             "order": 2,
             "value": 0.0,
             "project": 1
