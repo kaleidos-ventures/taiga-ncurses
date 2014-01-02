@@ -13,6 +13,55 @@ class IgnoreKeyPressMixin(object):
         return key
 
 
+class KeyPressMixin(object):
+    signals = ["click"]
+
+    def keypress(self, size, key):
+        """
+        Send 'click' signal on 'activate' command.
+
+        >>> assert Button._command_map[' '] == 'activate'
+        >>> assert Button._command_map['enter'] == 'activate'
+        >>> size = (15,)
+        >>> b = Button("Cancel")
+        >>> clicked_buttons = []
+        >>> def handle_click(button):
+        ...     clicked_buttons.append(button.label)
+        >>> connect_signal(b, 'click', handle_click)
+        >>> b.keypress(size, 'enter')
+        >>> b.keypress(size, ' ')
+        >>> clicked_buttons # ... = u in Python 2
+        [...'Cancel', ...'Cancel']
+        """
+        if self._command_map[key] != urwid.ACTIVATE:
+            return key
+
+        self._emit('click')
+
+    def mouse_event(self, size, event, button, x, y, focus):
+        """
+        Send 'click' signal on button 1 press.
+
+        >>> size = (15,)
+        >>> b = Button("Ok")
+        >>> clicked_buttons = []
+        >>> def handle_click(button):
+        ...     clicked_buttons.append(button.label)
+        >>> connect_signal(b, 'click', handle_click)
+        >>> b.mouse_event(size, 'mouse press', 1, 4, 0, True)
+        True
+        >>> b.mouse_event(size, 'mouse press', 2, 4, 0, True) # ignored
+        False
+        >>> clicked_buttons # ... = u in Python 2
+        [...'Ok']
+        """
+        if button != 1 or not urwid.utils.is_mouse_press(event):
+            return False
+
+        self._emit('click')
+        return True
+
+
 class FormMixin(object):
     FORM_KEYS = {
         "tab": "down",

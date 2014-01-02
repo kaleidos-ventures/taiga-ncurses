@@ -332,6 +332,7 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
     def __init__(self, project, user_story={}):
         self.project = project
         self.user_story = user_story
+        self.options = []
 
         contents = [
             generic.box_solid_fill(" ", 2),
@@ -347,13 +348,16 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
                                                      title), "popup"))
 
     def _milestone_selector(self):
-        milestone_items = []
+        content = []
         for milestone in data.list_of_milestones(self.project):
-            milestone_items.append(MilestoneOptionEntry(self.project, milestone))
-            milestone_items.append(generic.box_solid_fill(" ", 1))
+            option = MilestoneOptionEntry(milestone)
+            self.options.append(option)
 
-        list_walker = urwid.SimpleFocusListWalker(milestone_items)
-        if len(milestone_items) > 0:
+            content.append(option)
+            content.append(generic.box_solid_fill(" ", 1))
+
+        list_walker = urwid.SimpleFocusListWalker(content)
+        if len(content) > 0:
             list_walker.set_focus(0)
         return urwid.BoxAdapter(urwid.ListBox(list_walker), 20)
 
@@ -366,9 +370,8 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
 
-class MilestoneOptionEntry(urwid.WidgetWrap):
-    def __init__(self, project, milestone):
-        self.project = project
+class MilestoneOptionEntry(mixins.KeyPressMixin, urwid.WidgetWrap):
+    def __init__(self, milestone):
         self.milestone = milestone
 
         content = [

@@ -6,7 +6,7 @@ gmncurses.controllers.backlog
 """
 
 from concurrent.futures import wait
-import functools
+import functools, copy
 
 from gmncurses.config import ProjectBacklogKeys
 from gmncurses.ui import signals
@@ -120,6 +120,11 @@ class ProjectBacklogSubController(base.Controller):
 
         signals.connect(self.view.milestone_selector_popup.cancel_button, "click",
                         lambda _: self.cancel_milestone_selector_popup())
+
+        for milestone_option in self.view.milestone_selector_popup.options:
+            signals.connect(milestone_option, "click",
+                            lambda _: self.handler_move_user_story_to_milestone_request(
+                                                  user_story, milestone_option.milestone))
 
     def cancel_milestone_selector_popup(self):
         self.view.close_milestone_selector_popup()
@@ -244,6 +249,31 @@ class ProjectBacklogSubController(base.Controller):
             user_stories_f.add_done_callback(self.handle_user_stories)
         else:
             self.view.notifier.info_msg("Save  user stories")
+
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+
+    def handler_move_user_story_to_milestone_request(self, user_story, milestone):
+        data = {"milestone": milestone["id"]}
+
+        us_patch_f = self.executor.update_user_story(user_story, data)
+        us_patch_f.add_done_callback(self.handler_move_user_story_to_milestone_response)
+
+    def handler_move_user_story_to_milestone_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Error moving user story to milestone")
+        else:
+            self.view.notifier.info_msg("Moved user story succesful!")
+            self.view.close_milestone_selector_popup()
 
             project_stats_f = self.executor.project_stats(self.view.project)
             project_stats_f.add_done_callback(self.handle_project_stats)
