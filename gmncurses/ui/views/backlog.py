@@ -75,7 +75,7 @@ class ProjectBacklogSubView(base.SubView):
     def open_milestones_selector_popup(self, user_story={}):
         self.milestone_selector_popup = backlog.MIlestoneSelectorPopup(self.project, user_story)
         # FIXME: Calculate the popup size
-        self.parent.show_widget_on_top(self.milestone_selector_popup, 100, 28)
+        self.parent.show_widget_on_top(self.milestone_selector_popup, 100, 30)
 
     def close_milestone_selector_popup(self):
         del self.milestone_selector_popup

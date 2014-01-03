@@ -121,10 +121,10 @@ class ProjectBacklogSubController(base.Controller):
         signals.connect(self.view.milestone_selector_popup.cancel_button, "click",
                         lambda _: self.cancel_milestone_selector_popup())
 
-        for milestone_option in self.view.milestone_selector_popup.options:
-            signals.connect(milestone_option, "click",
+        for option in self.view.milestone_selector_popup.options:
+            signals.connect(option, "click",
                             lambda _: self.handler_move_user_story_to_milestone_request(
-                                                  user_story, milestone_option.milestone))
+                                                  user_story, option.milestone))
 
     def cancel_milestone_selector_popup(self):
         self.view.close_milestone_selector_popup()
@@ -272,7 +272,7 @@ class ProjectBacklogSubController(base.Controller):
         if response is None:
             self.view.notifier.error_msg("Error moving user story to milestone")
         else:
-            self.view.notifier.info_msg("Moved user story succesful!")
+            self.view.notifier.info_msg("Moved user story to milestone succesful!")
             self.view.close_milestone_selector_popup()
 
             project_stats_f = self.executor.project_stats(self.view.project)

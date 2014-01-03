@@ -336,6 +336,8 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         contents = [
             generic.box_solid_fill(" ", 2),
+            urwid.Padding(self._description(), right=2, left=2),
+            generic.box_solid_fill(" ", 1),
             urwid.Padding(self._milestone_selector(), right=2, left=2),
             generic.box_solid_fill(" ", 2),
             self._buttons(),
@@ -343,9 +345,14 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
         ]
         self.widget = urwid.Pile(contents)
 
-        title = "Moved User Story to a Milestone"
+        title = "Move User Story #{} to a Milestone".format(data.us_ref(self.user_story))
         super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
                                                      title), "popup"))
+
+    def _description(self):
+        description = "Move US #{0} '{1}' to milestone...".format(data.us_ref(self.user_story),
+                                                                  data.us_subject(self.user_story))
+        return urwid.Text(description)
 
     def _milestone_selector(self):
         content = []
