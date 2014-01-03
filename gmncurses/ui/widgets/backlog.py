@@ -403,7 +403,7 @@ class MilestoneOptionEntry(mixins.KeyPressMixin, urwid.WidgetWrap):
         return True
 
     def _is_closed_widget(self):
-        if self.milestone.get("is_closed", False):
+        if self.milestone.get("closed", False):
             return urwid.AttrMap(generic.ListText("☑"), "green")
         else:
             return urwid.AttrMap(generic.ListText("☒"), "red")
