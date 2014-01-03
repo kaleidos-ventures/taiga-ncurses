@@ -55,7 +55,7 @@ class KeyPressMixin(object):
         >>> clicked_buttons # ... = u in Python 2
         [...'Ok']
         """
-        if button != 1 or not urwid.utils.is_mouse_press(event):
+        if button != 1 or not urwid.util.is_mouse_press(event):
             return False
 
         self._emit('click')
