@@ -265,6 +265,8 @@ class ProjectBacklogSubController(base.Controller):
         us_patch_f = self.executor.update_user_story(user_story, data)
         us_patch_f.add_done_callback(self.handler_move_user_story_to_milestone_response)
 
+        self.cancel_milestone_selector_popup()
+
     def handler_move_user_story_to_milestone_response(self, future):
         response = future.result()
 
@@ -272,7 +274,6 @@ class ProjectBacklogSubController(base.Controller):
             self.view.notifier.error_msg("Error moving user story to milestone")
         else:
             self.view.notifier.info_msg("Moved user story to milestone succesful!")
-            self.view.close_milestone_selector_popup()
 
             project_stats_f = self.executor.project_stats(self.view.project)
             project_stats_f.add_done_callback(self.handle_project_stats)
