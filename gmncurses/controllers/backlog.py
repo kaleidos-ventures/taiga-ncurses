@@ -122,9 +122,8 @@ class ProjectBacklogSubController(base.Controller):
                         lambda _: self.cancel_milestone_selector_popup())
 
         for option in self.view.milestone_selector_popup.options:
-            signals.connect(option, "click",
-                            lambda _: self.handler_move_user_story_to_milestone_request(
-                                                  user_story, option.milestone))
+            signals.connect(option, "click", functools.partial(
+                    self.handler_move_user_story_to_milestone_request, user_story=user_story))
 
     def cancel_milestone_selector_popup(self):
         self.view.close_milestone_selector_popup()
@@ -260,8 +259,8 @@ class ProjectBacklogSubController(base.Controller):
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
             futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
 
-    def handler_move_user_story_to_milestone_request(self, user_story, milestone):
-        data = {"milestone": milestone["id"]}
+    def handler_move_user_story_to_milestone_request(self, selected_option, user_story=None):
+        data = {"milestone": selected_option.milestone["id"]}
 
         us_patch_f = self.executor.update_user_story(user_story, data)
         us_patch_f.add_done_callback(self.handler_move_user_story_to_milestone_response)
