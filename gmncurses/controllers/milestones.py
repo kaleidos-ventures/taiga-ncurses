@@ -23,7 +23,9 @@ class ProjectMilestoneSubController(base.Controller):
         self.state_machine = state_machine
 
     def handle(self, key):
-        if key == ProjectMilestoneKeys.RELOAD:
+        if key == ProjectMilestoneKeys.CHANGE_TO_MILESTONE:
+            self.change_to_milestone()
+        elif key == ProjectMilestoneKeys.RELOAD:
             self.load()
         elif key == ProjectMilestoneKeys.HELP:
             self.help_info()
@@ -35,7 +37,10 @@ class ProjectMilestoneSubController(base.Controller):
 
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
-        last_milestone_id = gmncurses.data.current_sprint_id(self.view.project)
+        if hasattr(self, "milestone") and "id" in self.milestone:
+            last_milestone_id = self.milestone["id"]
+        else:
+            last_milestone_id = gmncurses.data.current_sprint_id(self.view.project)
 
         milestone_f = self.executor.milestone(last_milestone_id, self.view.project)
         milestone_f.add_done_callback(self.handle_milestone)
@@ -52,6 +57,18 @@ class ProjectMilestoneSubController(base.Controller):
         futures = (milestone_tasks_f, user_stories_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
+    def change_to_milestone(self):
+        self.view.open_milestones_selector_popup(current_milestone=self.milestone)
+
+        signals.connect(self.view.milestone_selector_popup.cancel_button, "click",
+                        lambda _: self.cancel_milestone_selector_popup())
+
+        for option in self.view.milestone_selector_popup.options:
+            signals.connect(option, "click", functools.partial(self.handler_change_to_milestone))
+
+    def cancel_milestone_selector_popup(self):
+        self.view.close_milestone_selector_popup()
 
     def help_info(self):
         self.view.open_help_popup()
@@ -89,3 +106,26 @@ class ProjectMilestoneSubController(base.Controller):
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch milestone data (user stories or task)")
+
+    def handler_change_to_milestone(self, selected_option):
+        self.view.notifier.info_msg("Change to milestone '{}'".format(selected_option.milestone["name"]))
+
+        milestone_id = selected_option.milestone["id"]
+
+        milestone_f = self.executor.milestone(milestone_id, self.view.project)
+        milestone_f.add_done_callback(self.handle_milestone)
+
+        milestone_stats_f = self.executor.milestone_stats(milestone_id, self.view.project)
+        milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+        user_stories_f = self.executor.user_stories(milestone_id, self.view.project)
+        user_stories_f.add_done_callback(self.handle_user_stories)
+
+        milestone_tasks_f = self.executor.milestone_tasks(milestone_id, self.view.project)
+        milestone_tasks_f.add_done_callback(self.handle_milestone_tasks)
+
+        futures = (milestone_tasks_f, user_stories_f)
+        futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+        futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
+        self.cancel_milestone_selector_popup()

@@ -85,6 +85,7 @@ class ProjectBacklogKeys(metaclass=KeyConfigMeta):
 
 
 class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
+    CHANGE_TO_MILESTONE = "m"
     RELOAD = "r"
     HELP = "?"
 

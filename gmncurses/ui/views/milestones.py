@@ -21,6 +21,7 @@ class ProjectMilestoneSubView(base.SubView):
            #("→ | l | ctrl f", "Move Right"),
        )),
        ( "Task Actions:", (
+           ("m", "Change to another Milestone"),
            ("i", "Create new Task (TODO)"),
            ("e", "Edit selected Task/Us (TODO)"),
            ("Supr", "Delete selected Task (TODO)"),
@@ -46,6 +47,15 @@ class ProjectMilestoneSubView(base.SubView):
             generic.box_solid_fill(" ", 1),
             self.taskboard,
         ]))
+
+    def open_milestones_selector_popup(self, current_milestone={}):
+        self.milestone_selector_popup = milestones.MIlestoneSelectorPopup(self.project, current_milestone)
+        # FIXME: Calculate the popup size
+        self.parent.show_widget_on_top(self.milestone_selector_popup, 100, 28)
+
+    def close_milestone_selector_popup(self):
+        del self.milestone_selector_popup
+        self.parent.hide_widget_on_top()
 
     def open_help_popup(self):
         self.help_popup = generic.HelpPopup("Milestone Help Info", self.help_info)

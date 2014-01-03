@@ -9,7 +9,7 @@ import urwid
 
 from gmncurses import data
 
-from . import generic, utils
+from . import generic, mixins, utils
 
 
 class MilestoneInfo(urwid.WidgetWrap):
@@ -198,3 +198,111 @@ class TaskEntry(urwid.WidgetWrap):
 
     def selectable(self):
         return True
+
+class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
+    def __init__(self, project, current_milestone={}):
+        self.project = project
+        self.current_milestone = current_milestone
+        self.options = []
+
+        contents = [
+            generic.box_solid_fill(" ", 2),
+            urwid.Padding(self._milestone_selector(), right=2, left=2),
+            generic.box_solid_fill(" ", 2),
+            self._buttons(),
+            generic.box_solid_fill(" ", 1),
+        ]
+        self.widget = urwid.Pile(contents)
+
+        title = "Change to another Milestone"
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+
+    def _milestone_selector(self):
+        content = []
+        for milestone in data.list_of_milestones(self.project):
+            option = MilestoneOptionEntry(milestone, not data.milestones_are_equals(self.current_milestone,
+                                                                               milestone))
+            if option.selectable():
+                self.options.append(option)
+
+            content.append(option)
+            content.append(generic.box_solid_fill(" ", 1))
+
+        list_walker = urwid.SimpleFocusListWalker(content)
+        if len(content) > 0:
+            list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 20)
+
+    def _buttons(self):
+        self.cancel_button = generic.PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)
+
+
+class MilestoneOptionEntry(mixins.KeyPressMixin, urwid.WidgetWrap):
+    is_selectable = True
+
+    def __init__(self, milestone, is_selectable=True):
+        self.milestone = milestone
+        self.is_selectable = is_selectable
+
+        content = [
+            urwid.Columns([
+                (3, self._is_closed_widget()),
+                ("weight", 0.8, self._name_widget()),
+                ("weight", 0.2, self._progress_status_widget()),
+            ]),
+            urwid.Columns([
+                (3, urwid.Text("")),
+                ("weight", 0.4, self._finish_date_widget()),
+                ("weight", 0.4, self._total_points_widget()),
+                ("weight", 0.4, self._closed_points_widget()),
+            ])
+        ]
+
+        self.widget = urwid.Pile(content)
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.AttrMap(self.widget, "default")),
+                                       "default" if self.is_selectable else "popup", "focus"))
+
+    def selectable(self):
+        return self.is_selectable
+
+    def _is_closed_widget(self):
+        if self.milestone.get("closed", False):
+            return urwid.AttrMap(generic.ListText("☑"), "green")
+        else:
+            return urwid.AttrMap(generic.ListText("☒"), "red")
+
+    def _name_widget(self):
+        return urwid.Text(data.milestone_name(self.milestone))
+
+    def _progress_status_widget(self):
+        return urwid.ProgressBar("progressbar-normal",
+                                 "progressbar-complete",
+                                 data.milestone_closed_points(self.milestone),
+                                 data.milestone_total_points(self.milestone),
+                                 "progressbar-smooth")
+
+    def _finish_date_widget(self):
+        return urwid.Columns([
+           urwid.Text("Finish date"),
+           urwid.Text(("cyan", data.milestone_finish_date(self.milestone))),
+        ])
+
+    def _total_points_widget(self):
+        return urwid.Columns([
+           urwid.Text("Total points"),
+           generic.SemaphorePercentText(data.milestone_total_points(self.milestone),
+                                        data.milestone_total_points(self.milestone))
+        ])
+
+    def _closed_points_widget(self):
+         return urwid.Columns([
+           urwid.Text("Closed points"),
+           generic.SemaphorePercentText(data.milestone_closed_points(self.milestone),
+                                        data.milestone_total_points(self.milestone))
+        ])

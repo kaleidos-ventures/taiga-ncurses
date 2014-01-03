@@ -69,6 +69,10 @@ def computable_roles(project):
 def list_of_milestones(project, reverse=True):
     return sorted(project.get("list_of_milestones", []), key=lambda m: m["finish_date"], reverse=reverse)
 
+def milestones_are_equals(milestone1, milestone2):
+    return milestone1.get("id", milestone1) == milestone2.get("id", milestone2)
+
+
 # User Stories
 
 def us_ref(us):
