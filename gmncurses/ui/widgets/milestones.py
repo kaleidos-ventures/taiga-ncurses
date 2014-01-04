@@ -266,7 +266,7 @@ class MilestoneOptionEntry(mixins.KeyPressMixin, urwid.WidgetWrap):
 
         self.widget = urwid.Pile(content)
         super().__init__(urwid.AttrMap(urwid.LineBox(urwid.AttrMap(self.widget, "default")),
-                                       "default" if self.is_selectable else "popup", "focus"))
+                                       "default" if self.is_selectable else "popup-selected", "focus"))
 
     def selectable(self):
         return self.is_selectable
