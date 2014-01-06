@@ -8,6 +8,32 @@ from gmncurses.core import StateMachine
 
 from tests import factories
 
+def test_issues_controller_show_the_filters_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+
+    assert not hasattr(project_detail_controller.view.issues, "filters_popup")
+    project_detail_controller.handle(config.ProjectIssuesKeys.FILTERS)
+    assert hasattr(project_detail_controller.view.issues, "filters_popup")
+
+
+def test_issues_controller_cancel_the_filters_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(config.ProjectIssuesKeys.FILTERS)
+
+    assert hasattr(project_detail_controller.view.issues, "filters_popup")
+    filters_popup = project_detail_controller.view.issues.filters_popup
+    signals.emit(filters_popup.cancel_button, "click")
+    assert not hasattr(project_detail_controller.view.issues, "filters_popup")
 
 def test_issues_controller_show_the_help_popup():
     project = factories.project()
