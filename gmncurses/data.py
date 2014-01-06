@@ -233,8 +233,6 @@ def milestone_name(milestone):
     return milestone.get("name", "------")
 
 def milestone_total_points(milestone_stats):
-    import ipdb; ipdb.set_trace()
-    print(milestone_stats)
     return sum(milestone_stats.get("total_points", {}).values())
 
 def milestone_completed_points(milestone_stats):
