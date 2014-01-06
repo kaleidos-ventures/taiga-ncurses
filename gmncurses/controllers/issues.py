@@ -15,13 +15,24 @@ from . import base
 
 
 class ProjectIssuesSubController(base.Controller):
+    filters = {
+        "status": [],
+        "priority": [],
+        "severity": [],
+        "assigned_to": [],
+        "created_by": [],
+        "tags": []
+    }
+
     def __init__(self, view, executor, state_machine):
         self.view = view
         self.executor = executor
         self.state_machine = state_machine
 
     def handle(self, key):
-        if key == ProjectIssuesKeys.RELOAD:
+        if  key == ProjectIssuesKeys.FILTERS:
+            self.filters()
+        elif key == ProjectIssuesKeys.RELOAD:
             self.load()
         elif key == ProjectIssuesKeys.HELP:
             self.help_info()
@@ -43,6 +54,15 @@ class ProjectIssuesSubController(base.Controller):
         futures = (issues_stats_f, issues_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def filters(self):
+        self.view.open_filters_popup()
+
+        signals.connect(self.view.filters_popup.cancel_button, "click",
+                lambda _: self.cancel_filters_popup())
+
+    def cancel_filters_popup(self):
+        self.view.close_filters_popup()
 
     def help_info(self):
         self.view.open_help_popup()

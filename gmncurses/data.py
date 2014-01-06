@@ -132,6 +132,22 @@ def us_points_by_role_whith_names(us, project, roles):
             points.append((role["name"], project_points[str(default_point)]["name"]))
     return points
 
+def issue_types(project):
+    dc = {str(p["id"]): p for p in project.get("issue_types", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
+
+def issue_statuses(project):
+    dc = {str(p["id"]): p for p in project.get("issue_statuses", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
+
+def priorities(project):
+    dc = {str(p["id"]): p for p in project.get("priorities", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
+
+def severities(project):
+    dc = {str(p["id"]): p for p in project.get("severities", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
+
 
 # Issues
 
@@ -217,7 +233,9 @@ def milestone_name(milestone):
     return milestone.get("name", "------")
 
 def milestone_total_points(milestone_stats):
-    return sum(milestone_stats["total_points"].values())
+    import ipdb; ipdb.set_trace()
+    print(milestone_stats)
+    return sum(milestone_stats.get("total_points", {}).values())
 
 def milestone_completed_points(milestone_stats):
     return sum(milestone_stats["completed_points"])

@@ -154,3 +154,119 @@ class IssueEntry(urwid.WidgetWrap):
 
     def selectable(self):
         return True
+
+class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
+    def __init__(self, project):
+        self.project = project
+
+        contents = [
+            generic.box_solid_fill(" ", 2),
+            self._types_input(),
+            generic.box_solid_fill(" ", 1),
+            self._statuses_input(),
+            generic.box_solid_fill(" ", 1),
+            self._priorities_input(),
+            generic.box_solid_fill(" ", 1),
+            self._severities_input(),
+            generic.box_solid_fill(" ", 1),
+            self._assigned_to_input(),
+            generic.box_solid_fill(" ", 1),
+            self._created_by_input(),
+            generic.box_solid_fill(" ", 1),
+            self._tags_input(),
+            generic.box_solid_fill(" ", 2),
+            self._buttons(),
+            generic.box_solid_fill(" ", 1)
+        ]
+        self.widget = urwid.Pile(contents)
+
+        title = "Filter issues by..."
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+
+    def _types_input(self):
+        issue_types = data.issue_types(self.project)
+        max_length = max([len(s["name"]) for s in issue_types.values()])
+
+        self._issue_types_group = []
+        for id, items in issue_types.items():
+            self._issue_types_group.append(urwid.CheckBox(items["name"], False))
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Types", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._issue_types_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _statuses_input(self):
+        issue_statuses = data.issue_statuses(self.project)
+        max_length = max([len(s["name"]) for s in issue_statuses.values()])
+
+        self._issue_statuses_group = []
+        for id, items in issue_statuses.items():
+            self._issue_statuses_group.append(urwid.CheckBox(items["name"], False))
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Statuses", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._issue_statuses_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _priorities_input(self):
+        priorities = data.priorities(self.project)
+        max_length = max([len(s["name"]) for s in priorities.values()])
+
+        self._priorities_group = []
+        for id, items in priorities.items():
+            self._priorities_group.append(urwid.CheckBox(items["name"], False))
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Priorities", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._priorities_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _severities_input(self):
+        severities = data.severities(self.project)
+        max_length = max([len(s["name"]) for s in severities.values()])
+
+        self._severities_group = []
+        for id, items in severities.items():
+            self._severities_group.append(urwid.CheckBox(items["name"], False))
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Severities", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._severities_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _assigned_to_input(self):
+        max_length = 10
+
+        self._assigned_to_group = []
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Assigned To", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._assigned_to_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _created_by_input(self):
+        max_length = 10
+
+        self._created_by_group = []
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Created By", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._created_by_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _tags_input(self):
+        max_length = 10
+
+        self._tags_group = []
+
+        colum_items = [(16, urwid.Padding(generic.ListText("Tags", align="right"), right=2))]
+        colum_items.append(generic.Grid(self._tags_group, 4 + max_length, 3, 0, "left"))
+        return urwid.Columns(colum_items)
+
+    def _buttons(self):
+        self.filter_button = generic.PlainButton("Filter")
+        self.cancel_button = generic.PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.filter_button, right=2, left=2),
+                                              "popup-submit-button")))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)

@@ -92,6 +92,7 @@ class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
 
 
 class ProjectIssuesKeys(metaclass=KeyConfigMeta):
+    FILTERS = "f"
     RELOAD = "r"
     HELP = "?"
 

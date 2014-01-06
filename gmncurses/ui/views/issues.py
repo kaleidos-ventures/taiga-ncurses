@@ -46,6 +46,15 @@ class ProjectIssuesSubView(base.SubView):
         list_walker.set_focus(4)
         self.widget = urwid.ListBox(list_walker)
 
+    def open_filters_popup(self):
+        self.filters_popup = issues.FiltersPopup(self.project)
+        # FIXME: Calculate the popup size
+        self.parent.show_widget_on_top(self.filters_popup, 120, 22)
+
+    def close_filters_popup(self):
+        del self.filters_popup
+        self.parent.hide_widget_on_top()
+
     def open_help_popup(self):
         self.help_popup = generic.HelpPopup("Issues Help Info", self.help_info)
         # FIXME: Calculate the popup size
