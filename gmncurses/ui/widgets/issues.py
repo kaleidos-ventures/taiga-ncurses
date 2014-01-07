@@ -190,7 +190,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         self._issue_types_group = []
         for id, item in issue_types.items():
-            color = utils.color_to_hex(item["color"])
+            color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
             self._issue_types_group.append(urwid.CheckBox((attr, item["name"]), False))
 
@@ -204,7 +204,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         self._issue_statuses_group = []
         for id, item in issue_statuses.items():
-            color = utils.color_to_hex(item["color"])
+            color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
             self._issue_statuses_group.append(urwid.CheckBox((attr, item["name"]), False))
 
@@ -218,7 +218,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         self._priorities_group = []
         for id, item in priorities.items():
-            color = utils.color_to_hex(item["color"])
+            color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
             self._priorities_group.append(urwid.CheckBox((attr, item["name"]), False))
 
@@ -232,7 +232,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         self._severities_group = []
         for id, item in severities.items():
-            color = utils.color_to_hex(item["color"])
+            color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
             self._severities_group.append(urwid.CheckBox((attr, item["name"]), False))
 
@@ -242,13 +242,13 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
     def _assigned_to_input(self):
         members = data.memberships(self.project)
-        max_length = max([len(s["full_name"]) for s in members.values()])
+        max_length = max([len(data.user_full_name(s)) for s in members.values()])
 
         self._assigned_to_group = []
         for id, item in members.items():
-            color = utils.color_to_hex(item["color"])
+            color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
-            self._assigned_to_group.append(urwid.CheckBox((attr, item["full_name"]), False))
+            self._assigned_to_group.append(urwid.CheckBox((attr, data.user_full_name(item)), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Assigned To", align="right"), right=2))]
         colum_items.append(generic.Grid(self._assigned_to_group, 4 + max_length, 3, 0, "left"))
@@ -256,13 +256,13 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
     def _created_by_input(self):
         members = data.memberships(self.project)
-        max_length = max([len(s["full_name"]) for s in members.values()])
+        max_length = max([len(data.user_full_name(s)) for s in members.values()])
 
         self._created_by_group = []
         for id, item in members.items():
-            color = utils.color_to_hex(item["color"])
+            color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
-            self._created_by_group.append(urwid.CheckBox((attr, item["full_name"]), False))
+            self._created_by_group.append(urwid.CheckBox((attr, data.user_full_name(item)), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Created By", align="right"), right=2))]
         colum_items.append(generic.Grid(self._created_by_group, 4 + max_length, 3, 0, "left"))

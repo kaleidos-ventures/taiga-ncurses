@@ -74,7 +74,7 @@ def milestones_are_equals(milestone1, milestone2):
 
 def memberships(project):
     dc = {str(r["user"]): r for r in project.get("memberships", [])} if "memberships" in project else {}
-    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["full_name"] ))
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1].get("full_name", "") ))
 
 
 # User Stories
@@ -315,7 +315,16 @@ def slug(wiki_page):
 def content(wiki_page):
     return wiki_page.get("content", "")
 
+
+# User
+
+def user_full_name(user):
+    return user.get("full_name", None) or user.get("email", None) or "John Dou"
+
 # Misc
 
 def date(text, date_format="%Y-%m-%d"):
     return datetime.strptime(text, date_format)
+
+def color(user, default_color="#ffffff"):
+    return user.get("color", default_color)
