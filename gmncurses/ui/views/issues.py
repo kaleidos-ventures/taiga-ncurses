@@ -49,7 +49,7 @@ class ProjectIssuesSubView(base.SubView):
     def open_filters_popup(self):
         self.filters_popup = issues.FiltersPopup(self.project)
         # FIXME: Calculate the popup size
-        self.parent.show_widget_on_top(self.filters_popup, 120, 22)
+        self.parent.show_widget_on_top(self.filters_popup, 130, 28)
 
     def close_filters_popup(self):
         del self.filters_popup

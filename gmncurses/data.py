@@ -72,6 +72,10 @@ def list_of_milestones(project, reverse=True):
 def milestones_are_equals(milestone1, milestone2):
     return milestone1.get("id", milestone1) == milestone2.get("id", milestone2)
 
+def memberships(project):
+    dc = {str(r["user"]): r for r in project.get("memberships", [])} if "memberships" in project else {}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["full_name"] ))
+
 
 # User Stories
 

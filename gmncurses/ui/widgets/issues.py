@@ -233,18 +233,25 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        max_length = 10
+        members = data.memberships(self.project)
+        max_length = max([len(s["full_name"]) for s in members.values()])
 
         self._assigned_to_group = []
+        for id, items in members.items():
+            self._assigned_to_group.append(urwid.CheckBox(items["full_name"], False))
+
 
         colum_items = [(16, urwid.Padding(generic.ListText("Assigned To", align="right"), right=2))]
         colum_items.append(generic.Grid(self._assigned_to_group, 4 + max_length, 3, 0, "left"))
         return urwid.Columns(colum_items)
 
     def _created_by_input(self):
-        max_length = 10
+        members = data.memberships(self.project)
+        max_length = max([len(s["full_name"]) for s in members.values()])
 
         self._created_by_group = []
+        for id, items in members.items():
+            self._created_by_group.append(urwid.CheckBox(items["full_name"], False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Created By", align="right"), right=2))]
         colum_items.append(generic.Grid(self._created_by_group, 4 + max_length, 3, 0, "left"))
