@@ -189,8 +189,10 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         max_length = max([len(s["name"]) for s in issue_types.values()])
 
         self._issue_types_group = []
-        for id, items in issue_types.items():
-            self._issue_types_group.append(urwid.CheckBox(items["name"], False))
+        for id, item in issue_types.items():
+            color = utils.color_to_hex(item["color"])
+            attr = urwid.AttrSpec("h{0}".format(color), "default")
+            self._issue_types_group.append(urwid.CheckBox((attr, item["name"]), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Types", align="right"), right=2))]
         colum_items.append(generic.Grid(self._issue_types_group, 4 + max_length, 3, 0, "left"))
@@ -201,8 +203,10 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         max_length = max([len(s["name"]) for s in issue_statuses.values()])
 
         self._issue_statuses_group = []
-        for id, items in issue_statuses.items():
-            self._issue_statuses_group.append(urwid.CheckBox(items["name"], False))
+        for id, item in issue_statuses.items():
+            color = utils.color_to_hex(item["color"])
+            attr = urwid.AttrSpec("h{0}".format(color), "default")
+            self._issue_statuses_group.append(urwid.CheckBox((attr, item["name"]), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Statuses", align="right"), right=2))]
         colum_items.append(generic.Grid(self._issue_statuses_group, 4 + max_length, 3, 0, "left"))
@@ -213,8 +217,10 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         max_length = max([len(s["name"]) for s in priorities.values()])
 
         self._priorities_group = []
-        for id, items in priorities.items():
-            self._priorities_group.append(urwid.CheckBox(items["name"], False))
+        for id, item in priorities.items():
+            color = utils.color_to_hex(item["color"])
+            attr = urwid.AttrSpec("h{0}".format(color), "default")
+            self._priorities_group.append(urwid.CheckBox((attr, item["name"]), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Priorities", align="right"), right=2))]
         colum_items.append(generic.Grid(self._priorities_group, 4 + max_length, 3, 0, "left"))
@@ -225,8 +231,10 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         max_length = max([len(s["name"]) for s in severities.values()])
 
         self._severities_group = []
-        for id, items in severities.items():
-            self._severities_group.append(urwid.CheckBox(items["name"], False))
+        for id, item in severities.items():
+            color = utils.color_to_hex(item["color"])
+            attr = urwid.AttrSpec("h{0}".format(color), "default")
+            self._severities_group.append(urwid.CheckBox((attr, item["name"]), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Severities", align="right"), right=2))]
         colum_items.append(generic.Grid(self._severities_group, 4 + max_length, 3, 0, "left"))
@@ -237,9 +245,10 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         max_length = max([len(s["full_name"]) for s in members.values()])
 
         self._assigned_to_group = []
-        for id, items in members.items():
-            self._assigned_to_group.append(urwid.CheckBox(items["full_name"], False))
-
+        for id, item in members.items():
+            color = utils.color_to_hex(item["color"])
+            attr = urwid.AttrSpec("h{0}".format(color), "default")
+            self._assigned_to_group.append(urwid.CheckBox((attr, item["full_name"]), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Assigned To", align="right"), right=2))]
         colum_items.append(generic.Grid(self._assigned_to_group, 4 + max_length, 3, 0, "left"))
@@ -250,8 +259,10 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         max_length = max([len(s["full_name"]) for s in members.values()])
 
         self._created_by_group = []
-        for id, items in members.items():
-            self._created_by_group.append(urwid.CheckBox(items["full_name"], False))
+        for id, item in members.items():
+            color = utils.color_to_hex(item["color"])
+            attr = urwid.AttrSpec("h{0}".format(color), "default")
+            self._created_by_group.append(urwid.CheckBox((attr, item["full_name"]), False))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Created By", align="right"), right=2))]
         colum_items.append(generic.Grid(self._created_by_group, 4 + max_length, 3, 0, "left"))
