@@ -29,3 +29,9 @@ Note: greenmine-ncurses only runs with python 3.3+.
 
 .. _greenmine backend: https://github.com/kaleidos/greenmine-back
 .. _greenmine web client: https://github.com/kaleidos/greenmine-front
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/kaleidos/greenmine-ncurses/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
