@@ -22,7 +22,9 @@ Just execute these commands in your virtualenv(wrapper):
 
     $ pip install -r dev-requirements.txt
     $ python setup.py develop
-    $ py.test
+    $ gmncurses   # to run the app
+    $ py.test     # to run the tests
+    
 
 Obviously you need the `greenmine backend`_ and, if you consider yourself a loser,
 you can use the `greenmine web client`_, sometimes. ;-)
