@@ -31,11 +31,15 @@ class Executor(object):
         return self.pool.submit(self.client.get_project_issues_stats, id=project["id"])
 
     # Milestones
-    def milestone(self, id, project):
-        return self.pool.submit(self.client.get_milestone, id=id, params={"project": project["id"]})
+    def milestone(self, milestone, project):
+        params = {"project": project["id"]}
 
-    def milestone_stats(self, id, project):
-        return self.pool.submit(self.client.get_milestone_stats, id=id, params={"project": project["id"]})
+        return self.pool.submit(self.client.get_milestone, id=milestone["id"], params=params)
+
+    def milestone_stats(self, milestone, project):
+        params = {"project": project["id"]}
+
+        return self.pool.submit(self.client.get_milestone_stats, id=milestone["id"], params=params)
 
     # User Stories
     def create_user_story(self, data):
@@ -55,16 +59,29 @@ class Executor(object):
         return self.pool.submit(self.client.update_user_stories_order, data_dict=data)
 
     def unassigned_user_stories(self, project):
-        return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
-                                                                      "milestone__isnull": True})
-    def user_stories(self, id,  project):
-        return self.pool.submit(self.client.get_user_stories, params={"project": project["id"],
-                                                                      "milestone": id})
+        params = {
+            "project": project["id"],
+            "milestone__isnull": True
+        }
+
+        return self.pool.submit(self.client.get_user_stories, params=params)
+
+    def user_stories(self, milestone,  project):
+        params = {
+            "project": project["id"],
+            "milestone": milestone["id"]
+        }
+
+        return self.pool.submit(self.client.get_user_stories, params=params)
 
     # Task
-    def milestone_tasks(self, id,  project):
-        return self.pool.submit(self.client.get_tasks, params={"project": project["id"],
-                                                              "milestone": id})
+    def tasks(self, milestone,  project):
+        params = {
+            "project": project["id"],
+            "milestone": milestone["id"]
+        }
+
+        return self.pool.submit(self.client.get_tasks, params=params)
 
     # Issues
     def issues(self, project, order_by=[]):
@@ -77,5 +94,6 @@ class Executor(object):
 
     # Wiki
     def wiki_pages(self, project):
-        return self.pool.submit(self.client.get_wiki_pages, params={"project": project["id"]})
+        params={"project": project["id"]}
 
+        return self.pool.submit(self.client.get_wiki_pages, params=params)

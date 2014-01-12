@@ -45,17 +45,17 @@ def test_sprints_controller_reload():
     executor.milestone.reset_mock()
     executor.milestone_stats.reset_mock()
     executor.user_stories.reset_mock()
-    executor.milestone_tasks.reset_mock()
+    executor.tasks.reset_mock()
 
     assert executor.milestone.call_count == 0
     assert executor.milestone_stats.call_count == 0
     assert executor.user_stories.call_count == 0
-    assert executor.milestone_tasks.call_count == 0
+    assert executor.tasks.call_count == 0
     project_detail_controller.handle(config.ProjectMilestoneKeys.RELOAD)
     assert executor.milestone.call_count == 1
     assert executor.milestone_stats.call_count == 1
     assert executor.user_stories.call_count == 1
-    assert executor.milestone_tasks.call_count == 1
+    assert executor.tasks.call_count == 1
 
 def test_sprint_controller_show_the_milestone_selector_popup():
     project = factories.project()
@@ -97,18 +97,18 @@ def test_sprint_controller_change_to_another_milestone():
     executor.milestone.reset_mock()
     executor.milestone_stats.reset_mock()
     executor.user_stories.reset_mock()
-    executor.milestone_tasks.reset_mock()
+    executor.tasks.reset_mock()
 
     assert project_view.sprint.notifier.info_msg.call_count == 0
     assert executor.milestone.call_count == 0
     assert executor.milestone_stats.call_count == 0
     assert executor.user_stories.call_count == 0
-    assert executor.milestone_tasks.call_count == 0
+    assert executor.tasks.call_count == 0
     signals.emit(milestone_selector_popup.options[2], "click")
     assert project_view.sprint.notifier.info_msg.call_count == 1
     assert executor.milestone.call_count == 1
     assert executor.milestone_stats.call_count == 1
     assert executor.user_stories.call_count == 1
-    assert executor.milestone_tasks.call_count == 1
+    assert executor.tasks.call_count == 1
     assert (project_detail_controller.sprint.milestone["id"] ==
             milestone_selector_popup.project["list_of_milestones"][-1]["id"])

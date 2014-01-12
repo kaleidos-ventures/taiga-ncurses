@@ -38,7 +38,7 @@ class TotalPoints(urwid.Text):
 
 class TotalMilestones(urwid.Text):
     def __init__(self, project):
-        text = ["Total sprints: ", ("cyan", str(data.total_sprints(project)))]
+        text = ["Total milestones: ", ("cyan", str(data.total_milestones(project)))]
         super().__init__(text)
 
 
@@ -76,18 +76,15 @@ class DefinedPoints(urwid.Columns):
 class CurrentMilestone(urwid.Text):
     def __init__(self, project):
         text = [
-            "Current sprint: ",
-            ("cyan", str(data.current_sprint(project))),
-            " (",
-            ("cyan", str(data.current_sprint_name(project))),
-            ")",
+            "Current milestone: ",
+            ("cyan", str(data.current_milestone_name(project))),
         ]
         super().__init__(text)
 
 
 class CompletedMilestones(urwid.Text):
     def __init__(self, project):
-        text = ["Completed sprints: ", ("green", str(len(data.completed_sprints(project))))]
+        text = ["Completed milestones: ", ("green", str(len(data.completed_milestones(project))))]
         super().__init__(text)
 
 

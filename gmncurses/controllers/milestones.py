@@ -37,24 +37,24 @@ class ProjectMilestoneSubController(base.Controller):
 
         self.view.notifier.info_msg("Fetching Stats and User stories")
 
-        if hasattr(self, "milestone") and "id" in self.milestone:
-            last_milestone_id = self.milestone["id"]
+        if hasattr(self, "milestone"):
+            current_milestone = self.milestone
         else:
-            last_milestone_id = gmncurses.data.current_sprint_id(self.view.project)
+            current_milestone = gmncurses.data.current_milestone(self.view.project)
 
-        milestone_f = self.executor.milestone(last_milestone_id, self.view.project)
+        milestone_f = self.executor.milestone(current_milestone, self.view.project)
         milestone_f.add_done_callback(self.handle_milestone)
 
-        milestone_stats_f = self.executor.milestone_stats(last_milestone_id, self.view.project)
+        milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view.project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        user_stories_f = self.executor.user_stories(last_milestone_id, self.view.project)
+        user_stories_f = self.executor.user_stories(current_milestone, self.view.project)
         user_stories_f.add_done_callback(self.handle_user_stories)
 
-        milestone_tasks_f = self.executor.milestone_tasks(last_milestone_id, self.view.project)
-        milestone_tasks_f.add_done_callback(self.handle_milestone_tasks)
+        tasks_f = self.executor.tasks(current_milestone, self.view.project)
+        tasks_f.add_done_callback(self.handle_tasks)
 
-        futures = (milestone_tasks_f, user_stories_f)
+        futures = (tasks_f, user_stories_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
 
@@ -94,13 +94,13 @@ class ProjectMilestoneSubController(base.Controller):
     def handle_user_stories(self, future):
         self.user_stories = future.result()
 
-    def handle_milestone_tasks(self, future):
-        self.milestone_tasks = future.result()
+    def handle_tasks(self, future):
+        self.tasks = future.result()
 
     def handle_user_stories_and_task_info_fetched(self, future_with_results):
         done, not_done = future_with_results.result()
         if len(done) == 2:
-            self.view.taskboard.populate(self.user_stories, self.milestone_tasks)
+            self.view.taskboard.populate(self.user_stories, self.tasks)
             self.view.notifier.info_msg("User stories and tasks fetched")
             self.state_machine.refresh()
         else:
@@ -110,21 +110,21 @@ class ProjectMilestoneSubController(base.Controller):
     def handler_change_to_milestone(self, selected_option):
         self.view.notifier.info_msg("Change to milestone '{}'".format(selected_option.milestone["name"]))
 
-        milestone_id = selected_option.milestone["id"]
+        milestone = selected_option.milestone
 
-        milestone_f = self.executor.milestone(milestone_id, self.view.project)
+        milestone_f = self.executor.milestone(milestone, self.view.project)
         milestone_f.add_done_callback(self.handle_milestone)
 
-        milestone_stats_f = self.executor.milestone_stats(milestone_id, self.view.project)
+        milestone_stats_f = self.executor.milestone_stats(milestone, self.view.project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        user_stories_f = self.executor.user_stories(milestone_id, self.view.project)
+        user_stories_f = self.executor.user_stories(milestone, self.view.project)
         user_stories_f.add_done_callback(self.handle_user_stories)
 
-        milestone_tasks_f = self.executor.milestone_tasks(milestone_id, self.view.project)
-        milestone_tasks_f.add_done_callback(self.handle_milestone_tasks)
+        tasks_f = self.executor.tasks(milestone, self.view.project)
+        tasks_f.add_done_callback(self.handle_tasks)
 
-        futures = (milestone_tasks_f, user_stories_f)
+        futures = (tasks_f, user_stories_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
         futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
 

@@ -119,7 +119,7 @@ def successful_delete_user_story_response():
     return True
 
 # Tasks
-def milestone_tasks():
+def tasks():
     return json.loads(fixtures.MILESTONE_TASKS)
 
 # Issues
@@ -147,26 +147,33 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      update_user_story_response=future(successful_update_user_story_response("Update us")),
                      update_user_stories_order_response=future(successful_update_user_stories_order_response()),
                      delete_user_story_response=future(successful_delete_user_story_response()),
-                     milestone_tasks=future(milestone_tasks()),
+                     tasks=future(tasks()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues()),
                      wiki_pages=future(wiki_pages())):
     executor = Executor(mock.Mock())
+
     executor.login = mock.Mock(return_value=login_response)
+
     executor.projects = mock.Mock(return_value=projects)
     executor.project_detail = mock.Mock(return_value=project_detail)
     executor.project_stats = mock.Mock(return_value=project_stats)
+    executor.project_issues_stats = mock.Mock(return_value=project_issues_stats)
+
+    executor.user_stories = mock.Mock(return_value=user_stories)
     executor.unassigned_user_stories = mock.Mock(return_value=unassigned_user_stories)
     executor.create_user_story = mock.Mock(return_value=create_user_story_response)
     executor.update_user_story = mock.Mock(return_value=update_user_story_response)
     executor.update_user_stories_order = mock.Mock(return_value=update_user_stories_order_response)
     executor.delete_user_story = mock.Mock(return_value=delete_user_story_response)
+
     executor.milestone = mock.Mock(return_value=milestone)
     executor.milestone_stats = mock.Mock(return_value=milestone_stats)
-    executor.user_stories = mock.Mock(return_value=user_stories)
-    executor.milestone_tasks = mock.Mock(return_value=milestone_tasks)
-    executor.project_issues_stats = mock.Mock(return_value=project_issues_stats)
+
+    executor.tasks = mock.Mock(return_value=tasks)
+
     executor.issues = mock.Mock(return_value=issues)
+
     executor.wiki_pages = mock.Mock(return_value=wiki_pages)
 
     return executor

@@ -40,7 +40,7 @@ def test_project_issues_stats_method_returns_a_future():
 def test_milestone_stats_method_returns_a_future():
     client = mock.Mock()
     e = executor.Executor(client)
-    f = e.milestone_stats(123123, {"id": 123123})
+    f = e.milestone_stats({"id": 123123}, {"id": 123123})
     assert isinstance(f, Future)
 
 # User Stories
@@ -77,13 +77,13 @@ def test_unassigned_user_stories_method_returns_a_future():
 def test_user_stories_method_returns_a_future():
     client = mock.Mock()
     e = executor.Executor(client)
-    f = e.user_stories(123123, {"id": 123123})
+    f = e.user_stories({"id": 123123}, {"id": 123123})
 
 # Task
-def test_milestone_tasks_method_returns_a_future():
+def test_tasks_method_returns_a_future():
     client = mock.Mock()
     e = executor.Executor(client)
-    f = e.milestone_tasks(123123, {"id": 123123})
+    f = e.tasks({"id": 123123}, {"id": 123123})
     assert isinstance(f, Future)
 
 # Issues

@@ -109,7 +109,7 @@ class MilestoneTaskboard(urwid.WidgetWrap):
         self.widget = urwid.Pile([generic.ListText("Fetching data")])
         super().__init__(self.widget)
 
-    def populate(self, user_stories, milestone_tasks):
+    def populate(self, user_stories, tasks):
         if user_stories:
             self.reset()
 
@@ -117,12 +117,12 @@ class MilestoneTaskboard(urwid.WidgetWrap):
         for us in user_stories:
             self.widget.contents.append((UserStoryEntry(us, self.project, self.roles),
                                          ("weight", 0.1)))
-            for task in data.tasks_per_user_story(milestone_tasks, us):
+            for task in data.tasks_per_user_story(tasks, us):
                 self.widget.contents.append((TaskEntry(task, self.project), ("weight", 0.1)))
 
         # Unasigned task
         self.widget.contents.append((UnasignedTasksHeaderEntry(), ("weight", 0.1)))
-        for task in data.unassigned_tasks(milestone_tasks):
+        for task in data.unassigned_tasks(tasks):
             self.widget.contents.append((TaskEntry(task, self.project), ("weight", 0.1)))
 
         if len(self.widget.contents):

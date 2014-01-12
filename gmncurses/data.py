@@ -36,30 +36,24 @@ def points(project):
     dc = {str(p["id"]): p for p in project.get("points", [])}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
 
-def total_sprints(project_stats):
+def total_milestones(project_stats):
     return project_stats.get("total_milestones", 0)
 
-def completed_sprints(project):
+def completed_milestones(project):
     milestones = project.get("list_of_milestones", [])
     now = datetime.now()
     return [m for m in milestones if date(m["finish_date"]) < now]
 
-def current_sprint(project):
+def current_milestone(project):
     milestones = project.get("list_of_milestones", [])
     if milestones:
-        return len(milestones)
-    return "--"
+        return milestones[-1]
+    return None
 
-def current_sprint_name(project):
+def current_milestone_name(project):
     milestones = project.get("list_of_milestones", [])
     if milestones:
         return milestones[-1].get("name", "unknown")
-    return "-----"
-
-def current_sprint_id(project):
-    milestones = project.get("list_of_milestones", [])
-    if milestones:
-        return milestones[-1].get("id", None)
     return "-----"
 
 def computable_roles(project):
