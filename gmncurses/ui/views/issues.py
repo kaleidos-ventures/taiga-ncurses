@@ -55,3 +55,8 @@ class ProjectIssuesSubView(base.SubView):
     def close_filters_popup(self):
         del self.filters_popup
         self.parent.hide_widget_on_top()
+
+    def get_filters_popup_data(self):
+        if hasattr(self, "filters_popup"):
+            return self.filters_popup.filters
+        return {}
