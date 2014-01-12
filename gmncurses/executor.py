@@ -84,11 +84,14 @@ class Executor(object):
         return self.pool.submit(self.client.get_tasks, params=params)
 
     # Issues
-    def issues(self, project, order_by=[]):
+    def issues(self, project, order_by=[], filters={}):
         params = {"project": project["id"]}
 
         if order_by:
             params["order_by"] = ", ".join(order_by)
+
+        for filter, values in filters.items():
+            params[filter] = ",".join(values)
 
         return self.pool.submit(self.client.get_issues, params=params)
 
