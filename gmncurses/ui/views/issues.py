@@ -49,7 +49,7 @@ class ProjectIssuesSubView(base.SubView):
         self.widget = urwid.ListBox(list_walker)
 
     def open_filters_popup(self):
-        self.filters_popup = issues.FiltersPopup(self.project)
+        self.filters_popup = issues.FiltersPopup(self.project, self.filters)
         # FIXME: Calculate the popup size
         self.parent.show_widget_on_top(self.filters_popup, 130, 28)
 
