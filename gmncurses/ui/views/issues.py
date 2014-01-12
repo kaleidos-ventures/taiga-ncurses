@@ -33,6 +33,7 @@ class ProjectIssuesSubView(base.SubView):
 
         self.project = project
         self.notifier = notifier
+        self.filters = {}
 
         self.stats = issues.IssuesStats(project)
         self.issues = issues.IssuesList(project)

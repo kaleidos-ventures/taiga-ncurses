@@ -15,15 +15,6 @@ from . import base
 
 
 class ProjectIssuesSubController(base.Controller):
-    filters = {
-        "status": [],
-        "priority": [],
-        "severity": [],
-        "assigned_to": [],
-        "created_by": [],
-        "tags": []
-    }
-
     def __init__(self, view, executor, state_machine):
         self.view = view
         self.executor = executor
@@ -39,7 +30,6 @@ class ProjectIssuesSubController(base.Controller):
         else:
             super().handle(key)
 
-
     def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_ISSUES)
 
@@ -48,7 +38,7 @@ class ProjectIssuesSubController(base.Controller):
         issues_stats_f = self.executor.project_issues_stats(self.view.project)
         issues_stats_f.add_done_callback(self.handle_issues_stats)
 
-        issues_f = self.executor.issues(self.view.project)
+        issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
         issues_f.add_done_callback(self.handle_issues)
 
         futures = (issues_stats_f, issues_f)
@@ -58,8 +48,20 @@ class ProjectIssuesSubController(base.Controller):
     def filters(self):
         self.view.open_filters_popup()
 
+        signals.connect(self.view.filters_popup.filter_button, "click",
+                lambda _: self.apply_filters_from_filters_popup())
+
         signals.connect(self.view.filters_popup.cancel_button, "click",
                 lambda _: self.cancel_filters_popup())
+
+    def apply_filters_from_filters_popup(self):
+        self.view.filters = self.view.get_filters_popup_data()
+
+        self.view.notifier.info_msg("Filter issues")
+        self.cancel_filters_popup()
+
+        issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+        issues_f.add_done_callback(self.handle_refresh_issues)
 
     def cancel_filters_popup(self):
         self.view.close_filters_popup()
@@ -85,20 +87,31 @@ class ProjectIssuesSubController(base.Controller):
             self.view.issues.populate(self.issues)
 
             signals.connect(self.view.issues.header.issue_button, "click",
-                    functools.partial(self.order_by, "issue"))
+                    functools.partial(self.handle_order_by, "issue"))
 
             signals.connect(self.view.issues.header.status_button, "click",
-                    functools.partial(self.order_by, "status"))
+                    functools.partial(self.handle_order_by, "status"))
 
             signals.connect(self.view.issues.header.priority_button, "click",
-                    functools.partial(self.order_by, "priority"))
+                    functools.partial(self.handle_order_by, "priority"))
 
             signals.connect(self.view.issues.header.severity_buttton, "click",
-                    functools.partial(self.order_by, "severity"))
+                    functools.partial(self.handle_order_by, "severity"))
 
             signals.connect(self.view.issues.header.assigned_to_button, "click",
-                    functools.partial(self.order_by, "assigned_to"))
+                    functools.partial(self.handle_order_by, "assigned_to"))
 
+            self.state_machine.refresh()
+
+    def handle_order_by(self, param, button):
+        self.view.notifier.info_msg("Ordered issues by {}".format(param))
+        issues_f = self.executor.issues(self.view.project, order_by=[param], filters=self.view.filters)
+        issues_f.add_done_callback(self.handle_refresh_issues)
+
+    def handle_refresh_issues(self, future):
+        self.issues = future.result()
+        if self.issues is not None:
+            self.view.issues.populate(self.issues)
             self.state_machine.refresh()
 
     def when_issues_info_fetched(self, future_with_results):
@@ -109,16 +122,5 @@ class ProjectIssuesSubController(base.Controller):
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch issues data")
-
-    def order_by(self, param, button):
-        self.view.notifier.info_msg("Ordered issues by {}".format(param))
-        issues_f = self.executor.issues(self.view.project, order_by=[param])
-        issues_f.add_done_callback(self.handle_refresh_issues)
-
-    def handle_refresh_issues(self, future):
-        self.issues = future.result()
-        if self.issues is not None:
-            self.view.issues.populate(self.issues)
-            self.state_machine.refresh()
 
 

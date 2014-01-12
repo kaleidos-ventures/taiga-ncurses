@@ -75,7 +75,7 @@ class Executor(object):
         return self.pool.submit(self.client.get_user_stories, params=params)
 
     # Task
-    def tasks(self, milestone,  project):
+    def tasks(self, milestone, project):
         params = {
             "project": project["id"],
             "milestone": milestone["id"]
@@ -90,8 +90,8 @@ class Executor(object):
         if order_by:
             params["order_by"] = ", ".join(order_by)
 
-        for filter, values in filters.items():
-            params[filter] = ",".join(values)
+        if filters:
+            params.update(filters)
 
         return self.pool.submit(self.client.get_issues, params=params)
 
