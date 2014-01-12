@@ -7,6 +7,8 @@ gmncurses.ui.views.base
 
 import urwid
 
+from gmncurses.ui.widgets import generic
+
 
 class View(object):
     widget = None
@@ -29,6 +31,27 @@ class View(object):
 class SubView(object):
     parent = None
     widget = None
-
+    help_popup_title = "Help Info"
+    help_popup_info = (
+       ( "General", (
+           ("B", "Go to Backlog Panel"),
+           ("S", "Go to Milestones Panel"),
+           ("I", "Go to Issues Panel"),
+           ("W", "Go to Wiki Panel"),
+           ("A", "Go to Admin Panel"),
+           ("P", "Go back to the Projects Panel"),
+       )),
+    )
     def __init__(self, parent_view=None):
         self.parent = parent_view
+
+    def open_help_popup(self):
+        self.help_popup = generic.HelpPopup(self.help_popup_title, self.help_popup_info)
+        row = 5 + sum([3 + len(s[1]) for s in self.help_popup_info])
+        col = 60
+
+        self.parent.show_widget_on_top(self.help_popup, col, row)
+
+    def close_help_popup(self):
+        del self.help_popup
+        self.parent.hide_widget_on_top()

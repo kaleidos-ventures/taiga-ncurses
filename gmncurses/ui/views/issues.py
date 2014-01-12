@@ -13,7 +13,8 @@ from . import base
 
 
 class ProjectIssuesSubView(base.SubView):
-    help_info = (
+    help_popup_title = "Issues Help Info"
+    help_popup_info = base.SubView.help_popup_info + (
        ( "Issues Movements:", (
            ("↑ | k | ctrl p", "Move Up"),
            ("↓ | j | ctrl n", "Move Down"),
@@ -53,13 +54,4 @@ class ProjectIssuesSubView(base.SubView):
 
     def close_filters_popup(self):
         del self.filters_popup
-        self.parent.hide_widget_on_top()
-
-    def open_help_popup(self):
-        self.help_popup = generic.HelpPopup("Issues Help Info", self.help_info)
-        # FIXME: Calculate the popup size
-        self.parent.show_widget_on_top(self.help_popup, 60, 17)
-
-    def close_help_popup(self):
-        del self.help_popup
         self.parent.hide_widget_on_top()
