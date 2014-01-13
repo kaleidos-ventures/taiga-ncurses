@@ -36,6 +36,7 @@ class ProjectIssuesSubView(base.SubView):
         self.filters = {}
 
         self.stats = issues.IssuesStats(project)
+        self.filters_info = issues.IssuesFiltersInfo(project, self.filters)
         self.issues = issues.IssuesList(project)
 
         list_walker = urwid.SimpleFocusListWalker([
@@ -43,10 +44,15 @@ class ProjectIssuesSubView(base.SubView):
             generic.box_solid_fill(" ", 1),
             self.stats,
             generic.box_solid_fill(" ", 1),
+            self.filters_info,
             self.issues
         ])
-        list_walker.set_focus(4)
+        list_walker.set_focus(5)
         self.widget = urwid.ListBox(list_walker)
+
+    def set_filters(self, filters):
+        self.filters = filters
+        self.filters_info.set_filters(self.filters)
 
     def open_filters_popup(self):
         self.filters_popup = issues.FiltersPopup(self.project, self.filters)

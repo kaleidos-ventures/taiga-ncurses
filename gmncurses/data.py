@@ -173,6 +173,19 @@ def issue_ref(issue):
 def issue_subject(issue):
     return issue.get("subject", "------")
 
+def issue_type_with_color(issue, project, default_color="#ffffff"):
+    # FIXME: Improvement, get issues_statuses from a project constant
+    # TODO: Check that the color is in hex format
+    type_id = issue.get("type", None)
+    if status_id:
+        issue_types = {str(p["id"]): p for p in project["issue_types"]}
+        try:
+            return (issue_types[str(type_id)]["color"] or default_color,
+                    issue_types[str(type_id)]["name"])
+        except KeyError:
+            pass
+    return (default_color, "---")
+
 def issue_status_with_color(issue, project, default_color="#ffffff"):
     # FIXME: Improvement, get issues_statuses from a project constant
     # TODO: Check that the color is in hex format
@@ -223,7 +236,21 @@ def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
                     memberships[str(user_id)]["full_name"])
         except KeyError:
             pass
-    return  (default_color, "Unassigned")
+    return (default_color, "Unassigned")
+
+def issue_owner_with_color(issue, project, default_color="#ffffff"):
+    # FIXME: Improvement, get memberships and users from a project constant
+    # TODO: Check that the color is in hex format
+    user_id = issue.get("owner", None)
+    if user_id:
+        memberships = {str(p["user"]): p for p in project["memberships"]}
+        try:
+            return (memberships[str(user_id)]["color"] or default_color,
+                    memberships[str(user_id)]["full_name"])
+        except KeyError:
+            pass
+    return (default_color, "Unknown")
+
 
 # Milestone
 

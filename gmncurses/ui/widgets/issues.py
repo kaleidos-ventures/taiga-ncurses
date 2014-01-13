@@ -79,6 +79,97 @@ class IssuesSeverityStat(urwid.Text):
         super().__init__(text)
 
 
+class IssuesFiltersInfo(urwid.WidgetWrap):
+    def __init__(self, project, filters):
+        self.project = project
+        self.filters = filters
+
+        self.entries = urwid.Text("None")
+        self.widget = urwid.Columns([
+            (12, urwid.Text(("cyan", "Filter by:"))),
+            self.entries
+        ])
+        self._refresh()
+
+        super().__init__(self.widget)
+
+    def set_filters(self, filters):
+        self.filters = filters
+        self._refresh()
+
+    def _refresh(self):
+        # TODO: I don't like this method I should to refactor it, when I have more time
+        contents = []
+        for filter_type, values in self.filters.items():
+            if filter_type == "type":
+                if values:
+                    contents.append(("default", "TYPE: "))
+                for value in values:
+                    hex_color, type = data.issue_type_with_color({filter_type: value}, self.project)
+                    color = utils.color_to_hex(hex_color)
+                    attr = urwid.AttrSpec("h{0}".format(color), "default")
+                    contents.append((attr, "{} ".format(type)))
+
+            elif filter_type == "status":
+                if values:
+                    contents.append(("default", "STATUS: "))
+                for value in values:
+                    hex_color, status = data.issue_status_with_color({filter_type: value}, self.project)
+                    color = utils.color_to_hex(hex_color)
+                    attr = urwid.AttrSpec("h{0}".format(color), "default")
+                    contents.append((attr, "{} ".format(status)))
+
+            elif filter_type == "priority":
+                if values:
+                    contents.append(("default", "PRIORITY: "))
+                for value in values:
+                    hex_color, priority = data.issue_priority_with_color({filter_type: value}, self.project)
+                    color = utils.color_to_hex(hex_color)
+                    attr = urwid.AttrSpec("h{0}".format(color), "default")
+                    contents.append((attr, "{} ".format(priority)))
+
+            elif filter_type == "severity":
+                if values:
+                    contents.append(("default", "SEVERITY: "))
+                for value in values:
+                    hex_color, severity = data.issue_severity_with_color({filter_type: value}, self.project)
+                    color = utils.color_to_hex(hex_color)
+                    attr = urwid.AttrSpec("h{0}".format(color), "default")
+                    contents.append((attr, "{} ".format(severity)))
+
+            elif filter_type == "assigned_to":
+                if values:
+                    contents.append(("default", "ASSIGNED TO: "))
+                for value in values:
+                    hex_color, assigned_to = data.issue_assigned_to_with_color({filter_type: value}, self.project)
+                    color = utils.color_to_hex(hex_color)
+                    attr = urwid.AttrSpec("h{0}".format(color), "default")
+                    contents.append((attr, "{} ".format(assigned_to)))
+
+            elif filter_type == "owner":
+                if values:
+                    contents.append(("default", "CREATED BY: "))
+                for value in values:
+                    hex_color, owner = data.issue_owner_with_color({filter_type: value}, self.project)
+                    color = utils.color_to_hex(hex_color)
+                    attr = urwid.AttrSpec("h{0}".format(color), "default")
+                    contents.append((attr, "{} ".format(owner)))
+
+            elif filter_type == "tags":
+                if values:
+                    contents.append(("default", "TAG: "))
+                #TODO: When I added tags to the filters_popup
+                pass
+
+            else:
+                contents.append(("default", "  unknown filter '{}'".format(filter_type)))
+
+        if not contents:
+            contents = ("default", "No filter selected")
+
+        self.entries.set_text(contents)
+
+
 class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project

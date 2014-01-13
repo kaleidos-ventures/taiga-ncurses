@@ -55,7 +55,7 @@ class ProjectIssuesSubController(base.Controller):
                 lambda _: self.cancel_filters_popup())
 
     def apply_filters_from_filters_popup(self):
-        self.view.filters = self.view.get_filters_popup_data()
+        self.view.set_filters(self.view.get_filters_popup_data())
 
         self.view.notifier.info_msg("Filter issues")
         self.cancel_filters_popup()
