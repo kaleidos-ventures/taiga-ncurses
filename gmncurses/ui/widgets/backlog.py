@@ -173,17 +173,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
         contents = [
             generic.box_solid_fill(" ", 2),
-            self._subject_input(),
-            generic.box_solid_fill(" ", 1),
-            self._points_input(),
-            generic.box_solid_fill(" ", 1),
-            self._status_input(),
-            generic.box_solid_fill(" ", 1),
-            self._tags_input(),
-            generic.box_solid_fill(" ", 1),
-            self._description_input(),
-            generic.box_solid_fill(" ", 1),
-            self._requirements_input(),
+            self._form_inputs(),
             generic.box_solid_fill(" ", 2),
             self._buttons(),
             generic.box_solid_fill(" ", 1),
@@ -222,6 +212,25 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
     @property
     def client_requirement(self):
         return self._client_requirement_checkbox.get_state()
+
+    def _form_inputs(self):
+        contents = [
+            self._subject_input(),
+            generic.box_solid_fill(" ", 1),
+            self._points_input(),
+            generic.box_solid_fill(" ", 1),
+            self._status_input(),
+            generic.box_solid_fill(" ", 1),
+            self._tags_input(),
+            generic.box_solid_fill(" ", 1),
+            self._description_input(),
+            generic.box_solid_fill(" ", 1),
+            self._requirements_input(),
+        ]
+
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 14)
 
     def _subject_input(self):
         self._subject_edit = urwid.Edit(edit_text=self.user_story.get("subject", ""))
@@ -302,6 +311,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
                                               "popup-cancel-button")))
         return urwid.Columns(colum_items)
 
+
 class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
     def __init__(self, project, user_story={}):
         self.project = project
@@ -329,16 +339,16 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Text(description)
 
     def _milestone_selector(self):
-        content = []
+        contents = []
         for milestone in data.list_of_milestones(self.project):
             option = MilestoneOptionEntry(milestone)
             self.options.append(option)
 
-            content.append(option)
-            content.append(generic.box_solid_fill(" ", 1))
+            contents.append(option)
+            contents.append(generic.box_solid_fill(" ", 1))
 
-        list_walker = urwid.SimpleFocusListWalker(content)
-        if len(content) > 0:
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        if len(contents) > 0:
             list_walker.set_focus(0)
         return urwid.BoxAdapter(urwid.ListBox(list_walker), 20)
 

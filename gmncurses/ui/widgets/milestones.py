@@ -219,18 +219,18 @@ class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
                                                      title), "popup"))
 
     def _milestone_selector(self):
-        content = []
+        contents = []
         for milestone in data.list_of_milestones(self.project):
             option = MilestoneOptionEntry(milestone, not data.milestones_are_equals(self.current_milestone,
                                                                                milestone))
             if option.selectable():
                 self.options.append(option)
 
-            content.append(option)
-            content.append(generic.box_solid_fill(" ", 1))
+            contents.append(option)
+            contents.append(generic.box_solid_fill(" ", 1))
 
-        list_walker = urwid.SimpleFocusListWalker(content)
-        if len(content) > 0:
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        if len(contents) > 0:
             list_walker.set_focus(0)
         return urwid.BoxAdapter(urwid.ListBox(list_walker), 20)
 
