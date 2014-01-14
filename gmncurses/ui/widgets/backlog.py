@@ -244,7 +244,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
         max_role_len = max([len(r["name"]) for r in roles.values()]) + 2
 
         points = data.points(self.project)
-        items = tuple((p["name"], p["id"]) for p in points.values())
+        items = tuple((p.get("name", ""), p.get("id", None)) for p in points.values())
 
         points_pile_contents = []
         for r_id, role in roles.items():
@@ -265,7 +265,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     def _status_input(self):
         us_statuses = data.us_statuses(self.project)
-        items = tuple((s["name"], s["id"]) for s in us_statuses.values())
+        items = tuple((s.get("name", ""), s.get("id", None)) for s in us_statuses.values())
         selected = self.user_story.get("status", None) or self.project.get("default_us_status", None)
 
         self._status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
