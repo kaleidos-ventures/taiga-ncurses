@@ -164,8 +164,8 @@ class UserStoryEntry(urwid.WidgetWrap):
         return True
 
 class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
-    _status = None
-    _points = {}
+    _status_combo = None
+    _points_combos = {}
 
     def __init__(self, project, user_story={}):
         self.project = project
@@ -200,7 +200,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     @property
     def points(self):
-        return self._points
+        return {k: c.get_selected().value for k, c in self._points_combos.items()}
 
     @property
     def status(self):
@@ -232,39 +232,27 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     def _points_input(self):
         roles = data.computable_roles(self.project)
+        max_role_len = max([len(r["name"]) for r in roles.values()]) + 2
+
         points = data.points(self.project)
-        max_length = max([len(s.get("name", "")) for s in points.values()])
+        items = tuple((p["name"], p["id"]) for p in points.values())
 
-        self._role_points_groups = {}
-
-        points_pile = []
+        points_pile_contents = []
         for r_id, role in roles.items():
-            self._points[r_id] = (self.user_story.get("points", {}).get(r_id, None) or
-                                  self.project.get("default_points", None))
+            selected = (self.user_story.get("points", {}).get(r_id, None) or
+                        self.project.get("default_points", None))
+            self._points_combos[r_id] = generic.ComboBox(items, selected_value=selected, style="cyan")
 
-            points_colum = [(17, urwid.Text(role["name"]))]
-            points_group = []
-            for p_id, point in points.items():
-                urwid.RadioButton(points_group, point.get("name", "") or str(point.get("value", 0)),
-                                  state=(int(p_id) == self.user_story.get("points", {}).get(r_id, None) or
-                                         int(p_id) == self.project.get("default_points", None)),
-                                  on_state_change=self._handler_point_radiobutton_change,
-                                  user_data={r_id:point["id"]})
+            points_pile_contents.append(urwid.Columns([
+                (max_role_len, urwid.Text("{}:".format(role["name"]))),
+                self._points_combos[r_id]
+            ]))
 
-            points_colum.append(generic.Grid(points_group, 4 + max_length, 2, 0, "left"))
-            points_pile.append(urwid.Columns(points_colum))
-
-            self._role_points_groups[r_id] = points_group
-
-        self._points_checkbox = urwid.Pile(points_pile)
+        points_pile = urwid.Pile(points_pile_contents)
 
         colum_items = [(17, urwid.Padding(generic.ListText("Points", align="right"), right=4))]
-        colum_items.append(self._points_checkbox)
+        colum_items.append(points_pile)
         return urwid.Columns(colum_items)
-
-    def _handler_point_radiobutton_change(self, radio_button, new_state, user_data):
-        if new_state:
-            self._points.update(user_data)
 
     def _status_input(self):
         us_statuses = data.us_statuses(self.project)

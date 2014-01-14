@@ -54,7 +54,7 @@ class ProjectBacklogSubView(base.SubView):
     def open_user_story_form(self, user_story={}):
         self.user_story_form = backlog.UserStoryForm(self.project, user_story=user_story)
         # FIXME: Calculate the form size
-        self.parent.show_widget_on_top(self.user_story_form, 150, 22)
+        self.parent.show_widget_on_top(self.user_story_form, 80, 22)
 
     def close_user_story_form(self):
         del self.user_story_form
