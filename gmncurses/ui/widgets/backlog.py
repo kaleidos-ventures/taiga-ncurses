@@ -204,7 +204,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     @property
     def status(self):
-        return self._status_combo.get_selection().value
+        return self._status_combo.get_selected().value
 
     @property
     def tags(self):
@@ -268,18 +268,14 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     def _status_input(self):
         us_statuses = data.us_statuses(self.project)
-        items = [{"label": s["name"], "value": int(v)} for v, s in us_statuses.items()]
-        default = self.user_story.get("status", None) or self.project.get("default_us_status", None)
+        items = tuple((s["name"], s["id"]) for s in us_statuses.values())
+        selected = self.user_story.get("status", None) or self.project.get("default_us_status", None)
 
-        self._status_combo = generic.ComboBox(items, default=default, style="cyan")
+        self._status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
 
         colum_items = [(17, urwid.Padding(generic.ListText("Status", align="right"), right=4))]
         colum_items.append(self._status_combo)
         return urwid.Columns(colum_items)
-
-    def _handler_status_radiobutton_change(self, radio_button, new_state, user_data):
-        if new_state:
-            self._status = user_data
 
     def _tags_input(self):
         self._tags_edit = urwid.Edit(edit_text=", ".join(self.user_story.get("tags", [])))

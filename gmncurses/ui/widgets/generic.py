@@ -199,26 +199,66 @@ class SemaphorePercentText(ListText):
         super().__init__(text)
 
 
-class MenuItem(urwid.RadioButton):
+class ComboBox(urwid.PopUpLauncher):
     """
-    A RadioButton with a 'click' signal
+    A button launcher for the combobox menu
     """
-    signals = urwid.RadioButton.signals + ["click", "quit"]
+    signals = ["change"]
 
-    def __init__(self, group, label, value, state='first True', on_state_change=None, user_data=None):
-        self.value = value
-        super().__init__(group, label, state='first True', on_state_change=None, user_data=None)
+    def __init__(self, items, selected_value=None, on_state_change=None, style="default"):
+        self.menu = ComboBoxMenu(items, style)
+        self.on_state_change = on_state_change
 
-    def keypress(self, size, key):
-        command = urwid.command_map[key]
+        selected_item = utils.find(lambda x: x.value == selected_value, self.menu.items) or self.menu.items[0]
+        selected_item.set_state(True)
+        self._button = ComboBoxButton(selected_item.get_label(), align="left")
 
-        if command == "activate":
-            self._emit("click", True)
-        elif command == "menu":
-            self._emit("quit")
+        super().__init__(self._button)
 
-        super(MenuItem, self).keypress(size, key)
-        return key
+        urwid.connect_signal(self.original_widget, "click", lambda b: self.open_pop_up())
+        for i in self.menu.items:
+            urwid.connect_signal(i, "click", self.item_changed)
+            urwid.connect_signal(i, "quit", self.quit_menu)
+
+    def create_pop_up(self):
+        """
+        Create the pop up widget
+        """
+        return self.menu
+
+    def get_pop_up_parameters(self):
+        """
+        Configuration dictionary for the pop up
+        """
+
+        return {"left": 2,
+                "top": 1,
+                "overlay_width": max([len(i.get_label()) for i in self.menu.items]) + 7,
+                "overlay_height": len(self.menu.items) + 2}
+
+    def item_changed(self, item, state):
+        if state:
+            selection = item.get_label()
+            self._button.set_label(selection)
+        if self.on_state_change:
+            self.on_state_change(self, item, state)
+
+        self.close_pop_up()
+        self._emit("change", item, state)
+
+    def quit_menu(self, widget):
+        self.close_pop_up()
+
+    def get_selected(self):
+        return self.menu.get_selected()
+
+
+class ComboBoxButton(PlainButton):
+    combobox_mark = "↓"
+
+    def set_label(self, label):
+        s = "{} {}".format(label, self.combobox_mark)
+        super().set_label(s)
 
 
 class ComboBoxMenu(urwid.WidgetWrap):
@@ -246,16 +286,16 @@ class ComboBoxMenu(urwid.WidgetWrap):
         """
         Append an item to the menu
         """
-        r = MenuItem(self.group, item["label"], item["value"])
+        r = MenuItem(self.group, item)
         self.items.append(r)
 
     def get_item(self, index):
         """
         Get an item by index
         """
-        return self.items[index].get_label()
+        return self.items[index]
 
-    def get_selection(self):
+    def get_selected(self):
         """
         Return the index of the selected item
         """
@@ -265,59 +305,24 @@ class ComboBoxMenu(urwid.WidgetWrap):
         return None
 
 
-class ComboBox(urwid.PopUpLauncher):
+class MenuItem(urwid.RadioButton):
     """
-    A button launcher for the combobox menu
+    A RadioButton with a 'click' signal
     """
-    _combobox_mark = u"↓"
-    signals = ["change"]
+    signals = urwid.RadioButton.signals + ["click", "quit"]
 
-    def __init__(self, items, default=-1, on_state_change=None, style="default"):
-        self.menu = ComboBoxMenu(items, style)
-        self.on_state_change = on_state_change
+    def __init__(self, group, label_value, state='first True', on_state_change=None, user_data=None):
+        label, value = label_value
+        self.value = value
+        super().__init__(group, label, state='first True', on_state_change=None, user_data=None)
 
-        selected_item = utils.find(lambda x: x.value == default, self.menu.items) or self.menu.items[0]
-        selected_item.set_state(True)
-        self._button = DDButton(selected_item.get_label())
+    def keypress(self, size, key):
+        command = urwid.command_map[key]
 
-        super().__init__(self._button)
+        if command == "activate":
+            self._emit("click", True)
+        elif command == "menu":
+            self._emit("quit")
 
-        urwid.connect_signal(self.original_widget, 'click', lambda b: self.open_pop_up())
-        for i in self.menu.items:
-            urwid.connect_signal(i, 'click', self.item_changed)
-            urwid.connect_signal(i, 'quit', self.quit_menu)
-
-    def create_pop_up(self):
-        """
-        Create the pop up widget
-        """
-        return self.menu
-
-    def get_pop_up_parameters(self):
-        """
-        Configuration dictionary for the pop up
-        """
-        return {'left': 0, 'top': 0, 'overlay_width': 32, 'overlay_height': len(self.menu.items) + 2}
-
-    def item_changed(self, item, state):
-        if state:
-            selection = item.get_label()
-            self._button.set_label(selection)
-        if self.on_state_change:
-            self.on_state_change(self, item, state)
-
-        self.close_pop_up()
-        self._emit("change", item, state)
-
-    def quit_menu(self, widget):
-        self.close_pop_up()
-
-    def get_selection(self):
-        return self.menu.get_selection()
-
-
-class DDButton(mixins.PlainButtonMixin, urwid.Button):
-    def set_label(self, s):
-        s = s + " " + ComboBox._combobox_mark
-        super(DDButton, self).set_label(s)
-
+        super(MenuItem, self).keypress(size, key)
+        return key
