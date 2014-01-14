@@ -7,7 +7,7 @@ gmncurses.ui.widgets.generic
 
 import urwid
 
-from . import mixins
+from . import mixins, utils
 
 
 def box_solid_fill(char, height):
@@ -199,4 +199,125 @@ class SemaphorePercentText(ListText):
         super().__init__(text)
 
 
+class MenuItem(urwid.RadioButton):
+    """
+    A RadioButton with a 'click' signal
+    """
+    signals = urwid.RadioButton.signals + ["click", "quit"]
+
+    def __init__(self, group, label, value, state='first True', on_state_change=None, user_data=None):
+        self.value = value
+        super().__init__(group, label, state='first True', on_state_change=None, user_data=None)
+
+    def keypress(self, size, key):
+        command = urwid.command_map[key]
+
+        if command == "activate":
+            self._emit("click", True)
+        elif command == "menu":
+            self._emit("quit")
+
+        super(MenuItem, self).keypress(size, key)
+        return key
+
+
+class ComboBoxMenu(urwid.WidgetWrap):
+    """
+    A menu shown when parent is activated.
+    """
+    signals = ["close"]
+
+    def __init__(self, items, style):
+        """
+        Initialize items list
+
+        Item must be a list of dicts with "label" and "value" items.
+        """
+        self.group = []
+        self.items = []
+
+        for i in items:
+            self.append(i)
+
+        self.walker = urwid.Pile(self.items)
+        super().__init__(urwid.AttrWrap(urwid.Filler(urwid.LineBox(self.walker)), "selectable", style))
+
+    def append(self, item):
+        """
+        Append an item to the menu
+        """
+        r = MenuItem(self.group, item["label"], item["value"])
+        self.items.append(r)
+
+    def get_item(self, index):
+        """
+        Get an item by index
+        """
+        return self.items[index].get_label()
+
+    def get_selection(self):
+        """
+        Return the index of the selected item
+        """
+        for index, item in enumerate(self.items):
+            if item.state is True:
+                return item
+        return None
+
+
+class ComboBox(urwid.PopUpLauncher):
+    """
+    A button launcher for the combobox menu
+    """
+    _combobox_mark = u"↓"
+    signals = ["change"]
+
+    def __init__(self, items, default=-1, on_state_change=None, style="default"):
+        self.menu = ComboBoxMenu(items, style)
+        self.on_state_change = on_state_change
+
+        selected_item = utils.find(lambda x: x.value == default, self.menu.items) or self.menu.items[0]
+        selected_item.set_state(True)
+        self._button = DDButton(selected_item.get_label())
+
+        super().__init__(self._button)
+
+        urwid.connect_signal(self.original_widget, 'click', lambda b: self.open_pop_up())
+        for i in self.menu.items:
+            urwid.connect_signal(i, 'click', self.item_changed)
+            urwid.connect_signal(i, 'quit', self.quit_menu)
+
+    def create_pop_up(self):
+        """
+        Create the pop up widget
+        """
+        return self.menu
+
+    def get_pop_up_parameters(self):
+        """
+        Configuration dictionary for the pop up
+        """
+        return {'left': 0, 'top': 0, 'overlay_width': 32, 'overlay_height': len(self.menu.items) + 2}
+
+    def item_changed(self, item, state):
+        if state:
+            selection = item.get_label()
+            self._button.set_label(selection)
+        if self.on_state_change:
+            self.on_state_change(self, item, state)
+
+        self.close_pop_up()
+        self._emit("change", item, state)
+
+    def quit_menu(self, widget):
+        self.close_pop_up()
+
+    def get_selection(self):
+        return self.menu.get_selection()
+
+
+class DDButton(mixins.PlainButtonMixin, urwid.Button):
+    def set_label(self, s):
+        s = s + " " + ComboBox._combobox_mark
+        super(DDButton, self).set_label(s)
 

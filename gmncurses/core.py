@@ -32,7 +32,8 @@ class GreenMineCore(object):
         self.loop = urwid.MainLoop(self.controller.view.widget,
                                    palette=PALETTE,
                                    unhandled_input=self.key_handler,
-                                   handle_mouse=True)
+                                   handle_mouse=True,
+                                   pop_ups=True)
 
     def run(self):
         self.loop.run()

@@ -204,7 +204,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     @property
     def status(self):
-        return self._status
+        return self._status_combo.get_selection().value
 
     @property
     def tags(self):
@@ -267,21 +267,14 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
             self._points.update(user_data)
 
     def _status_input(self):
-        self._status = self.user_story.get("status", None) or self.project.get("default_us_status", None)
-
         us_statuses = data.us_statuses(self.project)
-        max_length = max([len(s["name"]) for s in us_statuses.values()])
+        items = [{"label": s["name"], "value": int(v)} for v, s in us_statuses.items()]
+        default = self.user_story.get("status", None) or self.project.get("default_us_status", None)
 
-        self._us_status_group = []
-        for s_id, status in us_statuses.items():
-            urwid.RadioButton(self._us_status_group, status["name"],
-                              state=(status["id"] == self.user_story.get("status", None) or
-                                     status["id"] == self.project.get("default_us_status", None)),
-                              on_state_change=self._handler_status_radiobutton_change,
-                              user_data=status["id"])
+        self._status_combo = generic.ComboBox(items, default=default, style="cyan")
 
         colum_items = [(17, urwid.Padding(generic.ListText("Status", align="right"), right=4))]
-        colum_items.append(generic.Grid(self._us_status_group, 4 + max_length, 3, 0, "left"))
+        colum_items.append(self._status_combo)
         return urwid.Columns(colum_items)
 
     def _handler_status_radiobutton_change(self, radio_button, new_state, user_data):
