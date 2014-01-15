@@ -246,7 +246,7 @@ def test_backlog_controller_delete_user_story_with_errors():
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.backlog.user_stories[0]["id"])
 
-def test_backlog_controller_delete_user_story_order_with_success():
+def test_backlog_controller_delete_user_story_with_success():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
     project_view.backlog.notifier = mock.Mock()
