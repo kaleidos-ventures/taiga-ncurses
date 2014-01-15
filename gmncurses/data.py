@@ -177,7 +177,7 @@ def issue_type_with_color(issue, project, default_color="#ffffff"):
     # FIXME: Improvement, get issues_statuses from a project constant
     # TODO: Check that the color is in hex format
     type_id = issue.get("type", None)
-    if status_id:
+    if type_id:
         issue_types = {str(p["id"]): p for p in project["issue_types"]}
         try:
             return (issue_types[str(type_id)]["color"] or default_color,
