@@ -86,6 +86,10 @@ class ProjectBacklogKeys(metaclass=KeyConfigMeta):
 
 
 class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
+    CREATE_USER_STORY = "i"
+    CREATE_TASK = "i"
+    EDIT_USER_STORY_OR_TASK = "e"
+    DELETE_USER_STORY_OR_TASK = "delete"
     CHANGE_TO_MILESTONE = "m"
     RELOAD = "r"
     HELP = "?"
