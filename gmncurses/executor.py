@@ -83,6 +83,9 @@ class Executor(object):
 
         return self.pool.submit(self.client.get_tasks, params=params)
 
+    def delete_task(self, task):
+        return self.pool.submit(self.client.delete_task, id=task["id"])
+
     # Issues
     def issues(self, project, order_by=[], filters={}):
         params = {"project": project["id"]}

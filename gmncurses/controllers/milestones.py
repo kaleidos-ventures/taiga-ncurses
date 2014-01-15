@@ -10,7 +10,7 @@ import functools
 
 from gmncurses.config import ProjectMilestoneKeys
 from gmncurses.ui import signals
-from gmncurses.ui.widgets.milestones import UserStoryEntry
+from gmncurses.ui.widgets.milestones import UserStoryEntry, TaskEntry
 import gmncurses.data
 
 
@@ -76,6 +76,9 @@ class ProjectMilestoneSubController(base.Controller):
         if isinstance(selected_item, UserStoryEntry):
             uss_delete_f = self.executor.delete_user_story(selected_item.user_story)
             uss_delete_f.add_done_callback(self.handler_delete_user_story_response)
+        elif isinstance(selected_item, TaskEntry):
+            task_delete_f = self.executor.delete_task(selected_item.task)
+            task_delete_f.add_done_callback(self.handler_delete_task_response)
 
     def change_to_milestone(self):
         self.view.open_milestones_selector_popup(current_milestone=self.milestone)
@@ -135,6 +138,35 @@ class ProjectMilestoneSubController(base.Controller):
             self.view.notifier.error_msg("Error deleting user_story")
         else:
             self.view.notifier.info_msg("Delete user story")
+
+            if hasattr(self, "milestone"):
+                current_milestone = self.milestone
+            else:
+                current_milestone = gmncurses.data.current_milestone(self.view.project)
+
+            milestone_f = self.executor.milestone(current_milestone, self.view.project)
+            milestone_f.add_done_callback(self.handle_milestone)
+
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view.project)
+            milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+            user_stories_f = self.executor.user_stories(current_milestone, self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            tasks_f = self.executor.tasks(current_milestone, self.view.project)
+            tasks_f.add_done_callback(self.handle_tasks)
+
+            futures = (tasks_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
+    def handler_delete_task_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Error deleting task")
+        else:
+            self.view.notifier.info_msg("Delete task")
 
             if hasattr(self, "milestone"):
                 current_milestone = self.milestone

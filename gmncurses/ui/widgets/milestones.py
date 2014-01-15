@@ -176,6 +176,8 @@ class UnasignedTasksHeaderEntry(urwid.WidgetWrap):
 
 class TaskEntry(urwid.WidgetWrap):
     def __init__(self, task, project):
+        self.task = task
+
         if data.task_finished_date(task):
             is_closed = urwid.AttrMap(generic.ListText("☑"), "green", "focus")
         else:
