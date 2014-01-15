@@ -204,7 +204,7 @@ class ProjectBacklogSubController(base.Controller):
         if response is None:
             self.view.notifier.error_msg("Edit error")
         else:
-            self.view.notifier.info_msg("Edit succesful!")
+            self.view.notifier.info_msg("Edit successful!")
             self.view.close_user_story_form()
 
             project_stats_f = self.executor.project_stats(self.view.project)
