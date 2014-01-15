@@ -154,7 +154,7 @@ class ProjectBacklogSubController(base.Controller):
 
             self.view.user_stories.populate(self.user_stories, self.project_stats)
             if info_msg:
-                self.view.notifier.info_msg(info_msg) #
+                self.view.notifier.info_msg(info_msg)
             self.state_machine.refresh()
         else:
             # TODO retry failed operationsi
@@ -187,7 +187,7 @@ class ProjectBacklogSubController(base.Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handler_edit_user_story_request(self, user_story):
         data = self.view.get_user_story_form_data()
@@ -215,16 +215,13 @@ class ProjectBacklogSubController(base.Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handler_delete_user_story_response(self, future):
         response = future.result()
 
         if response is None:
             self.view.notifier.error_msg("Error deleting user_story")
-
-            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
-            user_stories_f.add_done_callback(self.handle_user_stories)
         else:
             self.view.notifier.info_msg("Delete user story")
 
@@ -236,7 +233,7 @@ class ProjectBacklogSubController(base.Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handler_update_user_stories_order_response(self, future):
         response = future.result()
@@ -257,7 +254,7 @@ class ProjectBacklogSubController(base.Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handler_move_user_story_to_milestone_request(self, selected_option, user_story=None):
         data = {"milestone": selected_option.milestone["id"]}
@@ -283,4 +280,4 @@ class ProjectBacklogSubController(base.Controller):
 
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-            futures_completed_f.add_done_callback(functools.partial(self.when_backlog_info_fetched))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
