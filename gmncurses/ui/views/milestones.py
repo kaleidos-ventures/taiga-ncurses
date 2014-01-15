@@ -21,11 +21,12 @@ class ProjectMilestoneSubView(base.SubView):
            #("← | h | ctrl b", "Move Left"),
            #("→ | l | ctrl f", "Move Right"),
        )),
-       ( "Task Actions:", (
+       ( "Milestone Actions:", (
            ("m", "Change to another Milestone"),
-           ("i", "Create new Task (TODO)"),
-           ("e", "Edit selected Task/Us (TODO)"),
-           ("Supr", "Delete selected Task (TODO)"),
+           ("N", "Create new US (TODO)"),
+           ("n", "Create new Task (TODO)"),
+           ("e", "Edit selected US/Task (TODO Task)"),
+           ("Supr", "Delete selected US/Task"),
        )),
     )
 
