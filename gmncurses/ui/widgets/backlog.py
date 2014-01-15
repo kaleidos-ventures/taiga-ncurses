@@ -164,6 +164,7 @@ class UserStoryEntry(urwid.WidgetWrap):
         return True
 
 class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
+    _milestone_combo = None
     _status_combo = None
     _points_combos = {}
 
@@ -187,6 +188,10 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
     @property
     def subject(self):
         return self._subject_edit.get_edit_text()
+
+    @property
+    def milestone(self):
+        return self._milestone_combo.get_selected().value
 
     @property
     def points(self):
@@ -217,6 +222,8 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
         contents = [
             self._subject_input(),
             generic.box_solid_fill(" ", 1),
+            self._milestone_input(),
+            generic.box_solid_fill(" ", 1),
             self._points_input(),
             generic.box_solid_fill(" ", 1),
             self._status_input(),
@@ -230,13 +237,24 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
         list_walker = urwid.SimpleFocusListWalker(contents)
         list_walker.set_focus(0)
-        return urwid.BoxAdapter(urwid.ListBox(list_walker), 14)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 16)
 
     def _subject_input(self):
         self._subject_edit = urwid.Edit(edit_text=self.user_story.get("subject", ""))
 
         colum_items = [(17, urwid.Padding(generic.ListText("Subject", align="right"), right=4))]
         colum_items.append(urwid.AttrMap(self._subject_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _milestone_input(self):
+        milestones = [{"id": None, "name": "Unassigned"}] + data.list_of_milestones(self.project)
+        items = tuple((m.get("name", ""), m.get("id", None)) for m in milestones)
+        selected = self.user_story.get("milestone", None)
+
+        self._milestone_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Milestone", align="right"), right=4))]
+        colum_items.append(self._milestone_combo)
         return urwid.Columns(colum_items)
 
     def _points_input(self):
