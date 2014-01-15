@@ -134,6 +134,8 @@ class MilestoneTaskboard(urwid.WidgetWrap):
 
 class UserStoryEntry(urwid.WidgetWrap):
     def __init__(self, us, project, roles):
+        self.user_story = us
+
         if us.get("is_closed", False):
             is_closed = urwid.AttrMap(generic.ListText("☑"), "green", "focus-header")
         else:
