@@ -74,7 +74,7 @@ class ProjectKeys(metaclass=KeyConfigMeta):
 
 
 class ProjectBacklogKeys(metaclass=KeyConfigMeta):
-    CREATE_USER_STORY = "i"
+    CREATE_USER_STORY = "n"
     EDIT_USER_STORY = "e"
     DELETE_USER_STORY = "delete"
     UPDATE_USER_STORIES_ORDER = "w"
@@ -86,8 +86,8 @@ class ProjectBacklogKeys(metaclass=KeyConfigMeta):
 
 
 class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
-    CREATE_USER_STORY = "i"
-    CREATE_TASK = "i"
+    CREATE_USER_STORY = "N"
+    CREATE_TASK = "n"
     EDIT_USER_STORY_OR_TASK = "e"
     DELETE_USER_STORY_OR_TASK = "delete"
     CHANGE_TO_MILESTONE = "m"

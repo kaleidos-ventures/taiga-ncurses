@@ -22,7 +22,7 @@ class ProjectBacklogSubView(base.SubView):
            #("→ | l | ctrl f", "Move Right"),
        )),
        ( "User Stories Actions:", (
-           ("i", "Create new US"),
+           ("n", "Create new US"),
            ("e", "Edit selected US"),
            ("Supr", "Delete selected US"),
            ("K", "Move selected US up"),
