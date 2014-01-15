@@ -123,18 +123,6 @@ def test_sprint_controller_submit_edit_user_story_form_successfully():
     assert executor.update_user_story.call_count == 1
     assert executor.update_user_story.return_value.result()["subject"] == us_subject
 
-def test_sprint_controller_show_the_milestone_selector_popup():
-    project = factories.project()
-    project_view = views.projects.ProjectDetailView(project)
-    executor = factories.patched_executor()
-    _ = mock.Mock()
-    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
-
-    assert not hasattr(project_detail_controller.view.sprint, "milestone_selector_popup")
-    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
-    assert hasattr(project_detail_controller.view.sprint, "milestone_selector_popup")
-
 def test_sprint_controller_delete_user_story_with_errors():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
@@ -149,7 +137,7 @@ def test_sprint_controller_delete_user_story_with_errors():
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.sprint.user_stories[0]["id"])
 
-def test_sprint_controller_delete_user_story_order_with_success():
+def test_sprint_controller_delete_user_story_with_success():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
     project_view.sprint.notifier = mock.Mock()
@@ -163,6 +151,49 @@ def test_sprint_controller_delete_user_story_order_with_success():
     assert project_view.sprint.notifier.info_msg.call_count == 1
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.sprint.user_stories[0]["id"])
+
+def test_sprint_controller_delete_task_with_errors():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor(delete_task_response=factories.future(None))
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+
+    project_view.sprint.taskboard.widget.contents.focus = 2
+    project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
+    assert project_view.sprint.notifier.error_msg.call_count == 1
+    assert (executor.delete_task.call_args.call_list()[0][0][0]["id"] ==
+            project_detail_controller.sprint.tasks[1]["id"])
+
+def test_sprint_controller_delete_task_with_success():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_view.sprint.notifier.reset_mock()
+
+    project_view.sprint.taskboard.widget.contents.focus = 2
+    project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert (executor.delete_task.call_args.call_list()[0][0][0]["id"] ==
+            project_detail_controller.sprint.tasks[1]["id"])
+
+def test_sprint_controller_show_the_milestone_selector_popup():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+
+    assert not hasattr(project_detail_controller.view.sprint, "milestone_selector_popup")
+    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
+    assert hasattr(project_detail_controller.view.sprint, "milestone_selector_popup")
 
 def test_sprint_controller_close_the_milestone_selector_popup():
     project = factories.project()

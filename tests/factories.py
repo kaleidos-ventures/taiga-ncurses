@@ -122,6 +122,9 @@ def successful_delete_user_story_response():
 def tasks():
     return json.loads(fixtures.MILESTONE_TASKS)
 
+def successful_delete_task_response():
+    return True
+
 # Issues
 def issues():
     return json.loads(fixtures.ISSUES)
@@ -148,6 +151,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      update_user_stories_order_response=future(successful_update_user_stories_order_response()),
                      delete_user_story_response=future(successful_delete_user_story_response()),
                      tasks=future(tasks()),
+                     delete_task_response=future(successful_delete_task_response()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues()),
                      wiki_pages=future(wiki_pages())):
@@ -171,6 +175,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.milestone_stats = mock.Mock(return_value=milestone_stats)
 
     executor.tasks = mock.Mock(return_value=tasks)
+    executor.delete_task = mock.Mock(return_value=delete_task_response)
 
     executor.issues = mock.Mock(return_value=issues)
 
