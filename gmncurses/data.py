@@ -84,7 +84,7 @@ def us_total_points(us):
 
 def us_statuses(project):
     dc = {str(p["id"]): p for p in project.get("us_statuses", [])}
-    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"] ))
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
 
 def us_status_with_color(us, project, default_color="#ffffff"):
     # FIXME: Improvement, get priorities from a project constant
@@ -307,6 +307,10 @@ def task_assigned_to_with_color(task, project, default_color="#ffffff"):
         except KeyError:
             pass
     return  (default_color, "Unassigned")
+
+def task_statuses(project):
+    dc = {str(p["id"]): p for p in project.get("task_statuses", [])}
+    return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
 
 def task_status_with_color(task, project, default_color="#ffffff"):
     # FIXME: Improvement, get tasks_statuses from a project constant
