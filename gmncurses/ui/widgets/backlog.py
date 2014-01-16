@@ -300,7 +300,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _description_input(self):
-        self._description_edit = urwid.Edit(multiline=True, edit_text=self.user_story.get("subject", ""))
+        self._description_edit = urwid.Edit(multiline=True, edit_text=self.user_story.get("description", ""))
 
         colum_items = [(17, urwid.Padding(generic.ListText("Description", align="right"), right=4))]
         colum_items.append(urwid.AttrMap(self._description_edit, "popup-editor"))
