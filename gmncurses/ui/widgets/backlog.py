@@ -247,7 +247,7 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _milestone_input(self):
-        milestones = [{"id": None, "name": "Unassigned"}] + data.list_of_milestones(self.project)
+        milestones = [{"id": None, "name": "None"}] + data.list_of_milestones(self.project)
         items = tuple((m.get("name", ""), m.get("id", None)) for m in milestones)
         selected = self.user_story.get("milestone", None)
 
