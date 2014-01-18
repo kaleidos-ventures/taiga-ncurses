@@ -310,3 +310,141 @@ class MilestoneOptionEntry(mixins.KeyPressMixin, urwid.WidgetWrap):
            generic.SemaphorePercentText(data.milestone_closed_points(self.milestone),
                                         data.milestone_total_points(self.milestone))
         ])
+
+class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
+    _user_story_combo = None
+    _status_combo = None
+    _assigned_to_combo = None
+
+    def __init__(self, project, user_stories, task={}):
+        self.project = project
+        self.user_stories = user_stories
+        self.task = task
+
+        contents = [
+            generic.box_solid_fill(" ", 2),
+            self._form_inputs(),
+            generic.box_solid_fill(" ", 2),
+            self._buttons(),
+            generic.box_solid_fill(" ", 1),
+        ]
+        self.widget = urwid.Pile(contents)
+
+        title = "Edit Task" if self.user_story else "Create Task"
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+
+    @property
+    def subject(self):
+        return self._subject_edit.get_edit_text()
+
+    @property
+    def user_story(self):
+        return self._user_story_combo.get_selected().value
+
+    @property
+    def status(self):
+        return self._status_combo.get_selected().value
+
+    @property
+    def assigned_to(self):
+        return self._assigned_to_combo.get_selected().value
+
+    @property
+    def tags(self):
+        tags = self._tags_edit.get_edit_text()
+        return tags.split(" ,") if tags else []
+
+    @property
+    def description(self):
+        return self._description_edit.get_edit_text()
+
+    def _form_inputs(self):
+        contents = [
+            self._subject_input(),
+            generic.box_solid_fill(" ", 1),
+            self._user_story_input(),
+            generic.box_solid_fill(" ", 1),
+            self._status_input(),
+            generic.box_solid_fill(" ", 1),
+            self._assigned_to_input(),
+            generic.box_solid_fill(" ", 1),
+            self._tags_input(),
+            generic.box_solid_fill(" ", 1),
+            self._description_input(),
+        ]
+
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 11)
+
+    def _subject_input(self):
+        self._subject_edit = urwid.Edit(edit_text=self.task.get("subject", ""))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Subject", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._subject_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _user_story_input(self):
+        uss = [{"id": None, "subject": "None"}] + self.user_stories
+        items = tuple(("US #{} - {}".format(u.get("ref", "**"),
+                                            u.get("subject", "-no name-")) if u.get("id", None) else
+                           u.get("subject", "- no name -"),
+                       u.get("id", None)) for u in uss)
+        selected = self.task.get("user_story", None)
+
+        self._user_story_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("User story", align="right"), right=4))]
+        colum_items.append(self._user_story_combo)
+        return urwid.Columns(colum_items)
+
+    def _status_input(self):
+        task_statuses = data.task_statuses(self.project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in task_statuses.values())
+        selected = self.task.get("status", None) or self.project.get("default_task_status", None)
+
+        self._status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Status", align="right"), right=4))]
+        colum_items.append(self._status_combo)
+        return urwid.Columns(colum_items)
+
+    def _assigned_to_input(self):
+        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("full_name", "")), s.get("id", None)) for s in memberships)
+        selected = self.task.get("assigned_to", None)
+
+        self._assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Assigned to", align="right"), right=4))]
+        colum_items.append(self._assigned_to_combo)
+        return urwid.Columns(colum_items)
+
+    def _tags_input(self):
+        self._tags_edit = urwid.Edit(edit_text=", ".join(self.task.get("tags", [])))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Tags", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._tags_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _description_input(self):
+        self._description_edit = urwid.Edit(multiline=True, edit_text=self.task.get("description", ""))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Description", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._description_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _buttons(self):
+        self.save_button = generic.PlainButton("Save")
+        self.cancel_button = generic.PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
+                                              "popup-submit-button")))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)

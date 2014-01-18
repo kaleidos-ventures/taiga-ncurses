@@ -24,7 +24,7 @@ class ProjectMilestoneSubView(base.SubView):
        ( "Milestone Actions:", (
            ("m", "Change to another Milestone"),
            ("N", "Create new US (TODO)"),
-           ("n", "Create new Task (TODO)"),
+           ("n", "Create new Task"),
            ("e", "Edit selected US/Task (TODO Task)"),
            ("Supr", "Delete selected US/Task"),
        )),
@@ -32,13 +32,16 @@ class ProjectMilestoneSubView(base.SubView):
 
     def __init__(self, parent_view, project, notifier, tabs):
         super().__init__(parent_view)
-
-        self.project = project
         self.notifier = notifier
 
-        self.info = milestones.MilestoneInfo(project)
-        self.stats = milestones.MilestoneStats(project)
-        self.taskboard = milestones.MilestoneTaskboard(project)
+        self._project = project
+        self._milestone = {}
+        self._user_stories = []
+        self._tasks = []
+
+        self.info = milestones.MilestoneInfo(self._project)
+        self.stats = milestones.MilestoneStats(self._project)
+        self.taskboard = milestones.MilestoneTaskboard(self._project)
 
         self.widget = urwid.ListBox(urwid.SimpleListWalker([
             tabs,
@@ -51,7 +54,7 @@ class ProjectMilestoneSubView(base.SubView):
         ]))
 
     def open_user_story_form(self, user_story={}):
-        self.user_story_form = backlog.UserStoryForm(self.project, user_story=user_story)
+        self.user_story_form = backlog.UserStoryForm(self._project, user_story=user_story)
         # FIXME: Calculate the form size
         self.parent.show_widget_on_top(self.user_story_form, 80, 24)
 
@@ -70,13 +73,37 @@ class ProjectMilestoneSubView(base.SubView):
                 "description": self.user_story_form.description,
                 "team_requirement": self.user_story_form.team_requirement,
                 "client_requirement": self.user_story_form.client_requirement,
-                "project": self.project["id"],
+                "project": self._project["id"]
+            }
+            return data
+        return {}
+
+    def open_task_form(self, task={}):
+        self.task_form = milestones.TaskForm(self._project, self._user_stories, task=task)
+        # FIXME: Calculate the form size
+        self.parent.show_widget_on_top(self.task_form, 80, 19)
+
+    def close_task_form(self):
+        del self.task_form
+        self.parent.hide_widget_on_top()
+
+    def get_task_form_data(self):
+        if hasattr(self, "task_form"):
+            data = {
+                "subject": self.task_form.subject,
+                "user_story": self.task_form.user_story,
+                "status": self.task_form.status,
+                "assigned_to": self.task_form.assigned_to,
+                "tags": self.task_form.tags,
+                "description": self.task_form.description,
+                "project": self._project["id"],
+                "milestone": self._milestone["id"]
             }
             return data
         return {}
 
     def open_milestones_selector_popup(self, current_milestone={}):
-        self.milestone_selector_popup = milestones.MIlestoneSelectorPopup(self.project, current_milestone)
+        self.milestone_selector_popup = milestones.MIlestoneSelectorPopup(self._project, current_milestone)
         # FIXME: Calculate the popup size
         self.parent.show_widget_on_top(self.milestone_selector_popup, 100, 28)
 

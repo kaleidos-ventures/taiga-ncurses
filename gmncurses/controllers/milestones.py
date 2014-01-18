@@ -27,7 +27,7 @@ class ProjectMilestoneSubController(base.Controller):
         if key == ProjectMilestoneKeys.CREATE_USER_STORY:
             pass
         elif key == ProjectMilestoneKeys.CREATE_TASK:
-            pass
+            self.new_task()
         elif key == ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK:
             self.edit_user_story_or_task()
         elif key == ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK:
@@ -49,18 +49,18 @@ class ProjectMilestoneSubController(base.Controller):
         if hasattr(self, "milestone"):
             current_milestone = self.milestone
         else:
-            current_milestone = gmncurses.data.current_milestone(self.view.project)
+            current_milestone = gmncurses.data.current_milestone(self.view._project)
 
-        milestone_f = self.executor.milestone(current_milestone, self.view.project)
+        milestone_f = self.executor.milestone(current_milestone, self.view._project)
         milestone_f.add_done_callback(self.handle_milestone)
 
-        milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view.project)
+        milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        user_stories_f = self.executor.user_stories(current_milestone, self.view.project)
+        user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
         user_stories_f.add_done_callback(self.handle_user_stories)
 
-        tasks_f = self.executor.tasks(current_milestone, self.view.project)
+        tasks_f = self.executor.tasks(current_milestone, self.view._project)
         tasks_f.add_done_callback(self.handle_tasks)
 
         futures = (tasks_f, user_stories_f)
@@ -69,6 +69,15 @@ class ProjectMilestoneSubController(base.Controller):
                                                                 info_msg="User stories and tasks fetched",
                                                                 error_msg="Failed to fetch milestone data "
                                                                            "(user stories or task)"))
+
+    def new_task(self):
+        self.view.open_task_form()
+
+        signals.connect(self.view.task_form.cancel_button, "click",
+                lambda _: self.cancel_task_form())
+        signals.connect(self.view.task_form.save_button, "click",
+                lambda _: self.handler_create_task_request())
+
 
     def edit_user_story_or_task(self):
         selected_item = self.view.taskboard.widget.get_focus()
@@ -84,6 +93,9 @@ class ProjectMilestoneSubController(base.Controller):
     def cancel_user_story_form(self):
         self.view.close_user_story_form()
 
+    def cancel_task_form(self):
+        self.view.close_task_form()
+
     def delete_user_story_or_task(self):
         selected_item = self.view.taskboard.widget.get_focus()
 
@@ -95,7 +107,7 @@ class ProjectMilestoneSubController(base.Controller):
             task_delete_f.add_done_callback(self.handler_delete_task_response)
 
     def change_to_milestone(self):
-        self.view.open_milestones_selector_popup(current_milestone=self.milestone)
+        self.view.open_milestones_selector_popup(current_milestone=self.view._milestone)
 
         signals.connect(self.view.milestone_selector_popup.cancel_button, "click",
                         lambda _: self.cancel_milestone_selector_popup())
@@ -116,27 +128,27 @@ class ProjectMilestoneSubController(base.Controller):
         self.view.close_help_popup()
 
     def handle_milestone(self, future):
-        self.milestone = future.result()
-        if self.milestone:
-            self.view.info.populate(self.milestone)
+        self.view._milestone = future.result()
+        if self.view._milestone:
+            self.view.info.populate(self.view._milestone)
             self.state_machine.refresh()
 
     def handle_milestone_stats(self, future):
-        self.milestone_stats = future.result()
-        if self.milestone_stats:
-            self.view.stats.populate(self.milestone_stats)
+        self.view._milestone_stats = future.result()
+        if self.view._milestone_stats:
+            self.view.stats.populate(self.view._milestone_stats)
             self.state_machine.refresh()
 
     def handle_user_stories(self, future):
-        self.user_stories = future.result()
+        self.view._user_stories = future.result()
 
     def handle_tasks(self, future):
-        self.tasks = future.result()
+        self.view._tasks = future.result()
 
     def handle_user_stories_and_task_info_fetched(self, future_with_results, info_msg=None, error_msg=None):
         done, not_done = future_with_results.result()
         if len(done) == 2:
-            self.view.taskboard.populate(self.user_stories, self.tasks)
+            self.view.taskboard.populate(self.view._user_stories, self.view._tasks)
             if info_msg:
                 self.view.notifier.info_msg(info_msg)
             self.state_machine.refresh()
@@ -144,6 +156,45 @@ class ProjectMilestoneSubController(base.Controller):
             # TODO retry failed operations
             if error_msg:
                 self.view.notifier.error_msg(error_msg)
+
+    def handler_create_task_request(self):
+        data = self.view.get_task_form_data()
+
+        if not data.get("subject", None):
+            self.view.notifier.error_msg("Subject is required")
+        else:
+            task_post_f = self.executor.create_task(data)
+            task_post_f.add_done_callback(self.handler_create_task_response)
+
+    def handler_create_task_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Create error")
+        else:
+            self.view.notifier.info_msg("Create successful!")
+            self.view.close_task_form()
+
+            if hasattr(self, "milestone"):
+                current_milestone = self.milestone
+            else:
+                current_milestone = gmncurses.data.current_milestone(self.view._project)
+
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
+            milestone_f.add_done_callback(self.handle_milestone)
+
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
+            milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
+            tasks_f.add_done_callback(self.handle_tasks)
+
+            futures = (tasks_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
 
     def handler_edit_user_story_request(self, user_story):
         data = self.view.get_user_story_form_data()
@@ -166,18 +217,18 @@ class ProjectMilestoneSubController(base.Controller):
             if hasattr(self, "milestone"):
                 current_milestone = self.milestone
             else:
-                current_milestone = gmncurses.data.current_milestone(self.view.project)
+                current_milestone = gmncurses.data.current_milestone(self.view._project)
 
-            milestone_f = self.executor.milestone(current_milestone, self.view.project)
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
             milestone_f.add_done_callback(self.handle_milestone)
 
-            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view.project)
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
             milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-            user_stories_f = self.executor.user_stories(current_milestone, self.view.project)
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
             user_stories_f.add_done_callback(self.handle_user_stories)
 
-            tasks_f = self.executor.tasks(current_milestone, self.view.project)
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
             tasks_f.add_done_callback(self.handle_tasks)
 
             futures = (tasks_f, user_stories_f)
@@ -195,18 +246,18 @@ class ProjectMilestoneSubController(base.Controller):
             if hasattr(self, "milestone"):
                 current_milestone = self.milestone
             else:
-                current_milestone = gmncurses.data.current_milestone(self.view.project)
+                current_milestone = gmncurses.data.current_milestone(self.view._project)
 
-            milestone_f = self.executor.milestone(current_milestone, self.view.project)
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
             milestone_f.add_done_callback(self.handle_milestone)
 
-            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view.project)
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
             milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-            user_stories_f = self.executor.user_stories(current_milestone, self.view.project)
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
             user_stories_f.add_done_callback(self.handle_user_stories)
 
-            tasks_f = self.executor.tasks(current_milestone, self.view.project)
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
             tasks_f.add_done_callback(self.handle_tasks)
 
             futures = (tasks_f, user_stories_f)
@@ -224,18 +275,18 @@ class ProjectMilestoneSubController(base.Controller):
             if hasattr(self, "milestone"):
                 current_milestone = self.milestone
             else:
-                current_milestone = gmncurses.data.current_milestone(self.view.project)
+                current_milestone = gmncurses.data.current_milestone(self.view._project)
 
-            milestone_f = self.executor.milestone(current_milestone, self.view.project)
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
             milestone_f.add_done_callback(self.handle_milestone)
 
-            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view.project)
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
             milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-            user_stories_f = self.executor.user_stories(current_milestone, self.view.project)
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
             user_stories_f.add_done_callback(self.handle_user_stories)
 
-            tasks_f = self.executor.tasks(current_milestone, self.view.project)
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
             tasks_f.add_done_callback(self.handle_tasks)
 
             futures = (tasks_f, user_stories_f)
@@ -247,16 +298,16 @@ class ProjectMilestoneSubController(base.Controller):
 
         milestone = selected_option.milestone
 
-        milestone_f = self.executor.milestone(milestone, self.view.project)
+        milestone_f = self.executor.milestone(milestone, self.view._project)
         milestone_f.add_done_callback(self.handle_milestone)
 
-        milestone_stats_f = self.executor.milestone_stats(milestone, self.view.project)
+        milestone_stats_f = self.executor.milestone_stats(milestone, self.view._project)
         milestone_stats_f.add_done_callback(self.handle_milestone_stats)
 
-        user_stories_f = self.executor.user_stories(milestone, self.view.project)
+        user_stories_f = self.executor.user_stories(milestone, self.view._project)
         user_stories_f.add_done_callback(self.handle_user_stories)
 
-        tasks_f = self.executor.tasks(milestone, self.view.project)
+        tasks_f = self.executor.tasks(milestone, self.view._project)
         tasks_f.add_done_callback(self.handle_tasks)
 
         futures = (tasks_f, user_stories_f)
