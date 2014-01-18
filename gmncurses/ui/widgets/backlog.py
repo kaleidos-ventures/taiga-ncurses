@@ -283,7 +283,8 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
     def _status_input(self):
         us_statuses = data.us_statuses(self.project)
-        items = tuple((s.get("name", ""), s.get("id", None)) for s in us_statuses.values())
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in us_statuses.values())
         selected = self.user_story.get("status", None) or self.project.get("default_us_status", None)
 
         self._status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
