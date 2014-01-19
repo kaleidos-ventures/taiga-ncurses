@@ -57,6 +57,73 @@ def test_sprints_controller_reload():
     assert executor.user_stories.call_count == 1
     assert executor.tasks.call_count == 1
 
+def test_sprint_controller_show_the_new_user_story_form():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+
+    assert not hasattr(project_detail_controller.sprint.view, "user_story_form")
+    project_detail_controller.handle(config.ProjectMilestoneKeys.CREATE_USER_STORY)
+    assert hasattr(project_detail_controller.sprint.view, "user_story_form")
+    assert (project_detail_controller.sprint.view.user_story_form.user_story["milestone"] ==
+            project_detail_controller.sprint.view._milestone["id"])
+
+def test_sprint_controller_cancel_the_new_user_story_form():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.handle(config.ProjectMilestoneKeys.CREATE_USER_STORY)
+
+    assert hasattr(project_detail_controller.sprint.view, "user_story_form")
+    form = project_detail_controller.sprint.view.user_story_form
+    signals.emit(form.cancel_button, "click")
+    assert not hasattr(project_detail_controller.sprint.view, "user_story_form")
+
+def test_sprint_controller_submit_the_new_user_story_form_with_errors():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.handle(config.ProjectMilestoneKeys.CREATE_USER_STORY)
+    form = project_detail_controller.sprint.view.user_story_form
+
+    form._subject_edit.set_edit_text("")
+    signals.emit(form.save_button, "click")
+    assert project_view.sprint.notifier.error_msg.call_count == 1
+
+def test_sprint_controller_submit_new_user_story_form_successfully():
+    us_subject = "Create a new user story"
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor(create_user_story_response=factories.future(
+                           factories.successful_create_user_story_response(us_subject)))
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.handle(config.ProjectMilestoneKeys.CREATE_USER_STORY)
+    form = project_detail_controller.sprint.view.user_story_form
+    project_view.sprint.notifier.reset_mock()
+
+    form._subject_edit.set_edit_text(us_subject)
+
+    signals.emit(form.save_button, "click")
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert executor.create_user_story.call_args.call_list()[0][0][0]["subject"] == us_subject
+    assert (executor.create_user_story.call_args.call_list()[0][0][0]["milestone"] ==
+            project_detail_controller.sprint.view._milestone["id"])
+    assert executor.create_user_story.call_count == 1
+    assert executor.create_user_story.return_value.result()["subject"] == us_subject
+
 def test_sprint_controller_show_the_edit_user_story_form():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)
