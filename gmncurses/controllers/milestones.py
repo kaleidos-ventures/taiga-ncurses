@@ -71,7 +71,16 @@ class ProjectMilestoneSubController(base.Controller):
                                                                            "(user stories or task)"))
 
     def new_task(self):
-        self.view.open_task_form()
+        selected_item = self.view.taskboard.widget.get_focus()
+
+        if isinstance(selected_item, UserStoryEntry):
+            task = {"user_story": selected_item.user_story.get("id", None)}
+        elif isinstance(selected_item, TaskEntry):
+            task = {"user_story": selected_item.task.get("user_story", None)}
+        else:
+            task = {"user_story": None}
+
+        self.view.open_task_form(task=task)
 
         signals.connect(self.view.task_form.cancel_button, "click",
                 lambda _: self.cancel_task_form())
