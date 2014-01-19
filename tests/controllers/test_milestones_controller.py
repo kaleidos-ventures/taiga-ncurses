@@ -135,7 +135,7 @@ def test_sprint_controller_delete_user_story_with_errors():
     project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
     assert project_view.sprint.notifier.error_msg.call_count == 1
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
-            project_detail_controller.sprint.user_stories[0]["id"])
+            project_detail_controller.sprint.view._user_stories[0]["id"])
 
 def test_sprint_controller_delete_user_story_with_success():
     project = factories.project()
@@ -150,7 +150,7 @@ def test_sprint_controller_delete_user_story_with_success():
     project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
     assert project_view.sprint.notifier.info_msg.call_count == 1
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
-            project_detail_controller.sprint.user_stories[0]["id"])
+            project_detail_controller.sprint.view._user_stories[0]["id"])
 
 def test_sprint_controller_delete_task_with_errors():
     project = factories.project()
@@ -165,7 +165,7 @@ def test_sprint_controller_delete_task_with_errors():
     project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
     assert project_view.sprint.notifier.error_msg.call_count == 1
     assert (executor.delete_task.call_args.call_list()[0][0][0]["id"] ==
-            project_detail_controller.sprint.tasks[1]["id"])
+            project_detail_controller.sprint.view._tasks[1]["id"])
 
 def test_sprint_controller_delete_task_with_success():
     project = factories.project()
@@ -181,7 +181,7 @@ def test_sprint_controller_delete_task_with_success():
     project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
     assert project_view.sprint.notifier.info_msg.call_count == 1
     assert (executor.delete_task.call_args.call_list()[0][0][0]["id"] ==
-            project_detail_controller.sprint.tasks[1]["id"])
+            project_detail_controller.sprint.view._tasks[1]["id"])
 
 def test_sprint_controller_show_the_milestone_selector_popup():
     project = factories.project()
@@ -236,5 +236,5 @@ def test_sprint_controller_change_to_another_milestone():
     assert executor.milestone_stats.call_count == 1
     assert executor.user_stories.call_count == 1
     assert executor.tasks.call_count == 1
-    assert (project_detail_controller.sprint.milestone["id"] ==
+    assert (project_detail_controller.sprint.view._milestone["id"] ==
             milestone_selector_popup.project["list_of_milestones"][-1]["id"])
