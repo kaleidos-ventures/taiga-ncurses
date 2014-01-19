@@ -86,6 +86,9 @@ class Executor(object):
     def create_task(self, data):
         return self.pool.submit(self.client.create_task, data_dict=data)
 
+    def update_task(self, task, data):
+        return self.pool.submit(self.client.update_task, id=task["id"], data_dict=data)
+
     def delete_task(self, task):
         return self.pool.submit(self.client.delete_task, id=task["id"])
 

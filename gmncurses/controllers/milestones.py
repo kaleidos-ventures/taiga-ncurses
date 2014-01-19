@@ -87,7 +87,6 @@ class ProjectMilestoneSubController(base.Controller):
         signals.connect(self.view.task_form.save_button, "click",
                 lambda _: self.handler_create_task_request())
 
-
     def edit_user_story_or_task(self):
         selected_item = self.view.taskboard.widget.get_focus()
 
@@ -98,6 +97,13 @@ class ProjectMilestoneSubController(base.Controller):
                     lambda _: self.cancel_user_story_form())
             signals.connect(self.view.user_story_form.save_button, "click",
                     lambda _: self.handler_edit_user_story_request(selected_item.user_story))
+        elif isinstance(selected_item, TaskEntry):
+            self.view.open_task_form(task=selected_item.task)
+
+            signals.connect(self.view.task_form.cancel_button, "click",
+                    lambda _: self.cancel_task_form())
+            signals.connect(self.view.task_form.save_button, "click",
+                    lambda _: self.handler_edit_task_request(selected_item.task))
 
     def cancel_user_story_form(self):
         self.view.close_user_story_form()
@@ -222,6 +228,45 @@ class ProjectMilestoneSubController(base.Controller):
         else:
             self.view.notifier.info_msg("Edit user_story successful!")
             self.view.close_user_story_form()
+
+            if hasattr(self, "milestone"):
+                current_milestone = self.milestone
+            else:
+                current_milestone = gmncurses.data.current_milestone(self.view._project)
+
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
+            milestone_f.add_done_callback(self.handle_milestone)
+
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
+            milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
+            tasks_f.add_done_callback(self.handle_tasks)
+
+            futures = (tasks_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
+    def handler_edit_task_request(self, task):
+        data = self.view.get_task_form_data()
+
+        if not data.get("subject", None):
+            self.view.notifier.error_msg("Subject is required")
+        else:
+            us_patch_f = self.executor.update_task(task, data)
+            us_patch_f.add_done_callback(self.handler_edit_task_response)
+
+    def handler_edit_task_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Edit error")
+        else:
+            self.view.notifier.info_msg("Edit task successful!")
+            self.view.close_task_form()
 
             if hasattr(self, "milestone"):
                 current_milestone = self.milestone
