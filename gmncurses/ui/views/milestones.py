@@ -23,9 +23,9 @@ class ProjectMilestoneSubView(base.SubView):
        )),
        ( "Milestone Actions:", (
            ("m", "Change to another Milestone"),
-           ("N", "Create new US (TODO)"),
+           ("N", "Create new US"),
            ("n", "Create new Task"),
-           ("e", "Edit selected US/Task (TODO Task)"),
+           ("e", "Edit selected US/Task"),
            ("Supr", "Delete selected US/Task"),
        )),
     )

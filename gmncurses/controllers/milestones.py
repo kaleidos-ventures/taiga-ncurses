@@ -25,7 +25,7 @@ class ProjectMilestoneSubController(base.Controller):
 
     def handle(self, key):
         if key == ProjectMilestoneKeys.CREATE_USER_STORY:
-            pass
+            self.new_user_story()
         elif key == ProjectMilestoneKeys.CREATE_TASK:
             self.new_task()
         elif key == ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK:
@@ -69,6 +69,17 @@ class ProjectMilestoneSubController(base.Controller):
                                                                 info_msg="User stories and tasks fetched",
                                                                 error_msg="Failed to fetch milestone data "
                                                                            "(user stories or task)"))
+
+
+    def new_user_story(self):
+        user_story = {"milestone": self.view._milestone.get("id", None)}
+
+        self.view.open_user_story_form(user_story=user_story)
+
+        signals.connect(self.view.user_story_form.cancel_button, "click",
+                lambda _: self.cancel_user_story_form())
+        signals.connect(self.view.user_story_form.save_button, "click",
+                lambda _: self.handler_create_user_story_request())
 
     def new_task(self):
         selected_item = self.view.taskboard.widget.get_focus()
@@ -172,6 +183,45 @@ class ProjectMilestoneSubController(base.Controller):
             if error_msg:
                 self.view.notifier.error_msg(error_msg)
 
+    def handler_create_user_story_request(self):
+        data = self.view.get_user_story_form_data()
+
+        if not data.get("subject", None):
+            self.view.notifier.error_msg("Subject is required")
+        else:
+            us_post_f = self.executor.create_user_story(data)
+            us_post_f.add_done_callback(self.handler_create_user_story_response)
+
+    def handler_create_user_story_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Create US error")
+        else:
+            self.view.notifier.info_msg("Create US successful!")
+            self.view.close_user_story_form()
+
+            if hasattr(self, "milestone"):
+                current_milestone = self.milestone
+            else:
+                current_milestone = gmncurses.data.current_milestone(self.view._project)
+
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
+            milestone_f.add_done_callback(self.handle_milestone)
+
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
+            milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
+            tasks_f.add_done_callback(self.handle_tasks)
+
+            futures = (tasks_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
     def handler_create_task_request(self):
         data = self.view.get_task_form_data()
 
@@ -185,9 +235,9 @@ class ProjectMilestoneSubController(base.Controller):
         response = future.result()
 
         if response is None:
-            self.view.notifier.error_msg("Create error")
+            self.view.notifier.error_msg("Create task error")
         else:
-            self.view.notifier.info_msg("Create successful!")
+            self.view.notifier.info_msg("Create task successful!")
             self.view.close_task_form()
 
             if hasattr(self, "milestone"):
@@ -226,7 +276,7 @@ class ProjectMilestoneSubController(base.Controller):
         if response is None:
             self.view.notifier.error_msg("Edit error")
         else:
-            self.view.notifier.info_msg("Edit user_story successful!")
+            self.view.notifier.info_msg("Edit US successful!")
             self.view.close_user_story_form()
 
             if hasattr(self, "milestone"):
