@@ -190,6 +190,84 @@ def test_sprint_controller_submit_edit_user_story_form_successfully():
     assert executor.update_user_story.call_count == 1
     assert executor.update_user_story.return_value.result()["subject"] == us_subject
 
+def test_sprint_controller_show_the_edit_task_form():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.sprint.view.taskboard.widget.set_focus(1)
+
+    assert not hasattr(project_detail_controller.sprint.view, "task_form")
+    project_detail_controller.handle(config.ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK)
+    assert hasattr(project_detail_controller.sprint.view, "task_form")
+    assert (project_detail_controller.sprint.view.task_form.task ==
+            project_detail_controller.sprint.view.taskboard.widget.get_focus().task)
+
+def test_sprint_controller_cancel_the_edit_task_form():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.sprint.view.taskboard.widget.set_focus(1)
+    project_detail_controller.handle(config.ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK)
+
+    assert hasattr(project_detail_controller.sprint.view, "task_form")
+    form = project_detail_controller.sprint.view.task_form
+    signals.emit(form.cancel_button, "click")
+    assert not hasattr(project_detail_controller.sprint.view, "task_form")
+
+def test_sprint_controller_submit_the_edit_task_form_with_errors():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.sprint.view.taskboard.widget.set_focus(1)
+    project_detail_controller.handle(config.ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK)
+    form = project_detail_controller.sprint.view.task_form
+
+    form._subject_edit.set_edit_text("")
+    signals.emit(form.save_button, "click")
+    assert project_view.sprint.notifier.error_msg.call_count == 1
+
+def test_sprint_controller_submit_edit_task_form_successfully():
+    task_subject = "Update a task"
+    task_user_story = 12
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor(update_task_response=factories.future(
+                           factories.successful_update_task_response(task_subject, task_user_story)))
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.sprint.view.taskboard.widget.set_focus(1)
+    project_detail_controller.handle(config.ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK)
+    form = project_detail_controller.sprint.view.task_form
+    project_view.sprint.notifier.reset_mock()
+
+    form._subject_edit.set_edit_text(task_subject)
+    form._user_story_combo.get_selected().value = task_user_story
+
+    signals.emit(form.save_button, "click")
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert (executor.update_task.call_args.call_list()[0][0][0]["id"] == form.task["id"])
+    assert executor.update_task.call_args.call_list()[0][0][1]["subject"] == task_subject
+    assert (executor.update_task.call_args.call_list()[0][0][1]["milestone"] ==
+            project_detail_controller.sprint.view._milestone["id"])
+    assert executor.update_task.call_args.call_list()[0][0][1]["user_story"] == task_user_story
+    assert executor.update_task.call_count == 1
+    assert executor.update_task.return_value.result()["subject"] == task_subject
+    assert (executor.update_task.return_value.result()["milestone"] ==
+            project_detail_controller.sprint.view._milestone["id"])
+    assert executor.update_task.return_value.result()["user_story"] == task_user_story
+
 def test_sprint_controller_delete_user_story_with_errors():
     project = factories.project()
     project_view = views.projects.ProjectDetailView(project)

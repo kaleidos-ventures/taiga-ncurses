@@ -122,6 +122,48 @@ def successful_delete_user_story_response():
 def tasks():
     return json.loads(fixtures.MILESTONE_TASKS)
 
+def successful_create_task_response(subject, user_story):
+    return {
+        "tags": "",
+        "comment": "",
+        "id": 35,
+        "user_story": user_story,
+        "ref": 36,
+        "owner": 3,
+        "status": 1,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:53.462Z",
+        "modified_date": "2013-12-26T16:54:54.931Z",
+        "finished_date": None,
+        "subject": subject,
+        "description": "Praesentium tempora molestias quis autem iste. Esse perspiciatis eos odio nemo, accusamus adipisci doloremque nesciunt temporibus consequatur dolore tempora dolorum, necessitatibus fugiat non veniam mollitia adipisci nesciunt quibusdam accusamus quidem quis consequuntur, error sunt fugit dolorem suscipit, rem numquam dicta nemo sapiente.",
+        "assigned_to": 9,
+        "is_iocaine": False,
+        "watchers": []
+    }
+
+def successful_update_task_response(subject, user_story):
+    return {
+        "tags": "",
+        "comment": "",
+        "id": 35,
+        "user_story": user_story,
+        "ref": 36,
+        "owner": 3,
+        "status": 1,
+        "project": 1,
+        "milestone": 4,
+        "created_date": "2013-12-20T09:53:53.462Z",
+        "modified_date": "2013-12-26T16:54:54.931Z",
+        "finished_date": None,
+        "subject": subject,
+        "description": "Praesentium tempora molestias quis autem iste. Esse perspiciatis eos odio nemo, accusamus adipisci doloremque nesciunt temporibus consequatur dolore tempora dolorum, necessitatibus fugiat non veniam mollitia adipisci nesciunt quibusdam accusamus quidem quis consequuntur, error sunt fugit dolorem suscipit, rem numquam dicta nemo sapiente.",
+        "assigned_to": 9,
+        "is_iocaine": False,
+        "watchers": []
+    }
+
 def successful_delete_task_response():
     return True
 
@@ -151,6 +193,8 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      update_user_stories_order_response=future(successful_update_user_stories_order_response()),
                      delete_user_story_response=future(successful_delete_user_story_response()),
                      tasks=future(tasks()),
+                     create_task_response=future(successful_create_task_response("Create task", 1)),
+                     update_task_response=future(successful_update_task_response("Update task", 1)),
                      delete_task_response=future(successful_delete_task_response()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues()),
@@ -175,6 +219,8 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.milestone_stats = mock.Mock(return_value=milestone_stats)
 
     executor.tasks = mock.Mock(return_value=tasks)
+    executor.create_task = mock.Mock(return_value=create_task_response)
+    executor.update_task = mock.Mock(return_value=update_task_response)
     executor.delete_task = mock.Mock(return_value=delete_task_response)
 
     executor.issues = mock.Mock(return_value=issues)
