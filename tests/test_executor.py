@@ -37,6 +37,12 @@ def test_project_issues_stats_method_returns_a_future():
     assert isinstance(f, Future)
 
 # Milestones
+def test_milestone_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.milestone({"id": 123123}, {"id": 123123})
+    assert isinstance(f, Future)
+
 def test_milestone_stats_method_returns_a_future():
     client = mock.Mock()
     e = executor.Executor(client)
@@ -86,11 +92,29 @@ def test_tasks_method_returns_a_future():
     f = e.tasks({"id": 123123}, {"id": 123123})
     assert isinstance(f, Future)
 
+def test_create_task_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.create_task({"subject": "Foo Bar"})
+    assert isinstance(f, Future)
+
+def test_update_task_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.update_task({"id": 123123}, {"subject": "Bar Foo"})
+    assert isinstance(f, Future)
+
+def test_delete_task_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.delete_task({"id": 123123})
+    assert isinstance(f, Future)
+
 # Issues
 def test_issues_method_returns_a_future():
     client = mock.Mock()
     e = executor.Executor(client)
-    f = e.issues({"id": 123123}, [])
+    f = e.issues({"id": 123123}, ["status"], {"status": 1})
     assert isinstance(f, Future)
 
 # Wiki
