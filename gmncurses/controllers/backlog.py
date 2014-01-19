@@ -176,7 +176,7 @@ class ProjectBacklogSubController(base.Controller):
         if response is None:
             self.view.notifier.error_msg("Create error")
         else:
-            self.view.notifier.info_msg("Create succesful!")
+            self.view.notifier.info_msg("Create successful!")
             self.view.close_user_story_form()
 
             project_stats_f = self.executor.project_stats(self.view.project)
