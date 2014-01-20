@@ -29,6 +29,7 @@ class ProjectBacklogSubView(base.SubView):
            ("J", "Move selected US down"),
            ("w", "Save the position of all USs"),
            ("m", "Move selected US to a Milestone"),
+           ("r", "Refresh the screen")
        )),
     )
 

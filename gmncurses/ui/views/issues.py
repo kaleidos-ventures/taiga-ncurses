@@ -26,6 +26,7 @@ class ProjectIssuesSubView(base.SubView):
            ("e", "Edit selected Issue"),
            ("Supr", "Delete selected Issue"),
            ("f", "Filter issues"),
+           ("r", "Refresh the screen")
        )),
     )
 

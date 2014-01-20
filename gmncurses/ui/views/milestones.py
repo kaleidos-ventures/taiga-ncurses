@@ -27,6 +27,7 @@ class ProjectMilestoneSubView(base.SubView):
            ("n", "Create new Task"),
            ("e", "Edit selected US/Task"),
            ("Supr", "Delete selected US/Task"),
+           ("r", "Refresh the screen")
        )),
     )
 
