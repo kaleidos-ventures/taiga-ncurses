@@ -216,6 +216,8 @@ class IssuesListHeader(urwid.WidgetWrap):
 
 class IssueEntry(urwid.WidgetWrap):
     def __init__(self, issue, project):
+        self.issue = issue
+
         issue_ref_and_name = "#{0: <4} {1}".format(str(data.issue_ref(issue)), data.issue_subject(issue))
 
         colum_items = [("weight", 0.55, generic.ListText(issue_ref_and_name, align="left"))]
@@ -432,6 +434,179 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         colum_items = [("weight", 1, urwid.Text(""))]
         colum_items.append((15, urwid.AttrMap(urwid.Padding(self.filter_button, right=2, left=2),
+                                              "popup-submit-button")))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)
+
+class IssueForm(mixins.FormMixin, urwid.WidgetWrap):
+    _type_combo = None
+    _status_combo = None
+    _priority_combo = None
+    _severity_combo = None
+    _assigned_to_combo = None
+
+    def __init__(self, project, issue={}):
+        self.project = project
+        self.issue = issue
+
+        contents = [
+            generic.box_solid_fill(" ", 2),
+            self._form_inputs(),
+            generic.box_solid_fill(" ", 2),
+            self._buttons(),
+            generic.box_solid_fill(" ", 1),
+        ]
+        self.widget = urwid.Pile(contents)
+
+        title = "Edit Issue" if self.issue else "Create Issue"
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+
+    @property
+    def subject(self):
+        return self._subject_edit.get_edit_text()
+
+    @property
+    def type(self):
+        return self._type_combo.get_selected().value
+
+    @property
+    def status(self):
+        return self._status_combo.get_selected().value
+
+    @property
+    def priority(self):
+        return self._priority_combo.get_selected().value
+
+    @property
+    def severity(self):
+        return self._severity_combo.get_selected().value
+
+    @property
+    def assigned_to(self):
+        return self._assigned_to_combo.get_selected().value
+
+    @property
+    def tags(self):
+        tags = self._tags_edit.get_edit_text()
+        return tags.split(" ,") if tags else []
+
+    @property
+    def description(self):
+        return self._description_edit.get_edit_text()
+
+    def _form_inputs(self):
+        contents = [
+            self._subject_input(),
+            generic.box_solid_fill(" ", 1),
+            self._type_input(),
+            generic.box_solid_fill(" ", 1),
+            self._status_input(),
+            generic.box_solid_fill(" ", 1),
+            self._priority_input(),
+            generic.box_solid_fill(" ", 1),
+            self._severity_input(),
+            generic.box_solid_fill(" ", 1),
+            self._assigned_to_input(),
+            generic.box_solid_fill(" ", 1),
+            self._tags_input(),
+            generic.box_solid_fill(" ", 1),
+            self._description_input(),
+        ]
+
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 15)
+
+    def _subject_input(self):
+        self._subject_edit = urwid.Edit(edit_text=self.issue.get("subject", ""))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Subject", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._subject_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _type_input(self):
+        issue_types = data.issue_types(self.project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in issue_types.values())
+        selected = self.issue.get("type", None) or self.project.get("default_issue_type", None)
+
+        self._type_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Type", align="right"), right=4))]
+        colum_items.append(self._type_combo)
+        return urwid.Columns(colum_items)
+
+    def _status_input(self):
+        us_statuses = data.issue_statuses(self.project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in us_statuses.values())
+        selected = self.issue.get("status", None) or self.project.get("default_issue_status", None)
+
+        self._status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Status", align="right"), right=4))]
+        colum_items.append(self._status_combo)
+        return urwid.Columns(colum_items)
+
+    def _priority_input(self):
+        issue_priorities = data.priorities(self.project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in issue_priorities.values())
+        selected = self.issue.get("priority", None) or self.project.get("default_priority", None)
+
+        self._priority_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Priority", align="right"), right=4))]
+        colum_items.append(self._priority_combo)
+        return urwid.Columns(colum_items)
+
+    def _severity_input(self):
+        issue_severities = data.severities(self.project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in issue_severities.values())
+        selected = self.issue.get("severity", None) or self.project.get("default_severity", None)
+
+        self._severity_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Severity", align="right"), right=4))]
+        colum_items.append(self._severity_combo)
+        return urwid.Columns(colum_items)
+
+    def _assigned_to_input(self):
+        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("full_name", "")), s.get("id", None)) for s in memberships)
+        selected = self.issue.get("assigned_to", None)
+
+        self._assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Assigned to", align="right"), right=4))]
+        colum_items.append(self._assigned_to_combo)
+        return urwid.Columns(colum_items)
+
+    def _tags_input(self):
+        self._tags_edit = urwid.Edit(edit_text=", ".join(self.issue.get("tags", [])))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Tags", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._tags_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _description_input(self):
+        self._description_edit = urwid.Edit(multiline=True, edit_text=self.issue.get("description", ""))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Description", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._description_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _buttons(self):
+        self.save_button = generic.PlainButton("Save")
+        self.cancel_button = generic.PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
                                               "popup-submit-button")))
         colum_items.append((2, urwid.Text(" ")))
         colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),

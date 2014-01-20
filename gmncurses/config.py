@@ -96,6 +96,9 @@ class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
 
 
 class ProjectIssuesKeys(metaclass=KeyConfigMeta):
+    CREATE_ISSUE = "n"
+    EDIT_ISSUE = "e"
+    DELETE_ISSUE = "delete"
     FILTERS = "f"
     RELOAD = "r"
     HELP = "?"

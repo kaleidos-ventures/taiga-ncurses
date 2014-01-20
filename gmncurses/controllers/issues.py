@@ -21,7 +21,13 @@ class ProjectIssuesSubController(base.Controller):
         self.state_machine = state_machine
 
     def handle(self, key):
-        if  key == ProjectIssuesKeys.FILTERS:
+        if key == ProjectIssuesKeys.CREATE_ISSUE:
+            self.new_issue()
+        elif key == ProjectIssuesKeys.EDIT_ISSUE:
+            self.edit_issue()
+        elif key == ProjectIssuesKeys.DELETE_ISSUE:
+            self.delete_issue()
+        elif key == ProjectIssuesKeys.FILTERS:
             self.filters()
         elif key == ProjectIssuesKeys.RELOAD:
             self.load()
@@ -43,7 +49,35 @@ class ProjectIssuesSubController(base.Controller):
 
         futures = (issues_stats_f, issues_f)
         futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-        futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+        futures_completed_f.add_done_callback(functools.partial(self.when_issues_info_fetched,
+                                                                info_msg="Stats and issues fetched",
+                                                                error_msg="Failed to fetch issues data"))
+
+    def new_issue(self):
+        self.view.open_issue_form()
+
+        signals.connect(self.view.issue_form.cancel_button, "click",
+                lambda _: self.cancel_issue_form())
+        signals.connect(self.view.issue_form.save_button, "click",
+                lambda _: self.handler_create_issue_request())
+
+    def edit_issue(self):
+        issue = self.view.issues.widget.get_focus().issue
+        self.view.open_issue_form(issue=issue)
+
+        signals.connect(self.view.issue_form.cancel_button, "click",
+                lambda _: self.cancel_issue_form())
+        signals.connect(self.view.issue_form.save_button, "click",
+                lambda _: self.handler_edit_issue_request(issue))
+
+    def cancel_issue_form(self):
+        self.view.close_issue_form()
+
+    def delete_issue(self):
+        issue = self.view.issues.widget.get_focus().issue
+
+        issue_delete_f = self.executor.delete_issue(issue)
+        issue_delete_f.add_done_callback(self.handler_delete_issue_response)
 
     def filters(self):
         self.view.open_filters_popup()
@@ -102,6 +136,79 @@ class ProjectIssuesSubController(base.Controller):
                     functools.partial(self.handle_order_by, "assigned_to"))
 
             self.state_machine.refresh()
+    def handler_create_issue_request(self):
+        data = self.view.get_issue_form_data()
+
+        if not data.get("subject", None):
+            self.view.notifier.error_msg("Subject is required")
+        else:
+            us_post_f = self.executor.create_issue(data)
+            us_post_f.add_done_callback(self.handler_create_issue_response)
+
+    def handler_create_issue_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Create error")
+        else:
+            self.view.notifier.info_msg("Create successful!")
+            self.view.close_issue_form()
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def handler_edit_issue_request(self, issue):
+        data = self.view.get_issue_form_data()
+
+        if not data.get("subject", None):
+            self.view.notifier.error_msg("Subject is required")
+        else:
+            issue_patch_f = self.executor.update_issue(issue, data)
+            issue_patch_f.add_done_callback(self.handler_edit_issue_response)
+
+    def handler_edit_issue_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Edit error")
+        else:
+            self.view.notifier.info_msg("Edit successful!")
+            self.view.close_issue_form()
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def handler_delete_issue_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Error deleting issue")
+        else:
+            self.view.notifier.info_msg("Delete issue")
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
 
     def handle_order_by(self, param, button):
         self.view.notifier.info_msg("Ordered issues by {}".format(param))
@@ -114,13 +221,15 @@ class ProjectIssuesSubController(base.Controller):
             self.view.issues.populate(self.issues)
             self.state_machine.refresh()
 
-    def when_issues_info_fetched(self, future_with_results):
+    def when_issues_info_fetched(self, future_with_results, info_msg=None, error_msg=None):
         done, not_done = future_with_results.result()
         if len(done) == 2:
-            self.view.notifier.info_msg("Stats and issues fetched")
+            if info_msg:
+                self.view.notifier.info_msg(info_msg)
             self.state_machine.refresh()
         else:
             # TODO retry failed operations
-            self.view.notifier.error_msg("Failed to fetch issues data")
+            if error_msg:
+                self.view.notifier.error_msg(error_msg)
 
 

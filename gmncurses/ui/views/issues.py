@@ -22,9 +22,10 @@ class ProjectIssuesSubView(base.SubView):
            #("→ | l | ctrl f", "Move Right"),
        )),
        ( "Issue Actions:", (
-           ("i", "Create new Issue (TODO)"),
-           ("e", "Edit selected Issue (TODO)"),
-           ("Supr", "Delete selected Issue (TODO)"),
+           ("n", "Create new Issue"),
+           ("e", "Edit selected Issue"),
+           ("Supr", "Delete selected Issue"),
+           ("f", "Filter issues"),
        )),
     )
 
@@ -53,6 +54,31 @@ class ProjectIssuesSubView(base.SubView):
     def set_filters(self, filters):
         self.filters = filters
         self.filters_info.set_filters(self.filters)
+
+    def open_issue_form(self, issue={}):
+        self.issue_form = issues.IssueForm(self.project, issue=issue)
+        # FIXME: Calculate the form size
+        self.parent.show_widget_on_top(self.issue_form, 80, 23)
+
+    def close_issue_form(self):
+        del self.issue_form
+        self.parent.hide_widget_on_top()
+
+    def get_issue_form_data(self):
+        if hasattr(self, "issue_form"):
+            data = {
+                "subject": self.issue_form.subject,
+                "type": self.issue_form.type,
+                "status": self.issue_form.status,
+                "priority": self.issue_form.priority,
+                "severity": self.issue_form.severity,
+                "assigned_to": self.issue_form.assigned_to,
+                "tags": self.issue_form.tags,
+                "description": self.issue_form.description,
+                "project": self.project["id"],
+            }
+            return data
+        return {}
 
     def open_filters_popup(self):
         self.filters_popup = issues.FiltersPopup(self.project, self.filters)
