@@ -117,6 +117,24 @@ def test_issues_method_returns_a_future():
     f = e.issues({"id": 123123}, ["status"], {"status": 1})
     assert isinstance(f, Future)
 
+def test_create_issue_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.create_issue({"subject": "Foo Bar"})
+    assert isinstance(f, Future)
+
+def test_update_issue_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.update_issue({"id": 123123}, {"subject": "Bar Foo"})
+    assert isinstance(f, Future)
+
+def test_delete_issue_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.delete_issue({"id": 123123})
+    assert isinstance(f, Future)
+
 # Wiki
 def test_wiki_pages_method_returns_a_future():
     client = mock.Mock()

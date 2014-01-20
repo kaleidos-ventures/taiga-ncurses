@@ -104,6 +104,15 @@ class Executor(object):
 
         return self.pool.submit(self.client.get_issues, params=params)
 
+    def create_issue(self, data):
+        return self.pool.submit(self.client.create_issue, data_dict=data)
+
+    def update_issue(self, issue, data):
+        return self.pool.submit(self.client.update_issue, id=issue["id"], data_dict=data)
+
+    def delete_issue(self, issue):
+        return self.pool.submit(self.client.delete_issue, id=issue["id"])
+
     # Wiki
     def wiki_pages(self, project):
         params={"project": project["id"]}
