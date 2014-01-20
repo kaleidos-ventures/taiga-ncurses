@@ -63,7 +63,6 @@ def unassigned_user_stories():
 def user_stories():
     return json.loads(fixtures.USER_STORIES)
 
-
 def successful_create_user_story_response(subject):
     return {
         "tags": [],
@@ -171,6 +170,67 @@ def successful_delete_task_response():
 def issues():
     return json.loads(fixtures.ISSUES)
 
+def successful_create_issue_response(subject):
+    return {
+        "tags": [
+            "ratione",
+            "omnis",
+            "saepe",
+            "tempora",
+            "repellat"
+        ],
+        "comment": "",
+        "is_closed": False,
+        "id": 1,
+        "ref": 2,
+        "owner": 2,
+        "status": 7,
+        "severity": 5,
+        "priority": 2,
+        "type": 2,
+        "milestone": None,
+        "project": 1,
+        "created_date": "2013-12-20T09:53:59.044Z",
+        "modified_date": "2013-12-20T09:53:59.609Z",
+        "finished_date": None,
+        "subject": subject,
+        "description": "Alias voluptatem nulla quo reiciendis dicta distinctio, quis vel facilis quae dolore rerum earum error nesciunt, ipsam itaque eius placeat doloribus voluptate sequi? Impedit iure adipisci et itaque debitis nihil vel ipsum esse ut perspiciatis. Facilis fuga exercitationem illo ipsam eveniet, tempora assumenda voluptate, tenetur saepe doloribus beatae neque quae quasi culpa reprehenderit et, totam temporibus deleniti consectetur rerum quis eaque commodi.",
+        "assigned_to": 1,
+        "watchers": []
+    }
+
+def successful_update_issue_response(subject):
+    return {
+        "tags": [
+            "ratione",
+            "omnis",
+            "saepe",
+            "tempora",
+            "repellat"
+        ],
+        "comment": "",
+        "is_closed": False,
+        "id": 1,
+        "ref": 2,
+        "owner": 2,
+        "status": 7,
+        "severity": 5,
+        "priority": 2,
+        "type": 2,
+        "milestone": None,
+        "project": 1,
+        "created_date": "2013-12-20T09:53:59.044Z",
+        "modified_date": "2013-12-20T09:53:59.609Z",
+        "finished_date": None,
+        "subject": subject,
+        "description": "Alias voluptatem nulla quo reiciendis dicta distinctio, quis vel facilis quae dolore rerum earum error nesciunt, ipsam itaque eius placeat doloribus voluptate sequi? Impedit iure adipisci et itaque debitis nihil vel ipsum esse ut perspiciatis. Facilis fuga exercitationem illo ipsam eveniet, tempora assumenda voluptate, tenetur saepe doloribus beatae neque quae quasi culpa reprehenderit et, totam temporibus deleniti consectetur rerum quis eaque commodi.",
+        "assigned_to": 1,
+        "watchers": []
+    }
+
+def successful_delete_issue_response():
+    return True
+
 # Wiki
 def wiki_pages():
     return json.loads(fixtures.WIKI_PAGES)
@@ -198,6 +258,9 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      delete_task_response=future(successful_delete_task_response()),
                      project_issues_stats=future(project_issues_stats()),
                      issues=future(issues()),
+                     create_issue_response=future(successful_create_issue_response("Create issue")),
+                     update_issue_response=future(successful_update_issue_response("Update issue")),
+                     delete_issue_response=future(successful_delete_issue_response()),
                      wiki_pages=future(wiki_pages())):
     executor = Executor(mock.Mock())
 
@@ -224,6 +287,9 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.delete_task = mock.Mock(return_value=delete_task_response)
 
     executor.issues = mock.Mock(return_value=issues)
+    executor.create_issue = mock.Mock(return_value=create_issue_response)
+    executor.update_issue = mock.Mock(return_value=update_issue_response)
+    executor.delete_issue = mock.Mock(return_value=delete_issue_response)
 
     executor.wiki_pages = mock.Mock(return_value=wiki_pages)
 
