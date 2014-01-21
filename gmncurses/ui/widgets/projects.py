@@ -12,7 +12,7 @@ from . import generic, mixins
 
 class ProjectDetailHeader(mixins.NonSelectableMixin, urwid.WidgetWrap):
     def __init__(self, project):
-        text = urwid.Text("GREENMINE")
+        text = urwid.Text("TAIGA")
         self.title = urwid.Text(project["name"], align="left")
         self.projects_button = generic.PlainButton("My projects")
         self.account_button = generic.PlainButton("My account")

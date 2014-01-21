@@ -25,7 +25,7 @@ def center(widget):
 
 
 def banner():
-    bt = urwid.BigText("GreenMine", font=urwid.font.HalfBlock7x7Font())
+    bt = urwid.BigText("Taiga", font=urwid.font.HalfBlock7x7Font())
     btwp = urwid.Padding(bt, "center", width="clip")
     return urwid.AttrWrap(btwp, "green")
 
@@ -43,7 +43,7 @@ def editor(mask=None):
 
 class Header(mixins.NonSelectableMixin, urwid.WidgetWrap):
     def __init__(self):
-        text = urwid.Text("GREENMINE")
+        text = urwid.Text("TAIGA")
         self.account_button = PlainButton("My account")
         cols = urwid.Columns([
             ("weight", 0.9, text),

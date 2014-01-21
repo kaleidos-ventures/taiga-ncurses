@@ -1,4 +1,4 @@
-greenmine-ncurses
+taiga-ncurses
 =================
 
 .. image:: http://kaleidos.net/static/img/badge.png
@@ -11,7 +11,7 @@ greenmine-ncurses
     :alt: Bitdeli badge
     :target: https://bitdeli.com/free
 
-A NCurses client for GreenMine.
+A NCurses client for Taiga.
 
 Setup development environment
 -----------------------------
@@ -26,10 +26,10 @@ Just execute these commands in your virtualenv(wrapper):
     $ gmncurses         # to run the app
     
 
-Obviously you need the `greenmine backend`_ and, if you consider yourself a loser,
-you can use the `greenmine web client`_, sometimes. ;-)
+Obviously you need the `taiga backend`_ and, if you consider yourself a loser,
+you can use the `taiga web client`_, sometimes. ;-)
 
-Note: greenmine-ncurses only runs with python 3.3+.
+Note: taiga-ncurses only runs with python 3.3+.
 
-.. _greenmine backend: https://github.com/kaleidos/greenmine-back
-.. _greenmine web client: https://github.com/kaleidos/greenmine-front
+.. _taiga backend: https://github.com/kaleidos/greenmine-back
+.. _taiga web client: https://github.com/kaleidos/greenmine-front

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-A text interface to GreenMine.
+A text interface to Taiga.
 """
 
 from gmncurses import __name__, __description__, __version__

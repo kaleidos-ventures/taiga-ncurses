@@ -86,11 +86,11 @@ class BaseClient(object):
         return None
 
 
-class GreenMineClient(BaseClient):
-    """ A Greenmine Api Client.
+class TaigaClient(BaseClient):
+    """ A Taiga Api Client.
 
     >>> from gmncurses.api.client import *
-    >>> api = GreenMineClient("http://localhost:8000")
+    >>> api = TaigaClient("http://localhost:8000")
     >>> api.login("admin", "123123")
     {...}
     >>> api.get_projects()

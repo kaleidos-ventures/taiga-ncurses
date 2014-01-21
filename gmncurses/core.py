@@ -15,7 +15,7 @@ from gmncurses import controllers
 from gmncurses.config import Keys, PALETTE
 
 
-class GreenMineCore(object):
+class TaigaCore(object):
     def __init__(self, executor, configuration, authenticated=False, draw=True):
         self.executor = executor
         self.configuration = configuration
