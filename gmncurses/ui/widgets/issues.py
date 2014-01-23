@@ -204,7 +204,7 @@ class IssuesListHeader(urwid.WidgetWrap):
         self.severity_buttton = generic.PlainButton("Severity")
         self.assigned_to_button = generic.PlainButton("Assigned to")
 
-        colum_items = [("weight", 0.55, generic.ButtonCell(self.issue_button))]
+        colum_items = [("weight", 0.5, generic.ButtonCell(self.issue_button))]
         colum_items.append(("weight", 0.1, generic.ButtonCell(self.status_button)))
         colum_items.append(("weight", 0.1, generic.ButtonCell(self.priority_button)))
         colum_items.append(("weight", 0.1, generic.ButtonCell(self.severity_buttton)))
@@ -220,27 +220,36 @@ class IssueEntry(urwid.WidgetWrap):
 
         issue_ref_and_name = "#{0: <4} {1}".format(str(data.issue_ref(issue)), data.issue_subject(issue))
 
-        colum_items = [("weight", 0.55, generic.ListText(issue_ref_and_name, align="left"))]
+        colum_items = [("weight", 0.5, generic.ListText(issue_ref_and_name, align="left"))]
 
-        hex_color, status = data.issue_status_with_color(issue, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.1, generic.ListText((attr, status))))
+        issue_statuses = data.issue_statuses(project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in issue_statuses.values())
+        selected = issue.get("status", None) or project.get("default_issue_status", None)
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        colum_items.append(("weight", 0.1, status_combo))
 
-        hex_color, priority = data.issue_priority_with_color(issue, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.1, generic.ListText((attr, priority))))
+        issue_priorities = data.priorities(project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in issue_priorities.values())
+        selected = issue.get("priority", None) or project.get("default_priority", None)
+        priority_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        colum_items.append(("weight", 0.1, priority_combo))
 
-        hex_color, severity = data.issue_severity_with_color(issue, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.1, generic.ListText((attr, severity))))
+        issue_severities = data.severities(project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in issue_severities.values())
+        selected = issue.get("severity", None) or project.get("default_severity", None)
 
-        hex_color, username =  data.issue_assigned_to_with_color(issue, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.15, generic.ListText((attr, username))))
+        severity_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        colum_items.append(("weight", 0.1, severity_combo))
+
+        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("full_name", "")), s.get("id", None)) for s in memberships)
+        selected = issue.get("assigned_to", None)
+        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        colum_items.append(("weight", 0.15, assigned_to_combo))
 
         self.widget = urwid.Columns(colum_items)
         super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
