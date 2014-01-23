@@ -106,7 +106,11 @@ class MilestoneTaskboard(urwid.WidgetWrap):
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
-        self.widget = urwid.Pile([generic.ListText("Fetching data")])
+
+        self.list_walker = urwid.SimpleFocusListWalker([
+            generic.ListText("No items in this Milestone"),
+        ])
+        self.widget = urwid.ListBox(self.list_walker)
         super().__init__(self.widget)
 
     def populate(self, user_stories, tasks):
@@ -115,21 +119,20 @@ class MilestoneTaskboard(urwid.WidgetWrap):
 
         # Task with user stories
         for us in user_stories:
-            self.widget.contents.append((UserStoryEntry(us, self.project, self.roles),
-                                         ("weight", 0.1)))
+            self.list_walker.append(UserStoryEntry(us, self.project, self.roles))
             for task in data.tasks_per_user_story(tasks, us):
-                self.widget.contents.append((TaskEntry(task, self.project), ("weight", 0.1)))
+                self.list_walker.append(TaskEntry(task, self.project))
 
         # Unasigned task
-        self.widget.contents.append((UnasignedTasksHeaderEntry(), ("weight", 0.1)))
+        self.list_walker.append(UnasignedTasksHeaderEntry())
         for task in data.unassigned_tasks(tasks):
-            self.widget.contents.append((TaskEntry(task, self.project), ("weight", 0.1)))
+            self.list_walker.append(TaskEntry(task, self.project))
 
-        if len(self.widget.contents):
-            self.widget.contents.focus = 0
+        if len(self.list_walker) > 0:
+            self.list_walker.set_focus(0)
 
     def reset(self):
-        self.widget.contents = []
+        self.list_walker.clear()
 
 
 class UserStoryEntry(urwid.WidgetWrap):
@@ -187,21 +190,26 @@ class TaskEntry(urwid.WidgetWrap):
         task_ref_and_subject = "Task #{0: <4} {1}".format(data.task_ref(task), data.task_subject(task))
         colum_items.append(("weight", 1, generic.ListText(task_ref_and_subject, align="left")))
 
-        hex_color, assigned_to = data.task_assigned_to_with_color(task, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.2, generic.ListText((attr, assigned_to))))
+        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("full_name", "")), s.get("id", None)) for s in memberships)
+        selected = task.get("assigned_to", None)
+        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="poup")
+        colum_items.append(("weight", 0.2, assigned_to_combo))
 
-        hex_color, status = data.task_status_with_color(task, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.2, generic.ListText((attr, status))))
+        task_statuses = data.task_statuses(project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in task_statuses.values())
+        selected = task.get("status", None) or project.get("default_task_status", None)
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        colum_items.append(("weight", 0.2, status_combo))
 
         self.widget = urwid.Columns(colum_items)
         super().__init__(urwid.AttrMap(self.widget, "default", "focus"))
 
     def selectable(self):
         return True
+
 
 class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
     def __init__(self, project, current_milestone={}):
