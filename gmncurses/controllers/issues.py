@@ -126,15 +126,25 @@ class ProjectIssuesSubController(base.Controller):
 
     def handle_issues_stats(self, future):
         self.issues_stats = future.result()
-        if self.issues_stats is not None:
-            self.view.stats.populate(self.issues_stats)
-            self.state_machine.refresh()
 
     def handle_issues(self, future):
         self.issues = future.result()
-        if self.issues is not None:
+
+    def when_issues_info_fetched(self, future_with_results, info_msg=None, error_msg=None):
+        done, not_done = future_with_results.result()
+        if len(done) == 2:
+            # FIXME TODO: Moved to handle_issues_stats, to handle_issues and fixed populate method to
+            #             update the content of the main widget instead of replace the widget
+            self.view.stats.populate(self.issues_stats)
             self.view.issues.populate(self.issues)
+
+            if info_msg:
+                self.view.notifier.info_msg(info_msg)
             self.state_machine.refresh()
+        else:
+            # TODO retry failed operations
+            if error_msg:
+                self.view.notifier.error_msg(error_msg)
 
     def handler_create_issue_request(self):
         data = self.view.get_issue_form_data()
@@ -220,16 +230,3 @@ class ProjectIssuesSubController(base.Controller):
         if self.issues is not None:
             self.view.issues.populate(self.issues)
             self.state_machine.refresh()
-
-    def when_issues_info_fetched(self, future_with_results, info_msg=None, error_msg=None):
-        done, not_done = future_with_results.result()
-        if len(done) == 2:
-            if info_msg:
-                self.view.notifier.info_msg(info_msg)
-            self.state_machine.refresh()
-        else:
-            # TODO retry failed operations
-            if error_msg:
-                self.view.notifier.error_msg(error_msg)
-
-

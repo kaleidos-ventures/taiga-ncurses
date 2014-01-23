@@ -147,14 +147,14 @@ class ProjectBacklogSubController(base.Controller):
         done, not_done = future_with_results.result()
 
         if len(done) == 2:
-            # FIXME TODO: Moved to handle_project_stats and fixed populate method tu update the content
+            # FIXME TODO: Moved to handle_project_stats and fixed populate method to update the content
             #             of the main widget instead of replace the widget
-            if self.project_stats is not None:
-                self.view.stats.populate(self.project_stats)
-
+            self.view.stats.populate(self.project_stats)
             self.view.user_stories.populate(self.user_stories, self.project_stats)
+
             if info_msg:
                 self.view.notifier.info_msg(info_msg)
+
             self.state_machine.refresh()
         else:
             # TODO retry failed operationsi

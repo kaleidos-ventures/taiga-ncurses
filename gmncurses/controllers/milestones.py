@@ -163,7 +163,6 @@ class ProjectMilestoneSubController(base.Controller):
         self.view._milestone_stats = future.result()
         if self.view._milestone_stats:
             self.view.stats.populate(self.view._milestone_stats)
-            self.state_machine.refresh()
 
     def handle_user_stories(self, future):
         self.view._user_stories = future.result()
@@ -175,8 +174,10 @@ class ProjectMilestoneSubController(base.Controller):
         done, not_done = future_with_results.result()
         if len(done) == 2:
             self.view.taskboard.populate(self.view._user_stories, self.view._tasks)
+
             if info_msg:
                 self.view.notifier.info_msg(info_msg)
+
             self.state_machine.refresh()
         else:
             # TODO retry failed operations
