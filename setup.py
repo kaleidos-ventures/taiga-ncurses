@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 
 REQUIREMENTS = [
     "requests==2.0.1",
-    "urwid==1.1.1",
+    "urwid>=1.2.0-dev",
     "x256==0.0.3",
 ]
 
