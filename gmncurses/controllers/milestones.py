@@ -82,7 +82,7 @@ class ProjectMilestoneSubController(base.Controller):
                 lambda _: self.handler_create_user_story_request())
 
     def new_task(self):
-        selected_item = self.view.taskboard.widget.get_focus()
+        selected_item = self.view.taskboard.widget.get_focus()[0]
 
         if isinstance(selected_item, UserStoryEntry):
             task = {"user_story": selected_item.user_story.get("id", None)}
@@ -99,7 +99,7 @@ class ProjectMilestoneSubController(base.Controller):
                 lambda _: self.handler_create_task_request())
 
     def edit_user_story_or_task(self):
-        selected_item = self.view.taskboard.widget.get_focus()
+        selected_item = self.view.taskboard.widget.get_focus()[0]
 
         if isinstance(selected_item, UserStoryEntry):
             self.view.open_user_story_form(user_story=selected_item.user_story)
@@ -123,7 +123,7 @@ class ProjectMilestoneSubController(base.Controller):
         self.view.close_task_form()
 
     def delete_user_story_or_task(self):
-        selected_item = self.view.taskboard.widget.get_focus()
+        selected_item = self.view.taskboard.widget.get_focus()[0]
 
         if isinstance(selected_item, UserStoryEntry):
             uss_delete_f = self.executor.delete_user_story(selected_item.user_story)
