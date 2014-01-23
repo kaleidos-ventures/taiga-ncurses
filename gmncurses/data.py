@@ -295,35 +295,10 @@ def task_subject(task):
 def task_finished_date(task):
     return task.get("finished_date", None)
 
-def task_assigned_to_with_color(task, project, default_color="#ffffff"):
-    # FIXME: Improvement, get memberships and users from a project constant
-    # TODO: Check that the color is in hex format
-    user_id = task.get("assigned_to", None)
-    if user_id:
-        memberships = {str(p["user"]): p for p in project["memberships"]}
-        try:
-            return (memberships[str(user_id)]["color"] or default_color,
-                    memberships[str(user_id)]["full_name"])
-        except KeyError:
-            pass
-    return  (default_color, "Unassigned")
-
 def task_statuses(project):
     dc = {str(p["id"]): p for p in project.get("task_statuses", [])}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
 
-def task_status_with_color(task, project, default_color="#ffffff"):
-    # FIXME: Improvement, get tasks_statuses from a project constant
-    # TODO: Check that the color is in hex format
-    status_id = task.get("status", None)
-    if status_id:
-        task_statuses = {str(p["id"]): p for p in project["task_statuses"]}
-        try:
-            return (task_statuses[str(status_id)]["color"] or default_color,
-                    task_statuses[str(status_id)]["name"])
-        except KeyError:
-            pass
-    return (default_color, "---")
 
 def tasks_per_user_story(tasks, user_story):
     return [t for t in tasks if t["user_story"] == user_story["id"]]
