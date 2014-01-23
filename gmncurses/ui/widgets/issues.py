@@ -174,26 +174,24 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
     def __init__(self, project):
         self.project = project
 
-        self.header = IssuesListHeader()
-
-        self.widget = urwid.Pile([self.header])
+        self.list_walker = urwid.SimpleFocusListWalker([
+            generic.ListText("No issues yet"),
+        ])
+        self.widget = urwid.ListBox(self.list_walker)
         super().__init__(self.widget)
 
     def populate(self, issues):
         if issues:
             self.reset()
 
-        first_gains_focus = len(self.widget.contents) == 1 and issues
-
         for issue in issues:
-            self.widget.contents.append((IssueEntry(issue, self.project),
-                                         ("weight", 0.1)))
+            self.list_walker.append(IssueEntry(issue, self.project))
 
-        if first_gains_focus:
-            self.widget.contents.focus = 1
+        if len(issues) > 0:
+            self.list_walker.set_focus(0)
 
     def reset(self):
-        self.widget.contents = self.widget.contents[:1]
+        self.list_walker.clear()
 
 
 class IssuesListHeader(urwid.WidgetWrap):
@@ -549,9 +547,9 @@ class IssueForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _status_input(self):
-        us_statuses = data.issue_statuses(self.project)
+        issue_statuses = data.issue_statuses(self.project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
-                        s.get("name", "")), s.get("id", None)) for s in us_statuses.values())
+                        s.get("name", "")), s.get("id", None)) for s in issue_statuses.values())
         selected = self.issue.get("status", None) or self.project.get("default_issue_status", None)
 
         self._status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")

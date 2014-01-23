@@ -20,6 +20,21 @@ class ProjectIssuesSubController(base.Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+        signals.connect(self.view.issues_header.issue_button, "click",
+                functools.partial(self.handle_order_by, "issue"))
+
+        signals.connect(self.view.issues_header.status_button, "click",
+                functools.partial(self.handle_order_by, "status"))
+
+        signals.connect(self.view.issues_header.priority_button, "click",
+                functools.partial(self.handle_order_by, "priority"))
+
+        signals.connect(self.view.issues_header.severity_buttton, "click",
+                functools.partial(self.handle_order_by, "severity"))
+
+        signals.connect(self.view.issues_header.assigned_to_button, "click",
+                functools.partial(self.handle_order_by, "assigned_to"))
+
     def handle(self, key):
         if key == ProjectIssuesKeys.CREATE_ISSUE:
             self.new_issue()
@@ -62,7 +77,7 @@ class ProjectIssuesSubController(base.Controller):
                 lambda _: self.handler_create_issue_request())
 
     def edit_issue(self):
-        issue = self.view.issues.widget.get_focus().issue
+        issue = self.view.issues.widget.get_focus()[0].issue
         self.view.open_issue_form(issue=issue)
 
         signals.connect(self.view.issue_form.cancel_button, "click",
@@ -74,7 +89,7 @@ class ProjectIssuesSubController(base.Controller):
         self.view.close_issue_form()
 
     def delete_issue(self):
-        issue = self.view.issues.widget.get_focus().issue
+        issue = self.view.issues.widget.get_focus()[0].issue
 
         issue_delete_f = self.executor.delete_issue(issue)
         issue_delete_f.add_done_callback(self.handler_delete_issue_response)
@@ -119,23 +134,8 @@ class ProjectIssuesSubController(base.Controller):
         self.issues = future.result()
         if self.issues is not None:
             self.view.issues.populate(self.issues)
-
-            signals.connect(self.view.issues.header.issue_button, "click",
-                    functools.partial(self.handle_order_by, "issue"))
-
-            signals.connect(self.view.issues.header.status_button, "click",
-                    functools.partial(self.handle_order_by, "status"))
-
-            signals.connect(self.view.issues.header.priority_button, "click",
-                    functools.partial(self.handle_order_by, "priority"))
-
-            signals.connect(self.view.issues.header.severity_buttton, "click",
-                    functools.partial(self.handle_order_by, "severity"))
-
-            signals.connect(self.view.issues.header.assigned_to_button, "click",
-                    functools.partial(self.handle_order_by, "assigned_to"))
-
             self.state_machine.refresh()
+
     def handler_create_issue_request(self):
         data = self.view.get_issue_form_data()
 

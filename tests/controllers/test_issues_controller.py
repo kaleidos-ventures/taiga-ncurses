@@ -184,7 +184,7 @@ def test_issues_controller_show_the_edit_issue_form():
     project_detail_controller.handle(config.ProjectIssuesKeys.EDIT_ISSUE)
     assert hasattr(project_detail_controller.view.issues, "issue_form")
     assert (project_detail_controller.view.issues.issue_form.issue ==
-            project_detail_controller.view.issues.issues.widget.get_focus().issue)
+            project_detail_controller.view.issues.issues.list_walker.get_focus()[0].issue)
 
 def test_issues_controller_cancel_the_edit_issue_form():
     project = factories.project()

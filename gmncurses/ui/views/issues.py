@@ -39,6 +39,7 @@ class ProjectIssuesSubView(base.SubView):
 
         self.stats = issues.IssuesStats(project)
         self.filters_info = issues.IssuesFiltersInfo(project, self.filters)
+        self.issues_header = issues.IssuesListHeader()
         self.issues = issues.IssuesList(project)
 
         list_walker = urwid.SimpleFocusListWalker([
@@ -47,9 +48,11 @@ class ProjectIssuesSubView(base.SubView):
             self.stats,
             generic.box_solid_fill(" ", 1),
             self.filters_info,
-            self.issues
+            self.issues_header,
+            # TODO: FIXME: Calculate the row size wehn populate the issues list.
+            urwid.BoxAdapter(self.issues, 35),
         ])
-        list_walker.set_focus(5)
+        list_walker.set_focus(6)
         self.widget = urwid.ListBox(list_walker)
 
     def set_filters(self, filters):
