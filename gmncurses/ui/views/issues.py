@@ -69,8 +69,9 @@ class ProjectIssuesSubView(base.SubView):
         self.parent.hide_widget_on_top()
 
     def get_issue_form_data(self):
+        data = {}
         if hasattr(self, "issue_form"):
-            data = {
+            data.update({
                 "subject": self.issue_form.subject,
                 "type": self.issue_form.type,
                 "status": self.issue_form.status,
@@ -80,9 +81,8 @@ class ProjectIssuesSubView(base.SubView):
                 "tags": self.issue_form.tags,
                 "description": self.issue_form.description,
                 "project": self.project["id"],
-            }
-            return data
-        return {}
+            })
+        return data
 
     def open_filters_popup(self):
         self.filters_popup = issues.FiltersPopup(self.project, self.filters)
@@ -94,6 +94,7 @@ class ProjectIssuesSubView(base.SubView):
         self.parent.hide_widget_on_top()
 
     def get_filters_popup_data(self):
+        data = {}
         if hasattr(self, "filters_popup"):
-            return self.filters_popup.filters
-        return {}
+            data.update(self.filters_popup.filters)
+        return data

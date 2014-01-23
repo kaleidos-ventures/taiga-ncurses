@@ -21,10 +21,7 @@ def defined_points(project_stats):
     return project_stats.get("defined_points", 0)
 
 def defined_points_percentage(project_stats):
-    try:
-        return defined_points(project_stats) * 100 / total_points(project_stats)
-    except ZeroDivisionError:
-        return 0
+    return (defined_points(project_stats) * 100 / total_points(project_stats)) if total_points(project_stats) else 0
 
 def closed_points(project_stats):
     return  project_stats.get("closed_points", 0)
@@ -46,15 +43,11 @@ def completed_milestones(project):
 
 def current_milestone(project):
     milestones = project.get("list_of_milestones", [])
-    if milestones:
-        return milestones[-1]
-    return None
+    return milestones[-1] if milestones else None
 
 def current_milestone_name(project):
     milestones = project.get("list_of_milestones", [])
-    if milestones:
-        return milestones[-1].get("name", "unknown")
-    return "-----"
+    return milestones[-1].get("name", "unknown") if milestones else "-----"
 
 def computable_roles(project):
     dc = {str(r["id"]): r for r in project.get("roles", []) if r["computable"]} if "roles" in project else {}

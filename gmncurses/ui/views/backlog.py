@@ -62,8 +62,9 @@ class ProjectBacklogSubView(base.SubView):
         self.parent.hide_widget_on_top()
 
     def get_user_story_form_data(self):
+        data = {}
         if hasattr(self, "user_story_form"):
-            data = {
+            data.update({
                 "subject": self.user_story_form.subject,
                 "milestone": self.user_story_form.milestone,
                 "points": self.user_story_form.points,
@@ -73,9 +74,8 @@ class ProjectBacklogSubView(base.SubView):
                 "team_requirement": self.user_story_form.team_requirement,
                 "client_requirement": self.user_story_form.client_requirement,
                 "project": self.project["id"],
-            }
-            return data
-        return {}
+            })
+        return data
 
     def open_milestones_selector_popup(self, user_story={}):
         self.milestone_selector_popup = backlog.MIlestoneSelectorPopup(self.project, user_story)

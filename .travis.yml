@@ -5,7 +5,7 @@ python:
 install:
   - pip install -r dev-requirements.txt --use-mirrors
 script:
-  - coverage run --source=gmncurses --omit='*tests*,*cli.py,*client.py' -m py.test
+  - coverage run --source=gmncurses --omit='*tests*,*cli.py,*api*' -m py.test
 notifications:
   email:
     recipients:

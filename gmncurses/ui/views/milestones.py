@@ -65,8 +65,9 @@ class ProjectMilestoneSubView(base.SubView):
         self.parent.hide_widget_on_top()
 
     def get_user_story_form_data(self):
+        data = {}
         if hasattr(self, "user_story_form"):
-            data = {
+            data.update({
                 "subject": self.user_story_form.subject,
                 "milestone": self.user_story_form.milestone,
                 "points": self.user_story_form.points,
@@ -76,9 +77,8 @@ class ProjectMilestoneSubView(base.SubView):
                 "team_requirement": self.user_story_form.team_requirement,
                 "client_requirement": self.user_story_form.client_requirement,
                 "project": self._project["id"]
-            }
-            return data
-        return {}
+            })
+        return data
 
     def open_task_form(self, task={}):
         self.task_form = milestones.TaskForm(self._project, self._user_stories, task=task)
@@ -90,8 +90,9 @@ class ProjectMilestoneSubView(base.SubView):
         self.parent.hide_widget_on_top()
 
     def get_task_form_data(self):
+        data = {}
         if hasattr(self, "task_form"):
-            data = {
+            data.update({
                 "subject": self.task_form.subject,
                 "user_story": self.task_form.user_story,
                 "status": self.task_form.status,
@@ -100,9 +101,8 @@ class ProjectMilestoneSubView(base.SubView):
                 "description": self.task_form.description,
                 "project": self._project["id"],
                 "milestone": self._milestone["id"]
-            }
-            return data
-        return {}
+            })
+        return data
 
     def open_milestones_selector_popup(self, current_milestone={}):
         self.milestone_selector_popup = milestones.MIlestoneSelectorPopup(self._project, current_milestone)
