@@ -211,7 +211,7 @@ def test_sprint_controller_show_the_edit_user_story_form():
     project_detail_controller.handle(config.ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK)
     assert hasattr(project_detail_controller.sprint.view, "user_story_form")
     assert (project_detail_controller.sprint.view.user_story_form.user_story ==
-            project_detail_controller.sprint.view.taskboard.widget.get_focus().user_story)
+            project_detail_controller.sprint.view.taskboard.widget.get_focus()[0].user_story)
 
 def test_sprint_controller_cancel_the_edit_user_story_form():
     project = factories.project()
@@ -278,7 +278,7 @@ def test_sprint_controller_show_the_edit_task_form():
     project_detail_controller.handle(config.ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK)
     assert hasattr(project_detail_controller.sprint.view, "task_form")
     assert (project_detail_controller.sprint.view.task_form.task ==
-            project_detail_controller.sprint.view.taskboard.widget.get_focus().task)
+            project_detail_controller.sprint.view.taskboard.widget.get_focus()[0].task)
 
 def test_sprint_controller_cancel_the_edit_task_form():
     project = factories.project()
@@ -381,7 +381,7 @@ def test_sprint_controller_delete_task_with_errors():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
     project_detail_controller.handle(config.ProjectKeys.MILESTONES)
 
-    project_view.sprint.taskboard.widget.contents.focus = 2
+    project_view.sprint.taskboard.list_walker.set_focus(2)
     project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
     assert project_view.sprint.notifier.error_msg.call_count == 1
     assert (executor.delete_task.call_args.call_list()[0][0][0]["id"] ==
@@ -397,7 +397,7 @@ def test_sprint_controller_delete_task_with_success():
     project_detail_controller.handle(config.ProjectKeys.MILESTONES)
     project_view.sprint.notifier.reset_mock()
 
-    project_view.sprint.taskboard.widget.contents.focus = 2
+    project_view.sprint.taskboard.list_walker.set_focus(2)
     project_detail_controller.handle(config.ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK)
     assert project_view.sprint.notifier.info_msg.call_count == 1
     assert (executor.delete_task.call_args.call_list()[0][0][0]["id"] ==
