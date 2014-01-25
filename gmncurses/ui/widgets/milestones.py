@@ -194,14 +194,14 @@ class TaskEntry(urwid.WidgetWrap):
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("id", None)) for s in memberships)
         selected = task.get("assigned_to", None)
-        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="poup")
+        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="poup", enable_markup=True)
         colum_items.append(("weight", 0.2, assigned_to_combo))
 
         task_statuses = data.task_statuses(project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in task_statuses.values())
         selected = task.get("status", None) or project.get("default_task_status", None)
-        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
         colum_items.append(("weight", 0.2, status_combo))
 
         self.widget = urwid.Columns(colum_items)

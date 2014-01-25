@@ -224,14 +224,14 @@ class IssueEntry(urwid.WidgetWrap):
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in issue_statuses.values())
         selected = issue.get("status", None) or project.get("default_issue_status", None)
-        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
         colum_items.append(("weight", 0.1, status_combo))
 
         issue_priorities = data.priorities(project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in issue_priorities.values())
         selected = issue.get("priority", None) or project.get("default_priority", None)
-        priority_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        priority_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
         colum_items.append(("weight", 0.1, priority_combo))
 
         issue_severities = data.severities(project)
@@ -239,14 +239,14 @@ class IssueEntry(urwid.WidgetWrap):
                         s.get("name", "")), s.get("id", None)) for s in issue_severities.values())
         selected = issue.get("severity", None) or project.get("default_severity", None)
 
-        severity_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        severity_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
         colum_items.append(("weight", 0.1, severity_combo))
 
         memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("id", None)) for s in memberships)
         selected = issue.get("assigned_to", None)
-        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
+        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
         colum_items.append(("weight", 0.15, assigned_to_combo))
 
         self.widget = urwid.Columns(colum_items)

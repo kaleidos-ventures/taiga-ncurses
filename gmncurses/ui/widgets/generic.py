@@ -205,13 +205,18 @@ class ComboBox(urwid.PopUpLauncher):
     """
     signals = ["change"]
 
-    def __init__(self, items, selected_value=None, on_state_change=None, style="default"):
+    def __init__(self, items, selected_value=None, on_state_change=None, style="default", enable_markup=False):
         self.menu = ComboBoxMenu(items, style)
         self.on_state_change = on_state_change
+        self._enable_markup = enable_markup
 
         selected_item = utils.find(lambda x: x.value == selected_value, self.menu.items) or self.menu.items[0]
         selected_item.set_state(True)
-        self._button = ComboBoxButton(selected_item.get_label(), align="left")
+        if self._enable_markup:
+            self._button = ComboBoxButton(selected_item.get_label_markup(), align="left")
+        else:
+            self._button = ComboBoxButton(selected_item.get_label(), align="left")
+
 
         super().__init__(self._button)
 
@@ -238,8 +243,12 @@ class ComboBox(urwid.PopUpLauncher):
 
     def item_changed(self, item, state):
         if state:
-            selection = item.get_label()
+            if self._enable_markup:
+                selection = item.get_label_markup()
+            else:
+                selection = item.get_label()
             self._button.set_label(selection)
+
         if self.on_state_change:
             self.on_state_change(self, item, state)
 
@@ -257,8 +266,8 @@ class ComboBoxButton(PlainButton):
     combobox_mark = "↓"
 
     def set_label(self, label):
-        s = "{} {}".format(label, self.combobox_mark)
-        super().set_label(s)
+        s = " {}".format(self.combobox_mark)
+        super().set_label([label, s])
 
 
 class ComboBoxMenu(urwid.WidgetWrap):
@@ -312,9 +321,15 @@ class MenuItem(urwid.RadioButton):
     signals = urwid.RadioButton.signals + ["click", "quit"]
 
     def __init__(self, group, label_value, state='first True', on_state_change=None, user_data=None):
-        label, value = label_value
+        markup, value = label_value
+
+        self._markup = markup
         self.value = value
-        super().__init__(group, label, state='first True', on_state_change=None, user_data=None)
+
+        super().__init__(group, markup, state='first True', on_state_change=None, user_data=None)
+
+    def get_label_markup(self):
+        return self._markup
 
     def keypress(self, size, key):
         command = urwid.command_map[key]
