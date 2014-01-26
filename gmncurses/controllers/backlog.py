@@ -23,6 +23,8 @@ class ProjectBacklogSubController(base.Controller):
     def handle(self, key):
         if key == ProjectBacklogKeys.CREATE_USER_STORY:
             self.new_user_story()
+        if key == ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK:
+            self.new_user_stories_in_bulk()
         elif key == ProjectBacklogKeys.EDIT_USER_STORY:
             self.edit_user_story()
         elif key == ProjectBacklogKeys.DELETE_USER_STORY:
@@ -79,6 +81,17 @@ class ProjectBacklogSubController(base.Controller):
 
     def cancel_user_story_form(self):
         self.view.close_user_story_form()
+
+    def new_user_stories_in_bulk(self):
+        self.view.open_user_stories_in_bulk_form()
+
+        signals.connect(self.view.user_stories_in_bulk_form.cancel_button, "click",
+                lambda _: self.cancel_user_stories_in_bulk_form())
+        signals.connect(self.view.user_stories_in_bulk_form.save_button, "click",
+                lambda _: self.handler_create_user_stories_in_bulk_request())
+
+    def cancel_user_stories_in_bulk_form(self):
+        self.view.close_user_stories_in_bulk_form()
 
     def delete_user_story(self):
         user_story = self.view.user_stories.widget.get_focus().user_story
@@ -216,6 +229,36 @@ class ProjectBacklogSubController(base.Controller):
             futures = (project_stats_f, user_stories_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
             futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
+    def handler_create_user_stories_in_bulk_request(self):
+        data = self.view.get_user_stories_in_bulk_form_data()
+
+        if not data.get("subjects", None):
+            self.view.notifier.error_msg("Subjects are required")
+        else:
+            pass
+    #TODO
+    #        us_post_f = self.executor.create_user_stories_in_bulk(data)
+    #        us_post_f.add_done_callback(self.handler_create_user_stories_in_bulk_response)
+
+    #def handler_create_user_stories_in_bulk_response(self, future):
+    #    response = future.result()
+
+    #    if response is None:
+    #        self.view.notifier.error_msg("Create error")
+    #    else:
+    #        self.view.notifier.info_msg("Create successful!")
+    #        self.view.close_user_story_form()
+
+    #        project_stats_f = self.executor.project_stats(self.view.project)
+    #        project_stats_f.add_done_callback(self.handle_project_stats)
+
+    #        user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+    #        user_stories_f.add_done_callback(self.handle_user_stories)
+
+    #        futures = (project_stats_f, user_stories_f)
+    #        futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+    #        futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handler_delete_user_story_response(self, future):
         response = future.result()

@@ -330,6 +330,104 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
                                               "popup-cancel-button")))
         return urwid.Columns(colum_items)
 
+class UserStoriesInBulkForm(mixins.FormMixin, urwid.WidgetWrap):
+
+    def __init__(self, project):
+        self.project = project
+
+        contents = [
+            generic.box_solid_fill(" ", 2),
+            self._form_inputs(),
+            generic.box_solid_fill(" ", 2),
+            self._buttons(),
+            generic.box_solid_fill(" ", 1),
+        ]
+        self.widget = urwid.Pile(contents)
+
+        title = "Create User Stories in bulk"
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+
+    @property
+    def subjects(self):
+        return self._subjects_edit.get_edit_text()
+
+    def _form_inputs(self):
+        contents = [
+            self._subjects_input(),
+        ]
+
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 16)
+
+    def _subjects_input(self):
+        self._subjects_edit = urwid.Edit(edit_text="", multiline=True, )
+
+        colum_items = [(13, urwid.Padding(generic.ListText("Subjects", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._subjects_edit, "popup-editor"))
+        return urwid.Columns(colum_items)
+
+    def _buttons(self):
+        self.save_button = generic.PlainButton("Save")
+        self.cancel_button = generic.PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.save_button, right=2, left=2),
+                                              "popup-submit-button")))
+        colum_items.append((2, urwid.Text(" ")))
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)
+
+
+class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
+    def __init__(self, project, user_story={}):
+        self.project = project
+        self.user_story = user_story
+        self.options = []
+
+        contents = [
+            generic.box_solid_fill(" ", 2),
+            urwid.Padding(self._description(), right=2, left=2),
+            generic.box_solid_fill(" ", 1),
+            urwid.Padding(self._milestone_selector(), right=2, left=2),
+            generic.box_solid_fill(" ", 2),
+            self._buttons(),
+            generic.box_solid_fill(" ", 1),
+        ]
+        self.widget = urwid.Pile(contents)
+
+        title = "Move User Story #{} to a Milestone".format(data.us_ref(self.user_story))
+        super().__init__(urwid.AttrMap(urwid.LineBox(urwid.Padding(self.widget, right=2, left=2),
+                                                     title), "popup"))
+
+    def _description(self):
+        description = "Move US #{0} '{1}' to milestone...".format(data.us_ref(self.user_story),
+                                                                  data.us_subject(self.user_story))
+        return urwid.Text(description)
+
+    def _milestone_selector(self):
+        contents = []
+        for milestone in data.list_of_milestones(self.project):
+            option = MilestoneOptionEntry(milestone)
+            self.options.append(option)
+
+            contents.append(option)
+            contents.append(generic.box_solid_fill(" ", 1))
+
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        if len(contents) > 0:
+            list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 20)
+
+    def _buttons(self):
+        self.cancel_button = generic.PlainButton("Cancel")
+
+        colum_items = [("weight", 1, urwid.Text(""))]
+        colum_items.append((15, urwid.AttrMap(urwid.Padding(self.cancel_button, right=1, left=2),
+                                              "popup-cancel-button")))
+        return urwid.Columns(colum_items)
 
 class MIlestoneSelectorPopup(mixins.FormMixin, urwid.WidgetWrap):
     def __init__(self, project, user_story={}):

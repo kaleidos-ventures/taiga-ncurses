@@ -23,6 +23,7 @@ class ProjectBacklogSubView(base.SubView):
        )),
        ( "User Stories Actions:", (
            ("n", "Create new US"),
+           ("N", "Create new USs in bulk"),
            ("e", "Edit selected US"),
            ("Supr", "Delete selected US"),
            ("K", "Move selected US up"),
@@ -74,6 +75,23 @@ class ProjectBacklogSubView(base.SubView):
                 "team_requirement": self.user_story_form.team_requirement,
                 "client_requirement": self.user_story_form.client_requirement,
                 "project": self.project["id"],
+            })
+        return data
+
+    def open_user_stories_in_bulk_form(self):
+        self.user_stories_in_bulk_form = backlog.UserStoriesInBulkForm(self.project)
+        # FIXME: Calculate the form size
+        self.parent.show_widget_on_top(self.user_stories_in_bulk_form, 80, 24)
+
+    def close_user_stories_in_bulk_form(self):
+        del self.user_stories_in_bulk_form
+        self.parent.hide_widget_on_top()
+
+    def get_user_stories_in_bulk_form_data(self):
+        data = {}
+        if hasattr(self, "user_stories_in_bulk_form"):
+            data.update({
+                "subjects": self.user_stories_in_bulk_form.subjects,
             })
         return data
 
