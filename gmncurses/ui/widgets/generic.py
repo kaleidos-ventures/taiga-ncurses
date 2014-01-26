@@ -205,14 +205,18 @@ class ComboBox(urwid.PopUpLauncher):
     """
     signals = ["change"]
 
-    def __init__(self, items, selected_value=None, on_state_change=None, style="default", enable_markup=False):
+    def __init__(self, items, selected_value=None, style="default", enable_markup=False,
+                 on_state_change=None, user_data=None):
         self.menu = ComboBoxMenu(items, style)
+
+        self.enable_markup = enable_markup
+
         self.on_state_change = on_state_change
-        self._enable_markup = enable_markup
+        self.user_data = user_data
 
         selected_item = utils.find(lambda x: x.value == selected_value, self.menu.items) or self.menu.items[0]
         selected_item.set_state(True)
-        if self._enable_markup:
+        if self.enable_markup:
             self._button = ComboBoxButton(selected_item.get_label_markup(), align="left")
         else:
             self._button = ComboBoxButton(selected_item.get_label(), align="left")
@@ -243,14 +247,14 @@ class ComboBox(urwid.PopUpLauncher):
 
     def item_changed(self, item, state):
         if state:
-            if self._enable_markup:
+            if self.enable_markup:
                 selection = item.get_label_markup()
             else:
                 selection = item.get_label()
             self._button.set_label(selection)
 
         if self.on_state_change:
-            self.on_state_change(self, item, state)
+            self.on_state_change(self, item, state, user_data=self.user_data)
 
         self.close_pop_up()
         self._emit("change", item, state)
