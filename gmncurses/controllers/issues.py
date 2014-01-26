@@ -35,6 +35,11 @@ class ProjectIssuesSubController(base.Controller):
         signals.connect(self.view.issues_header.assigned_to_button, "click",
                 functools.partial(self.handle_order_by, "assigned_to"))
 
+        self.view.issues.on_issue_status_change = self.handle_change_issue_status_request
+        self.view.issues.on_issue_priority_change = self.handle_change_issue_priority_request
+        self.view.issues.on_issue_severity_change = self.handle_change_issue_severity_request
+        self.view.issues.on_issue_assigned_to_change = self.handle_change_issue_assigned_to_request
+
     def handle(self, key):
         if key == ProjectIssuesKeys.CREATE_ISSUE:
             self.new_issue()
@@ -74,7 +79,7 @@ class ProjectIssuesSubController(base.Controller):
         signals.connect(self.view.issue_form.cancel_button, "click",
                 lambda _: self.cancel_issue_form())
         signals.connect(self.view.issue_form.save_button, "click",
-                lambda _: self.handler_create_issue_request())
+                lambda _: self.handle_create_issue_request())
 
     def edit_issue(self):
         issue = self.view.issues.widget.get_focus()[0].issue
@@ -83,7 +88,7 @@ class ProjectIssuesSubController(base.Controller):
         signals.connect(self.view.issue_form.cancel_button, "click",
                 lambda _: self.cancel_issue_form())
         signals.connect(self.view.issue_form.save_button, "click",
-                lambda _: self.handler_edit_issue_request(issue))
+                lambda _: self.handle_edit_issue_request(issue))
 
     def cancel_issue_form(self):
         self.view.close_issue_form()
@@ -92,7 +97,7 @@ class ProjectIssuesSubController(base.Controller):
         issue = self.view.issues.widget.get_focus()[0].issue
 
         issue_delete_f = self.executor.delete_issue(issue)
-        issue_delete_f.add_done_callback(self.handler_delete_issue_response)
+        issue_delete_f.add_done_callback(self.handle_delete_issue_response)
 
     def filters(self):
         self.view.open_filters_popup()
@@ -146,16 +151,16 @@ class ProjectIssuesSubController(base.Controller):
             if error_msg:
                 self.view.notifier.error_msg(error_msg)
 
-    def handler_create_issue_request(self):
+    def handle_create_issue_request(self):
         data = self.view.get_issue_form_data()
 
         if not data.get("subject", None):
             self.view.notifier.error_msg("Subject is required")
         else:
             us_post_f = self.executor.create_issue(data)
-            us_post_f.add_done_callback(self.handler_create_issue_response)
+            us_post_f.add_done_callback(self.handle_create_issue_response)
 
-    def handler_create_issue_response(self, future):
+    def handle_create_issue_response(self, future):
         response = future.result()
 
         if response is None:
@@ -174,16 +179,16 @@ class ProjectIssuesSubController(base.Controller):
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
             futures_completed_f.add_done_callback(self.when_issues_info_fetched)
 
-    def handler_edit_issue_request(self, issue):
+    def handle_edit_issue_request(self, issue):
         data = self.view.get_issue_form_data()
 
         if not data.get("subject", None):
             self.view.notifier.error_msg("Subject is required")
         else:
             issue_patch_f = self.executor.update_issue(issue, data)
-            issue_patch_f.add_done_callback(self.handler_edit_issue_response)
+            issue_patch_f.add_done_callback(self.handle_edit_issue_response)
 
-    def handler_edit_issue_response(self, future):
+    def handle_edit_issue_response(self, future):
         response = future.result()
 
         if response is None:
@@ -202,7 +207,7 @@ class ProjectIssuesSubController(base.Controller):
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
             futures_completed_f.add_done_callback(self.when_issues_info_fetched)
 
-    def handler_delete_issue_response(self, future):
+    def handle_delete_issue_response(self, future):
         response = future.result()
 
         if response is None:
@@ -224,6 +229,107 @@ class ProjectIssuesSubController(base.Controller):
         self.view.notifier.info_msg("Ordered issues by {}".format(param))
         issues_f = self.executor.issues(self.view.project, order_by=[param], filters=self.view.filters)
         issues_f.add_done_callback(self.handle_refresh_issues)
+
+    def handle_change_issue_status_request(self, combo, item, state, user_data=None):
+        data = {"status": item.value}
+        issue = user_data
+
+        issue_patch_f = self.executor.update_issue(issue, data)
+        issue_patch_f.add_done_callback(self.handle_change_issue_status_response)
+
+    def handle_change_issue_status_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change issue status error")
+        else:
+            self.view.notifier.info_msg("Change issue status successful!")
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def handle_change_issue_priority_request(self, combo, item, state, user_data=None):
+        data = {"priority": item.value}
+        issue = user_data
+
+        issue_patch_f = self.executor.update_issue(issue, data)
+        issue_patch_f.add_done_callback(self.handle_change_issue_priority_response)
+
+    def handle_change_issue_priority_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change issue priority error")
+        else:
+            self.view.notifier.info_msg("Change issue priority successful!")
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def handle_change_issue_severity_request(self, combo, item, state, user_data=None):
+        data = {"severity": item.value}
+        issue = user_data
+
+        issue_patch_f = self.executor.update_issue(issue, data)
+        issue_patch_f.add_done_callback(self.handle_change_issue_severity_response)
+
+    def handle_change_issue_severity_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change issue severity error")
+        else:
+            self.view.notifier.info_msg("Change issue severity successful!")
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
+    def handle_change_issue_assigned_to_request(self, combo, item, state, user_data=None):
+        data = {"assigned_to": item.value}
+        issue = user_data
+
+        issue_patch_f = self.executor.update_issue(issue, data)
+        issue_patch_f.add_done_callback(self.handle_change_issue_assigned_to_response)
+
+    def handle_change_issue_assigned_to_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change issue assignation error")
+        else:
+            self.view.notifier.info_msg("Change issue assignation successful!")
+
+            issues_stats_f = self.executor.project_issues_stats(self.view.project)
+            issues_stats_f.add_done_callback(self.handle_issues_stats)
+
+            issues_f = self.executor.issues(self.view.project, filters=self.view.filters)
+            issues_f.add_done_callback(self.handle_issues)
+
+            futures = (issues_stats_f, issues_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_issues_info_fetched)
+
 
     def handle_refresh_issues(self, future):
         self.issues = future.result()

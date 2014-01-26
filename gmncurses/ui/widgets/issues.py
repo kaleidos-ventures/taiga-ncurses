@@ -171,6 +171,11 @@ class IssuesFiltersInfo(urwid.WidgetWrap):
 
 
 class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
+    on_issue_status_change = None
+    on_issue_priority_change = None
+    on_issue_severity_change = None
+    on_issue_assigned_to_change = None
+
     def __init__(self, project):
         self.project = project
 
@@ -185,7 +190,9 @@ class IssuesList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap
             self.reset()
 
         for issue in issues:
-            self.list_walker.append(IssueEntry(issue, self.project))
+            self.list_walker.append(IssueEntry(issue, self.project, self.on_issue_status_change,
+                                               self.on_issue_priority_change, self.on_issue_severity_change,
+                                               self.on_issue_assigned_to_change))
 
         if len(issues) > 0:
             self.list_walker.set_focus(0)
@@ -213,7 +220,8 @@ class IssuesListHeader(urwid.WidgetWrap):
 
 
 class IssueEntry(urwid.WidgetWrap):
-    def __init__(self, issue, project):
+    def __init__(self, issue, project, on_status_change=None, on_priority_change=None, on_severity_change=None,
+                 on_assigned_to_change=None):
         self.issue = issue
 
         issue_ref_and_name = "#{0: <4} {1}".format(str(data.issue_ref(issue)), data.issue_subject(issue))
@@ -224,29 +232,32 @@ class IssueEntry(urwid.WidgetWrap):
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in issue_statuses.values())
         selected = issue.get("status", None) or project.get("default_issue_status", None)
-        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                        on_state_change=on_status_change, user_data=issue)
         colum_items.append(("weight", 0.1, status_combo))
 
         issue_priorities = data.priorities(project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in issue_priorities.values())
         selected = issue.get("priority", None) or project.get("default_priority", None)
-        priority_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
+        priority_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                        on_state_change=on_priority_change, user_data=issue)
         colum_items.append(("weight", 0.1, priority_combo))
 
         issue_severities = data.severities(project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in issue_severities.values())
         selected = issue.get("severity", None) or project.get("default_severity", None)
-
-        severity_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
+        severity_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                        on_state_change=on_severity_change, user_data=issue)
         colum_items.append(("weight", 0.1, severity_combo))
 
         memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("id", None)) for s in memberships)
         selected = issue.get("assigned_to", None)
-        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
+        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                        on_state_change=on_assigned_to_change, user_data=issue)
         colum_items.append(("weight", 0.15, assigned_to_combo))
 
         self.widget = urwid.Columns(colum_items)

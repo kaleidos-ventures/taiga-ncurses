@@ -103,6 +103,9 @@ class MilestoneStatsDates(urwid.Pile):
 
 
 class MilestoneTaskboard(urwid.WidgetWrap):
+    on_task_status_change = None
+    on_task_assigned_to_change = None
+
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
@@ -121,12 +124,14 @@ class MilestoneTaskboard(urwid.WidgetWrap):
         for us in user_stories:
             self.list_walker.append(UserStoryEntry(us, self.project, self.roles))
             for task in data.tasks_per_user_story(tasks, us):
-                self.list_walker.append(TaskEntry(task, self.project))
+                self.list_walker.append(TaskEntry(task, self.project, self.on_task_status_change,
+                                              self.on_task_assigned_to_change))
 
         # Unasigned task
         self.list_walker.append(UnasignedTasksHeaderEntry())
         for task in data.unassigned_tasks(tasks):
-            self.list_walker.append(TaskEntry(task, self.project))
+            self.list_walker.append(TaskEntry(task, self.project, self.on_task_status_change,
+                                              self.on_task_assigned_to_change))
 
         if len(self.list_walker) > 0:
             self.list_walker.set_focus(0)
@@ -178,7 +183,7 @@ class UnasignedTasksHeaderEntry(urwid.WidgetWrap):
 
 
 class TaskEntry(urwid.WidgetWrap):
-    def __init__(self, task, project):
+    def __init__(self, task, project, on_status_change=None, on_assigned_to_change=None):
         self.task = task
 
         if data.task_finished_date(task):
@@ -194,14 +199,16 @@ class TaskEntry(urwid.WidgetWrap):
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("id", None)) for s in memberships)
         selected = task.get("assigned_to", None)
-        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="poup", enable_markup=True)
+        assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                             on_state_change=on_assigned_to_change, user_data=task)
         colum_items.append(("weight", 0.2, assigned_to_combo))
 
         task_statuses = data.task_statuses(project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("name", "")), s.get("id", None)) for s in task_statuses.values())
         selected = task.get("status", None) or project.get("default_task_status", None)
-        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True)
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                        on_state_change=on_status_change, user_data=task)
         colum_items.append(("weight", 0.2, status_combo))
 
         self.widget = urwid.Columns(colum_items)
