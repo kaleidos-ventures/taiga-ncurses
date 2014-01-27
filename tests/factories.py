@@ -2,8 +2,8 @@ from unittest import mock
 from concurrent.futures import Future
 import json
 
-from gmncurses.ui import views, signals
-from gmncurses.executor import Executor
+from taiga_ncurses.ui import views, signals
+from taiga_ncurses.executor import Executor
 
 from . import fixtures
 

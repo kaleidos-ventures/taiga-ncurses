@@ -2,7 +2,7 @@ import os
 import tempfile
 from configparser import ConfigParser
 
-from gmncurses.config import DEFAULTS, Configuration
+from taiga_ncurses.config import DEFAULTS, Configuration
 
 
 SAMPLE_HOST = {

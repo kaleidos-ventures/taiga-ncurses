@@ -1,7 +1,7 @@
 from unittest import mock
 from concurrent.futures import Future
 
-from gmncurses import executor
+from taiga_ncurses import executor
 
 
 # Auth

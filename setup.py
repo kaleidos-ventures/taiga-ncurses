@@ -4,7 +4,7 @@
 A text interface to Taiga.
 """
 
-from gmncurses import __name__, __description__, __version__
+from taiga_ncurses import __name__, __description__, __version__
 
 from setuptools import setup, find_packages
 
@@ -24,7 +24,7 @@ setup(name=NAME,
       description=DESCRIPTION,
       packages=find_packages(),
       entry_points={
-          "console_scripts": ["gmncurses = gmncurses.cli:main"]
+          "console_scripts": ["taiga-ncurses = taiga_ncurses.cli:main"]
       },
       classifiers=[
           "Development Status :: 3 - Alpha",

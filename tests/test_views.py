@@ -1,4 +1,4 @@
-from gmncurses.ui import views
+from taiga_ncurses.ui import views
 
 
 def test_login_views_username_property_is_the_typed_username():

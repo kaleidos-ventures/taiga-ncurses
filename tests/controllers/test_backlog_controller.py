@@ -1,10 +1,10 @@
 from concurrent.futures import Future
 from unittest import mock
 
-from gmncurses.ui import signals, views
-from gmncurses import controllers, config
-from gmncurses.executor import Executor
-from gmncurses.core import StateMachine
+from taiga_ncurses.ui import signals, views
+from taiga_ncurses import controllers, config
+from taiga_ncurses.executor import Executor
+from taiga_ncurses.core import StateMachine
 
 from tests import factories
 

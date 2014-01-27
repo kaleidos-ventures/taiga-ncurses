@@ -1,9 +1,9 @@
 from concurrent.futures import Future
 from unittest import mock
 
-from gmncurses.config import Configuration
-from gmncurses.core import TaigaCore, StateMachine
-from gmncurses import controllers
+from taiga_ncurses.config import Configuration
+from taiga_ncurses.core import TaigaCore, StateMachine
+from taiga_ncurses import controllers
 
 from . import factories
 

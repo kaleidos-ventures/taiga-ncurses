@@ -22,9 +22,9 @@ Just execute these commands in your virtualenv(wrapper):
 
     $ pip install -r dev-requirements.txt
     $ python setup.py develop
-    $ py.test           # to run the tests
-    $ gmncurses         # to run the app
-    
+    $ py.test               # to run the tests
+    $ taiga-ncurses         # to run the app
+
 
 Obviously you need the `taiga backend`_ and, if you consider yourself a loser,
 you can use the `taiga web client`_, sometimes. ;-)
