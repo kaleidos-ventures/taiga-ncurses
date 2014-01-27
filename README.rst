@@ -3,11 +3,11 @@ taiga-ncurses
 
 .. image:: http://kaleidos.net/static/img/badge.png
     :target: http://kaleidos.net/community/greenmine/
-.. image:: https://api.travis-ci.org/kaleidos/greenmine-ncurses.png?branch=master
-    :target: https://travis-ci.org/kaleidos/greenmine-ncurses
-.. image:: https://coveralls.io/repos/kaleidos/greenmine-ncurses/badge.png?branch=master
-    :target: https://coveralls.io/r/kaleidos/greenmine-ncurses?branch=master
-.. image:: https://d2weczhvl823v0.cloudfront.net/kaleidos/greenmine-ncurses/trend.png
+.. image:: https://api.travis-ci.org/kaleidos/taiga-ncurses.png?branch=master
+    :target: https://travis-ci.org/kaleidos/taiga-ncurses
+.. image:: https://coveralls.io/repos/kaleidos/taiga-ncurses/badge.png?branch=master
+    :target: https://coveralls.io/r/kaleidos/taiga-ncurses?branch=master
+.. image:: https://d2weczhvl823v0.cloudfront.net/kaleidos/taiga-ncurses/trend.png
     :alt: Bitdeli badge
     :target: https://bitdeli.com/free
 
