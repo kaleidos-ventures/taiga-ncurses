@@ -254,7 +254,7 @@ class IssueEntry(urwid.WidgetWrap):
 
         memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
-                        s.get("full_name", "")), s.get("id", None)) for s in memberships)
+                        s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = issue.get("assigned_to", None)
         assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
                                         on_state_change=on_assigned_to_change, user_data=issue)
@@ -596,7 +596,7 @@ class IssueForm(mixins.FormMixin, urwid.WidgetWrap):
     def _assigned_to_input(self):
         memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
-                        s.get("full_name", "")), s.get("id", None)) for s in memberships)
+                        s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = self.issue.get("assigned_to", None)
 
         self._assigned_to_combo = generic.ComboBox(items, selected_value=selected, style="cyan")
