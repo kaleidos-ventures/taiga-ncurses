@@ -31,5 +31,5 @@ you can use the `taiga web client`_, sometimes. ;-)
 
 Note: taiga-ncurses only runs with python 3.3+.
 
-.. _taiga backend: https://github.com/kaleidos/greenmine-back
-.. _taiga web client: https://github.com/kaleidos/greenmine-front
+.. _taiga backend: https://github.com/kaleidos/taiga-back
+.. _taiga web client: https://github.com/kaleidos/taiga-front
