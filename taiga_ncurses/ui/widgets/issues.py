@@ -252,7 +252,7 @@ class IssueEntry(urwid.WidgetWrap):
                                         on_state_change=on_severity_change, user_data=issue)
         colum_items.append(("weight", 0.1, severity_combo))
 
-        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
+        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = issue.get("assigned_to", None)
@@ -594,7 +594,7 @@ class IssueForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = self.issue.get("assigned_to", None)

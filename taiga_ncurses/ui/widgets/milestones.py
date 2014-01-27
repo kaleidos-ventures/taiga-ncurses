@@ -195,7 +195,7 @@ class TaskEntry(urwid.WidgetWrap):
         task_ref_and_subject = "Task #{0: <4} {1}".format(data.task_ref(task), data.task_subject(task))
         colum_items.append(("weight", 1, generic.ListText(task_ref_and_subject, align="left")))
 
-        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
+        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = task.get("assigned_to", None)
@@ -427,7 +427,7 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        memberships = [{"id": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = self.task.get("assigned_to", None)
