@@ -11,7 +11,7 @@ from configparser import ConfigParser
 from collections import ChainMap
 
 
-DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga_ncurses")
+DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
 DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
 DEFAULT_AUTH_FILE = os.path.join(DEFAULT_CONFIG_DIR, "auth.ini")
 
