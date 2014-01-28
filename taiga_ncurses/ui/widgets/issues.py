@@ -408,19 +408,20 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        members = data.memberships(self.project)
-        max_length = max([len(data.user_full_name(s)) for s in members.values()])
+        members = [{"user": "none", "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        max_length = max([len(data.user_full_name(s)) for s in members])
         selected_filters = self._filters.get("assigned_to", set())
 
         self._assigned_to_group = []
-        for id, item in members.items():
-            state = id in selected_filters
+        for item in members:
+            state = item["user"] in selected_filters
 
             color = utils.color_to_hex(data.color(item))
             attr = urwid.AttrSpec("h{0}".format(color), "default")
 
             self._assigned_to_group.append(urwid.CheckBox((attr, data.user_full_name(item)), state, False,
-                                                          self._handle_filter_change, ("assigned_to", id)))
+                                                          self._handle_filter_change, ("assigned_to",
+                                                          item["user"])))
 
         colum_items = [(16, urwid.Padding(generic.ListText("Assigned To", align="right"), right=2))]
         colum_items.append(generic.Grid(self._assigned_to_group, 4 + max_length, 3, 0, "left"))
