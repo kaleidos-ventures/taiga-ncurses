@@ -286,21 +286,8 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
 
         contents = [
             generic.box_solid_fill(" ", 2),
-            self._types_input(),
-            generic.box_solid_fill(" ", 1),
-            self._statuses_input(),
-            generic.box_solid_fill(" ", 1),
-            self._priorities_input(),
-            generic.box_solid_fill(" ", 1),
-            self._severities_input(),
-            generic.box_solid_fill(" ", 1),
-            self._assigned_to_input(),
-            generic.box_solid_fill(" ", 1),
-            self._created_by_input(),
-            generic.box_solid_fill(" ", 1),
-            # TODO
-            #self._tags_input(),
-            #generic.box_solid_fill(" ", 2),
+            self._form_inputs(),
+            generic.box_solid_fill(" ", 2),
             self._buttons(),
             generic.box_solid_fill(" ", 1)
         ]
@@ -313,6 +300,28 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
     @property
     def filters(self):
         return self._filters
+
+    def _form_inputs(self):
+        contents = [
+            self._types_input(),
+            generic.box_solid_fill(" ", 1),
+            self._statuses_input(),
+            generic.box_solid_fill(" ", 1),
+            self._priorities_input(),
+            generic.box_solid_fill(" ", 1),
+            self._severities_input(),
+            generic.box_solid_fill(" ", 1),
+            self._assigned_to_input(),
+            generic.box_solid_fill(" ", 1),
+            self._created_by_input(),
+            # TODO
+            #generic.box_solid_fill(" ", 1),
+            #self._tags_input(),
+        ]
+
+        list_walker = urwid.SimpleFocusListWalker(contents)
+        list_walker.set_focus(0)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 20)
 
     def _handle_filter_change(self, check_box, new_state, data):
         filter_type, value = data
