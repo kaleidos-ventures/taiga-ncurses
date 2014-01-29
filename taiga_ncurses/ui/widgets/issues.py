@@ -408,7 +408,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        members = [{"user": "none", "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        members = [{"user": "null", "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
         max_length = max([len(data.user_full_name(s)) for s in members])
         selected_filters = self._filters.get("assigned_to", set())
 
