@@ -267,7 +267,7 @@ class ComboBox(urwid.PopUpLauncher):
 
 
 class ComboBoxButton(PlainButton):
-    combobox_mark = "↓"
+    combobox_mark = "▼"
 
     def set_label(self, label):
         s = " {}".format(self.combobox_mark)
