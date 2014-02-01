@@ -52,7 +52,7 @@ class ProjectMilestoneSubView(base.SubView):
             self.stats,
             generic.box_solid_fill(" ", 1),
             # TODO: FIXME: Calculate the row size wehn populate the tb.
-            urwid.BoxAdapter(self.taskboard, 35),
+            urwid.BoxAdapter(self.taskboard, 39),
         ]))
 
     def open_user_story_form(self, user_story={}):
@@ -83,7 +83,7 @@ class ProjectMilestoneSubView(base.SubView):
     def open_task_form(self, task={}):
         self.task_form = milestones.TaskForm(self._project, self._user_stories, task=task)
         # FIXME: Calculate the form size
-        self.parent.show_widget_on_top(self.task_form, 80, 19)
+        self.parent.show_widget_on_top(self.task_form, 80, 21)
 
     def close_task_form(self):
         del self.task_form
@@ -97,6 +97,7 @@ class ProjectMilestoneSubView(base.SubView):
                 "user_story": self.task_form.user_story,
                 "status": self.task_form.status,
                 "assigned_to": self.task_form.assigned_to,
+                "iocaine": self.task_form.iocaine,
                 "tags": self.task_form.tags,
                 "description": self.task_form.description,
                 "project": self._project["id"],

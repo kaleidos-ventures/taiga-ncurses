@@ -366,6 +366,10 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
         return self._assigned_to_combo.get_selected().value
 
     @property
+    def iocaine(self):
+        return self._iocaine_checkbox.get_state()
+
+    @property
     def tags(self):
         tags = self._tags_edit.get_edit_text()
         return tags.split(" ,") if tags else []
@@ -384,6 +388,8 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
             generic.box_solid_fill(" ", 1),
             self._assigned_to_input(),
             generic.box_solid_fill(" ", 1),
+            self._iocaine_input(),
+            generic.box_solid_fill(" ", 1),
             self._tags_input(),
             generic.box_solid_fill(" ", 1),
             self._description_input(),
@@ -391,7 +397,7 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
 
         list_walker = urwid.SimpleFocusListWalker(contents)
         list_walker.set_focus(0)
-        return urwid.BoxAdapter(urwid.ListBox(list_walker), 11)
+        return urwid.BoxAdapter(urwid.ListBox(list_walker), 13)
 
     def _subject_input(self):
         self._subject_edit = urwid.Edit(edit_text=self.task.get("subject", ""))
@@ -436,6 +442,14 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
 
         colum_items = [(17, urwid.Padding(generic.ListText("Assigned to", align="right"), right=4))]
         colum_items.append(self._assigned_to_combo)
+        return urwid.Columns(colum_items)
+
+    def _iocaine_input(self):
+        self._iocaine_checkbox = urwid.CheckBox(["Is iocaine ", (("popup-text-green"), "☣")],
+                state=self.task.get("iocaine", False))
+
+        colum_items = [(17, urwid.Text(" "))]
+        colum_items.append(self._iocaine_checkbox)
         return urwid.Columns(colum_items)
 
     def _tags_input(self):
