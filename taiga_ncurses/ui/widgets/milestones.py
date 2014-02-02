@@ -193,6 +193,8 @@ class TaskEntry(urwid.WidgetWrap):
         colum_items = [("weight", 0.05, is_closed)]
 
         task_ref_and_subject = "Task #{0: <4} {1}".format(data.task_ref(task), data.task_subject(task))
+        if task.get("is_iocaine", False):
+            task_ref_and_subject = [task_ref_and_subject + " ", (("green"), "☣")]
         colum_items.append(("weight", 1, generic.ListText(task_ref_and_subject, align="left")))
 
         memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
@@ -366,8 +368,8 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
         return self._assigned_to_combo.get_selected().value
 
     @property
-    def iocaine(self):
-        return self._iocaine_checkbox.get_state()
+    def is_iocaine(self):
+        return self._is_iocaine_checkbox.get_state()
 
     @property
     def tags(self):
@@ -388,7 +390,7 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
             generic.box_solid_fill(" ", 1),
             self._assigned_to_input(),
             generic.box_solid_fill(" ", 1),
-            self._iocaine_input(),
+            self._is_iocaine_input(),
             generic.box_solid_fill(" ", 1),
             self._tags_input(),
             generic.box_solid_fill(" ", 1),
@@ -444,12 +446,12 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
         colum_items.append(self._assigned_to_combo)
         return urwid.Columns(colum_items)
 
-    def _iocaine_input(self):
-        self._iocaine_checkbox = urwid.CheckBox(["Is iocaine ", (("popup-text-green"), "☣")],
-                state=self.task.get("iocaine", False))
+    def _is_iocaine_input(self):
+        self._is_iocaine_checkbox = urwid.CheckBox(["Is iocaine ", (("popup-text-green"), "☣")],
+                state=self.task.get("is_iocaine", False))
 
         colum_items = [(17, urwid.Text(" "))]
-        colum_items.append(self._iocaine_checkbox)
+        colum_items.append(self._is_iocaine_checkbox)
         return urwid.Columns(colum_items)
 
     def _tags_input(self):

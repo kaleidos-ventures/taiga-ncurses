@@ -97,7 +97,7 @@ class ProjectMilestoneSubView(base.SubView):
                 "user_story": self.task_form.user_story,
                 "status": self.task_form.status,
                 "assigned_to": self.task_form.assigned_to,
-                "iocaine": self.task_form.iocaine,
+                "is_iocaine": self.task_form.is_iocaine,
                 "tags": self.task_form.tags,
                 "description": self.task_form.description,
                 "project": self._project["id"],
