@@ -194,7 +194,7 @@ class TaskEntry(urwid.WidgetWrap):
 
         task_ref_and_subject = "Task #{0: <4} {1}".format(data.task_ref(task), data.task_subject(task))
         if task.get("is_iocaine", False):
-            task_ref_and_subject = [task_ref_and_subject + " ", (("green"), "☣")]
+            task_ref_and_subject = [task_ref_and_subject + " ", (("magenta"), "☣")]
         colum_items.append(("weight", 1, generic.ListText(task_ref_and_subject, align="left")))
 
         memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
@@ -447,7 +447,7 @@ class TaskForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _is_iocaine_input(self):
-        self._is_iocaine_checkbox = urwid.CheckBox(["Is iocaine ", (("popup-text-green"), "☣")],
+        self._is_iocaine_checkbox = urwid.CheckBox(["Is iocaine ", (("popup-text-magenta"), "☣")],
                 state=self.task.get("is_iocaine", False))
 
         colum_items = [(17, urwid.Text(" "))]
