@@ -52,7 +52,7 @@ class ProjectMilestoneSubView(base.SubView):
             self.stats,
             generic.box_solid_fill(" ", 1),
             # TODO: FIXME: Calculate the row size wehn populate the tb.
-            urwid.BoxAdapter(self.taskboard, 39),
+            urwid.BoxAdapter(self.taskboard, 46),
         ]))
 
     def open_user_story_form(self, user_story={}):
