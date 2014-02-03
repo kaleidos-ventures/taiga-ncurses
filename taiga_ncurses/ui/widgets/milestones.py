@@ -141,7 +141,7 @@ class MilestoneTaskboard(urwid.WidgetWrap):
 
 
 class UserStoryEntry(urwid.WidgetWrap):
-    def __init__(self, us, project, roles):
+    def __init__(self, us, project, roles, on_status_change=None, on_point_change=None):
         self.user_story = us
 
         if us.get("is_closed", False):
@@ -153,14 +153,19 @@ class UserStoryEntry(urwid.WidgetWrap):
         us_ref_and_name = "US #{0: <4} {1}".format(str(data.us_ref(us)), data.us_subject(us))
         colum_items.append(("weight", 0.6, generic.ListText(us_ref_and_name, align="left")))
 
-        hex_color, status = data.us_status_with_color(us, project)
-        color = utils.color_to_hex(hex_color)
-        attr = urwid.AttrSpec("h{0}".format(color), "default")
-        colum_items.append(("weight", 0.15, generic.ListText( (attr, status) )))
+        us_statuses = data.us_statuses(project)
+        items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
+                        s.get("name", "")), s.get("id", None)) for s in us_statuses.values())
+        selected = us.get("status", None) or project.get("default_us_status", None)
+        status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
+                                        on_state_change=on_status_change, user_data=us)
+        colum_items.append(("weight", 0.15, status_combo))
+
 
         points_by_role = data.us_points_by_role_whith_names(us, project, roles.values())
         for role, point in points_by_role:
             colum_items.append(("weight", 0.1, generic.ListText("{}: {}".format(role, str(point)))))
+
         colum_items.append(("weight", 0.1, generic.ListText(("green", "TOTAL: {0:.1f}".format(
                                                                       data.us_total_points(us))))))
 
