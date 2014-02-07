@@ -59,8 +59,8 @@ def list_of_milestones(project, reverse=True):
 def milestones_are_equals(milestone1, milestone2):
     return milestone1.get("id", milestone1) == milestone2.get("id", milestone2)
 
-def memberships(project):
-    dc = {str(r["user"]): r for r in project.get("memberships", [])} if "memberships" in project else {}
+def active_memberships(project):
+    dc = {str(r["user"]): r for r in project.get("active_memberships", [])} if "active_memberships" in project else {}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1].get("full_name", "") ))
 
 
@@ -219,27 +219,27 @@ def issue_severity_with_color(issue, project, default_color="#ffffff"):
     return (default_color, "---")
 
 def issue_assigned_to_with_color(issue, project, default_color="#ffffff"):
-    # FIXME: Improvement, get memberships and users from a project constant
+    # FIXME: Improvement, get active_memberships and users from a project constant
     # TODO: Check that the color is in hex format
     user_id = issue.get("assigned_to", None)
     if user_id:
-        memberships = {str(p["user"]): p for p in project["memberships"]}
+        active_memberships = {str(p["user"]): p for p in project["active_memberships"]}
         try:
-            return (memberships[str(user_id)]["color"] or default_color,
-                    memberships[str(user_id)]["full_name"])
+            return (active_memberships[str(user_id)]["color"] or default_color,
+                    active_memberships[str(user_id)]["full_name"])
         except KeyError:
             pass
     return (default_color, "Unassigned")
 
 def issue_owner_with_color(issue, project, default_color="#ffffff"):
-    # FIXME: Improvement, get memberships and users from a project constant
+    # FIXME: Improvement, get active_memberships and users from a project constant
     # TODO: Check that the color is in hex format
     user_id = issue.get("owner", None)
     if user_id:
-        memberships = {str(p["user"]): p for p in project["memberships"]}
+        active_memberships = {str(p["user"]): p for p in project["active_memberships"]}
         try:
-            return (memberships[str(user_id)]["color"] or default_color,
-                    memberships[str(user_id)]["full_name"])
+            return (active_memberships[str(user_id)]["color"] or default_color,
+                    active_memberships[str(user_id)]["full_name"])
         except KeyError:
             pass
     return (default_color, "Unknown")

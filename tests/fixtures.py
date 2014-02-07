@@ -139,6 +139,138 @@ PROJECT = """
             "computable": false
         }
     ],
+    "active_memberships": [
+        {
+            "role_name": "UX",
+            "full_name": "Josefina Reyes",
+            "id": 9,
+            "user": 9,
+            "project": 1,
+            "role": 3,
+            "email": "ab@maxime.org",
+            "created_at": "2013-12-20T09:53:46.452Z",
+            "token": null
+        },
+        {
+            "role_name": "UX",
+            "full_name": "Aitor Montero",
+            "color": "#002e33",
+            "id": 6,
+            "user": 6,
+            "project": 1,
+            "role": 3,
+            "email": "sit@magni.com",
+            "created_at": "2013-12-20T09:53:46.429Z",
+            "token": null
+        },
+        {
+            "role_name": "Design",
+            "full_name": "admin",
+            "color": "",
+            "id": 1,
+            "user": 1,
+            "project": 1,
+            "role": 4,
+            "email": "niwi@niwi.be",
+            "created_at": "2013-12-20T09:53:46.386Z",
+            "token": null
+        },
+        {
+            "role_name": "Design",
+            "full_name": "Aurora Calvo",
+            "color": "#4B0082",
+            "id": 7,
+            "user": 7,
+            "project": 1,
+            "role": 4,
+            "email": "voluptatibus@inventore.com",
+            "created_at": "2013-12-20T09:53:46.436Z",
+            "token": null
+        },
+        {
+            "role_name": "Design",
+            "color": "#FC8EAC",
+            "id": 3,
+            "user": 3,
+            "project": 1,
+            "role": 4,
+            "email": "voluptatem@placeat.com",
+            "created_at": "2013-12-20T09:53:46.406Z",
+            "token": null
+        },
+        {
+            "role_name": "Front",
+            "full_name": "Teresa Gallardo",
+            "color": "#FFCC00",
+            "id": 11,
+            "user": 11,
+            "project": 1,
+            "role": 2,
+            "email": "nihil@eligendi.net",
+            "created_at": "2013-12-20T09:53:46.467Z",
+            "token": null
+        },
+        {
+            "role_name": "Back",
+            "full_name": "Victoria Nu\u00f1ez",
+            "color": "#FFF8E7",
+            "id": 10,
+            "user": 10,
+            "project": 1,
+            "role": 1,
+            "email": "recusandae@facilis.org",
+            "created_at": "2013-12-20T09:53:46.460Z",
+            "token": null
+        },
+        {
+            "role_name": "Product Owner",
+            "full_name": "Carolina Mora",
+            "color": "#FC8EAC",
+            "id": 5,
+            "user": 5,
+            "project": 1,
+            "role": 5,
+            "email": "minima@quos.org",
+            "created_at": "2013-12-20T09:53:46.421Z",
+            "token": null
+        },
+        {
+            "role_name": "Product Owner",
+            "full_name": "Eugenio Herrera",
+            "color": "#FFFF00",
+            "id": 4,
+            "user": 4,
+            "project": 1,
+            "role": 5,
+            "email": "quasi@reprehenderit.net",
+            "created_at": "2013-12-20T09:53:46.413Z",
+            "token": null
+        },
+        {
+            "role_name": "Product Owner",
+            "full_name": "Susana Reyes",
+            "color": "#FC8EAC",
+            "id": 8,
+            "user": 8,
+            "project": 1,
+            "role": 5,
+            "email": "consectetur@impedit.net",
+            "created_at": "2013-12-20T09:53:46.444Z",
+            "token": null
+        },
+        {
+            "role_name": "Stakeholder",
+            "full_name": "Marina Medina",
+            "color": "#FFFF00",
+            "id": 2,
+            "user": 2,
+            "project": 1,
+            "role": 6,
+            "email": "ducimus@maiores.net",
+            "created_at": "2013-12-20T09:53:46.398Z",
+            "token": null
+        }
+    ],
     "memberships": [
         {
             "role_name": "UX",

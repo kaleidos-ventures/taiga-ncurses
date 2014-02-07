@@ -252,7 +252,7 @@ class IssueEntry(urwid.WidgetWrap):
                                         on_state_change=on_severity_change, user_data=issue)
         colum_items.append(("weight", 0.1, severity_combo))
 
-        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(project).values())
+        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.active_memberships(project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = issue.get("assigned_to", None)
@@ -408,7 +408,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        members = [{"user": "null", "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        members = [{"user": "null", "full_name": "Unassigned"}] + list(data.active_memberships(self.project).values())
         max_length = max([len(data.user_full_name(s)) for s in members])
         selected_filters = self._filters.get("assigned_to", set())
 
@@ -428,7 +428,7 @@ class FiltersPopup(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _created_by_input(self):
-        members = data.memberships(self.project)
+        members = data.active_memberships(self.project)
         max_length = max([len(data.user_full_name(s)) for s in members.values()])
         selected_filters = self._filters.get("owner", set())
 
@@ -604,7 +604,7 @@ class IssueForm(mixins.FormMixin, urwid.WidgetWrap):
         return urwid.Columns(colum_items)
 
     def _assigned_to_input(self):
-        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.memberships(self.project).values())
+        memberships = [{"user": None, "full_name": "Unassigned"}] + list(data.active_memberships(self.project).values())
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),
                         s.get("full_name", "")), s.get("user", None)) for s in memberships)
         selected = self.issue.get("assigned_to", None)
