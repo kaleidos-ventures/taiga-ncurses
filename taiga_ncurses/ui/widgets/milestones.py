@@ -161,10 +161,16 @@ class UserStoryEntry(urwid.WidgetWrap):
                                         on_state_change=on_status_change, user_data=us)
         colum_items.append(("weight", 0.15, status_combo))
 
+        points = data.points(project)
+        items = tuple((p.get("name", ""), p.get("id", None)) for p in points.values())
+        for r_id, role in roles.items():
+            role_name = generic.ListText("{}:".format(role.get("name", "UNK.")))
 
-        points_by_role = data.us_points_by_role_whith_names(us, project, roles.values())
-        for role, point in points_by_role:
-            colum_items.append(("weight", 0.1, generic.ListText("{}: {}".format(role, str(point)))))
+            selected = (us.get("points", {}).get(r_id, None) or
+                        project.get("default_points", None))
+            points_combo = generic.ComboBox(items, selected_value=selected, style="cyan",
+                                            on_state_change=on_points_change, user_data=(us, r_id))
+            colum_items.append(("weight", 0.15, urwid.Columns([('pack',role_name), points_combo])))
 
         colum_items.append(("weight", 0.1, generic.ListText(("green", "TOTAL: {0:.1f}".format(
                                                                       data.us_total_points(us))))))
