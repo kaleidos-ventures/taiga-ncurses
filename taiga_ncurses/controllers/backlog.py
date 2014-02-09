@@ -20,6 +20,9 @@ class ProjectBacklogSubController(base.Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+        self.view.user_stories.on_user_story_status_change = self.handle_change_user_story_status_request
+        self.view.user_stories.on_user_story_points_change = self.handle_change_user_story_points_request
+
     def handle(self, key):
         if key == ProjectBacklogKeys.CREATE_USER_STORY:
             self.new_user_story()
@@ -314,6 +317,58 @@ class ProjectBacklogSubController(base.Controller):
             self.view.notifier.error_msg("Error moving user story to milestone")
         else:
             self.view.notifier.info_msg("Moved user story to milestone succesful!")
+
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
+    def handle_change_user_story_status_request(self, combo, item, state, user_data=None):
+        data = {"status": item.value}
+        user_story = user_data
+
+        user_story_patch_f = self.executor.update_user_story(user_story, data)
+        user_story_patch_f.add_done_callback(self.handle_change_user_story_status_response)
+
+    def handle_change_user_story_status_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change user story status with errors")
+            # TODO: Select old value
+        else:
+            self.view.notifier.info_msg("Change user story status successful!")
+
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
+
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+
+    def handle_change_user_story_points_request(self, combo, item, state, user_data=None):
+        user_story, role_id = user_data
+        data = {"points": {role_id: item.value}}
+
+        user_story_patch_f = self.executor.update_user_story(user_story, data)
+        user_story_patch_f.add_done_callback(self.handle_change_user_story_points_response)
+
+    def handle_change_user_story_points_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change user story points with errors")
+            # TODO: Select old value
+        else:
+            self.view.notifier.info_msg("Change user story points successful!")
 
             project_stats_f = self.executor.project_stats(self.view.project)
             project_stats_f.add_done_callback(self.handle_project_stats)

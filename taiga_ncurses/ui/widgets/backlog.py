@@ -89,6 +89,9 @@ class CompletedMilestones(urwid.Text):
 
 
 class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetWrap):
+    on_user_story_status_change = None
+    on_user_story_points_change = None
+
     def __init__(self, project):
         self.project = project
         self.roles = data.computable_roles(project)
@@ -120,7 +123,9 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
                 self.widget.contents.append((generic.RowDivider("red", div_char="☠"), ("weight", 0.1)))
                 doomline = True
 
-            self.widget.contents.append((UserStoryEntry(us, self.project, self.roles, summation),
+            self.widget.contents.append((UserStoryEntry(us, self.project, self.roles, summation,
+                                                        self.on_user_story_status_change,
+                                                        self.on_user_story_points_change),
                                          ("weight", 0.1)))
         # Set the focus # TODO: Refactor
         if first_gains_focus:
@@ -139,7 +144,7 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
 
 
 class UserStoryEntry(urwid.WidgetWrap):
-    def __init__(self, us, project, roles, summation=0.0, on_status_change=None, on_point_change=None):
+    def __init__(self, us, project, roles, summation=0.0, on_status_change=None, on_points_change=None):
         self.user_story = us
 
         us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
@@ -159,8 +164,7 @@ class UserStoryEntry(urwid.WidgetWrap):
             selected = (us.get("points", {}).get(r_id, None) or
                         project.get("default_points", None))
             points_combo = generic.ComboBox(items, selected_value=selected, style="cyan",
-                                            on_state_change=on_point_change, user_data={"user_story": us,
-                                                                                        "role_id": r_id})
+                                            on_state_change=on_points_change, user_data=(us, r_id))
             colum_items.append(("weight", 0.05, points_combo))
 
         colum_items.append(("weight", 0.05, generic.ListText(("green", "{0:.1f}".format(
