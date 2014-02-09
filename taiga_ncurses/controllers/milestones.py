@@ -25,6 +25,8 @@ class ProjectMilestoneSubController(base.Controller):
 
         self.view.taskboard.on_task_status_change = self.handle_change_task_status_request
         self.view.taskboard.on_task_assigned_to_change = self.handle_change_task_assigned_to_request
+        self.view.taskboard.on_user_story_status_change = self.handle_change_user_story_status_request
+        self.view.taskboard.on_user_story_points_change = self.handle_change_user_story_points_request
 
     def handle(self, key):
         if key == ProjectMilestoneKeys.CREATE_USER_STORY:
@@ -476,6 +478,80 @@ class ProjectMilestoneSubController(base.Controller):
             # TODO: Select old value
         else:
             self.view.notifier.info_msg("Change task assignation successful!")
+
+            if hasattr(self, "milestone"):
+                current_milestone = self.milestone
+            else:
+                current_milestone = taiga_ncurses.data.current_milestone(self.view._project)
+
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
+            milestone_f.add_done_callback(self.handle_milestone)
+
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
+            milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
+            tasks_f.add_done_callback(self.handle_tasks)
+
+            futures = (tasks_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
+    def handle_change_user_story_status_request(self, combo, item, state, user_data=None):
+        data = {"status": item.value}
+        user_story = user_data
+
+        user_story_patch_f = self.executor.update_user_story(user_story, data)
+        user_story_patch_f.add_done_callback(self.handle_change_user_story_status_response)
+
+    def handle_change_user_story_status_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change user story status with errors")
+            # TODO: Select old value
+        else:
+            self.view.notifier.info_msg("Change user story status successful!")
+
+            if hasattr(self, "milestone"):
+                current_milestone = self.milestone
+            else:
+                current_milestone = taiga_ncurses.data.current_milestone(self.view._project)
+
+            milestone_f = self.executor.milestone(current_milestone, self.view._project)
+            milestone_f.add_done_callback(self.handle_milestone)
+
+            milestone_stats_f = self.executor.milestone_stats(current_milestone, self.view._project)
+            milestone_stats_f.add_done_callback(self.handle_milestone_stats)
+
+            user_stories_f = self.executor.user_stories(current_milestone, self.view._project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
+
+            tasks_f = self.executor.tasks(current_milestone, self.view._project)
+            tasks_f.add_done_callback(self.handle_tasks)
+
+            futures = (tasks_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.handle_user_stories_and_task_info_fetched)
+
+    def handle_change_user_story_points_request(self, combo, item, state, user_data=None):
+        user_story, role_id = user_data
+        data = {"points": {role_id: item.value}}
+
+        user_story_patch_f = self.executor.update_user_story(user_story, data)
+        user_story_patch_f.add_done_callback(self.handle_change_user_story_points_response)
+
+    def handle_change_user_story_points_response(self, future):
+        response = future.result()
+
+        if response is None:
+            self.view.notifier.error_msg("Change user story points with errors")
+            # TODO: Select old value
+        else:
+            self.view.notifier.info_msg("Change user story points successful!")
 
             if hasattr(self, "milestone"):
                 current_milestone = self.milestone

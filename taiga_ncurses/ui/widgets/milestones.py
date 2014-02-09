@@ -105,6 +105,8 @@ class MilestoneStatsDates(urwid.Pile):
 class MilestoneTaskboard(urwid.WidgetWrap):
     on_task_status_change = None
     on_task_assigned_to_change = None
+    on_user_story_status_change = None
+    on_user_story_points_change = None
 
     def __init__(self, project):
         self.project = project
@@ -122,7 +124,9 @@ class MilestoneTaskboard(urwid.WidgetWrap):
 
         # Task with user stories
         for us in user_stories:
-            self.list_walker.append(UserStoryEntry(us, self.project, self.roles))
+            self.list_walker.append(UserStoryEntry(us, self.project, self.roles,
+                                                  self.on_user_story_status_change,
+                                                  self.on_user_story_points_change))
             for task in data.tasks_per_user_story(tasks, us):
                 self.list_walker.append(TaskEntry(task, self.project, self.on_task_status_change,
                                               self.on_task_assigned_to_change))
@@ -141,7 +145,7 @@ class MilestoneTaskboard(urwid.WidgetWrap):
 
 
 class UserStoryEntry(urwid.WidgetWrap):
-    def __init__(self, us, project, roles, on_status_change=None, on_point_change=None):
+    def __init__(self, us, project, roles, on_status_change=None, on_points_change=None):
         self.user_story = us
 
         if us.get("is_closed", False):
