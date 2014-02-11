@@ -32,7 +32,7 @@ class ProjectWikiSubController(base.Controller):
         self.wiki_pages = future.result()
         if self.wiki_pages is not None:
             if len(self.wiki_pages) > 0:
-                self.view.wiki_page.populate(self.wiki_pages[0])
+                self.view.wiki_page.populate(self.wiki_pages, self.wiki_pages[0])
             self.state_machine.refresh()
 
     def when_wiki_pages_fetched(self, future_with_results):
