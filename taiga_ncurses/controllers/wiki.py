@@ -16,6 +16,8 @@ class ProjectWikiSubController(base.Controller):
         self.executor = executor
         self.state_machine = state_machine
 
+        self.view.wiki_page.on_wiki_page_change = self.handle_wiki_page_change
+
     def load(self):
         self.state_machine.transition(self.state_machine.PROJECT_WIKI)
 
@@ -43,3 +45,10 @@ class ProjectWikiSubController(base.Controller):
         else:
             # TODO retry failed operations
             self.view.notifier.error_msg("Failed to fetch wiki data")
+
+    def handle_wiki_page_change(self, combo, item, state, user_data=None):
+        wiki_page = item.value
+        self.view.wiki_page.populate(self.wiki_pages, wiki_page)
+
+        self.view.notifier.info_msg("Change to wiki page: '{}'".format(wiki_page["slug"]))
+

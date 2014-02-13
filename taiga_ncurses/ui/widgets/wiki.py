@@ -22,8 +22,8 @@ class WikiPage(urwid.WidgetWrap):
         super().__init__(self.widget)
 
     def populate(self, wiki_pages, wiki_page):
-        items = tuple((data.slug(p), data.slug(p)) for p in wiki_pages)
-        selected = data.slug(wiki_page)
+        items = tuple((data.slug(p), p) for p in wiki_pages)
+        selected = wiki_page
         pages_combo = generic.ComboBox(items, selected_value=selected, style="cyan",
                                         on_state_change=self.on_wiki_page_change)
 
