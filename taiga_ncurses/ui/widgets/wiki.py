@@ -13,6 +13,8 @@ from . import generic
 
 
 class WikiPage(urwid.WidgetWrap):
+    on_wiki_page_change = None
+
     def __init__(self, project):
         self.project = project
 
@@ -22,8 +24,8 @@ class WikiPage(urwid.WidgetWrap):
     def populate(self, wiki_pages, wiki_page):
         items = tuple((data.slug(p), data.slug(p)) for p in wiki_pages)
         selected = data.slug(wiki_page)
-        pages_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
-                                        on_state_change=None, user_data=None)
+        pages_combo = generic.ComboBox(items, selected_value=selected, style="cyan",
+                                        on_state_change=self.on_wiki_page_change)
 
         page_combo_size = max([len(p["slug"]) for p in wiki_pages]) + 8
 
