@@ -266,3 +266,79 @@ def test_issues_controller_delete_issue_with_success():
     assert project_view.issues.notifier.info_msg.call_count == 1
     assert (executor.delete_issue.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.issues.issues[0]["id"])
+
+def test_issues_controller_change_issue_status():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.issues.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_view.issues.notifier.reset_mock()
+
+    issue = project_view.issues.issues.widget.contents()[0][0]
+    combo = issue.base_widget.widget.contents[1][0]     # 1 => status
+    item = combo.menu.get_item(0)                       # 0 => New
+    combo.item_changed(item, True)
+
+    assert project_view.issues.notifier.info_msg.call_count == 1
+    assert executor.update_issue.call_args.call_list()[0][0][1]["status"] == item.value
+    assert executor.update_issue.call_count == 1
+
+def test_issues_controller_change_issue_priority():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.issues.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_view.issues.notifier.reset_mock()
+
+    issue = project_view.issues.issues.widget.contents()[0][0]
+    combo = issue.base_widget.widget.contents[2][0]     # 2 => priority
+    item = combo.menu.get_item(0)                       # 0 => Low
+    combo.item_changed(item, True)
+
+    assert project_view.issues.notifier.info_msg.call_count == 1
+    assert executor.update_issue.call_args.call_list()[0][0][1]["priority"] == item.value
+    assert executor.update_issue.call_count == 1
+
+def test_issues_controller_change_issue_severity():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.issues.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_view.issues.notifier.reset_mock()
+
+    issue = project_view.issues.issues.widget.contents()[0][0]
+    combo = issue.base_widget.widget.contents[3][0]     # 3 => severity
+    item = combo.menu.get_item(0)                       # 0 => wishlist
+    combo.item_changed(item, True)
+
+    assert project_view.issues.notifier.info_msg.call_count == 1
+    assert executor.update_issue.call_args.call_list()[0][0][1]["severity"] == item.value
+    assert executor.update_issue.call_count == 1
+
+def test_issues_controller_change_issue_assigned_to():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.issues.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_view.issues.notifier.reset_mock()
+
+    issue = project_view.issues.issues.widget.contents()[0][0]
+    combo = issue.base_widget.widget.contents[4][0]     # 4 => assigned_to
+    item = combo.menu.get_item(0)                       # 0
+    combo.item_changed(item, True)
+
+    assert project_view.issues.notifier.info_msg.call_count == 1
+    assert executor.update_issue.call_args.call_list()[0][0][1]["assigned_to"] == item.value
+    assert executor.update_issue.call_count == 1
