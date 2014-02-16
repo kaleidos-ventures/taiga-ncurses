@@ -333,7 +333,6 @@ def test_backlog_controller_change_user_story_points():
     project_view.backlog.notifier.reset_mock()
 
     us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
-    import ipdb; ipdb.set_trace()
     combo = us.base_widget.widget.contents[2][0]    # 1 => points
     item = combo.menu.get_item(2)                   # 2 => 1/2
     combo.item_changed(item, True)
