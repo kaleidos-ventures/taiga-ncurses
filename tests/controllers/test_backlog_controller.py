@@ -302,3 +302,42 @@ def test_backlog_controller_move_a_user_story_to_a_milestone():
     assert executor.update_user_story.call_count == 1
     assert (executor.update_user_story.call_args.call_list()[0][0][1]["milestone"] ==
             milestone_selector_popup.project["list_of_milestones"][-3]["id"])
+
+def test_backlog_controller_change_user_story_status():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_view.backlog.notifier.reset_mock()
+
+    us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
+    combo = us.base_widget.widget.contents[1][0]    # 1 => status
+    item = combo.menu.get_item(0)                   # 0 => New
+    combo.item_changed(item, True)
+
+    assert project_view.backlog.notifier.info_msg.call_count == 1
+    assert executor.update_user_story.call_args.call_list()[0][0][1]["status"] == item.value
+    assert executor.update_user_story.call_count == 1
+
+def test_backlog_controller_change_user_story_points():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_view.backlog.notifier.reset_mock()
+
+    us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
+    import ipdb; ipdb.set_trace()
+    combo = us.base_widget.widget.contents[2][0]    # 1 => points
+    item = combo.menu.get_item(2)                   # 2 => 1/2
+    combo.item_changed(item, True)
+
+    assert project_view.backlog.notifier.info_msg.call_count == 1
+    assert list(executor.update_user_story.call_args.call_list()[0][0][1]["points"].values())[0] == item.value
+    assert executor.update_user_story.call_count == 1
