@@ -458,3 +458,79 @@ def test_sprint_controller_change_to_another_milestone():
     assert executor.tasks.call_count == 1
     assert (project_detail_controller.sprint.view._milestone["id"] ==
             milestone_selector_popup.project["list_of_milestones"][-1]["id"])
+
+def test_sprint_controller_change_user_story_status():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_view.sprint.notifier.reset_mock()
+
+    us = project_view.sprint.taskboard.widget.contents()[0][0]
+    combo = us.base_widget.widget.contents[2][0]    # 2 => status
+    item = combo.menu.get_item(0)                   # 0 => New
+    combo.item_changed(item, True)
+
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert executor.update_user_story.call_args.call_list()[0][0][1]["status"] == item.value
+    assert executor.update_user_story.call_count == 1
+
+def test_sprint_controller_change_user_story_points():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_view.sprint.notifier.reset_mock()
+
+    us = project_view.sprint.taskboard.widget.contents()[0][0]
+    combo = us.base_widget.widget.contents[3][0].contents[1][0]     # 3 => points
+    item = combo.menu.get_item(2)                                   # 2 => 1/2
+    combo.item_changed(item, True)
+
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert list(executor.update_user_story.call_args.call_list()[0][0][1]["points"].values())[0] == item.value
+    assert executor.update_user_story.call_count == 1
+
+def test_sprint_controller_change_task_status():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_view.sprint.notifier.reset_mock()
+
+    task = project_view.sprint.taskboard.widget.contents()[1][0]
+    combo = task.base_widget.widget.contents[3][0]      # 3 => status
+    item = combo.menu.get_item(0)                       # 0 => New
+    combo.item_changed(item, True)
+
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert executor.update_task.call_args.call_list()[0][0][1]["status"] == item.value
+    assert executor.update_task.call_count == 1
+
+def test_sprint_controller_change_task_assigned_to():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.sprint.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_view.sprint.notifier.reset_mock()
+
+    task = project_view.sprint.taskboard.widget.contents()[1][0]
+    combo = task.base_widget.widget.contents[2][0]      # 2 => assigned_to
+    item = combo.menu.get_item(0)                       # 0
+    combo.item_changed(item, True)
+
+    assert project_view.sprint.notifier.info_msg.call_count == 1
+    assert executor.update_task.call_args.call_list()[0][0][1]["assigned_to"] == item.value
+    assert executor.update_task.call_count == 1
