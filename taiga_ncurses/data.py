@@ -79,50 +79,6 @@ def us_statuses(project):
     dc = {str(p["id"]): p for p in project.get("us_statuses", [])}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
 
-def us_status_with_color(us, project, default_color="#ffffff"):
-    # FIXME: Improvement, get priorities from a project constant
-    # TODO: Check that the color is in hex format
-    us_status_id = us.get("status", None)
-    if us_status_id:
-        us_statuses = {str(p["id"]): p for p in project["us_statuses"]}
-        try:
-            return (us_statuses[str(us_status_id)]["color"] or default_color,
-                    us_statuses[str(us_status_id)]["name"])
-        except KeyError:
-            pass
-    return (default_color, "---")
-
-
-def us_points_by_role(us, project, roles):
-    # FIXME: Improvement, get project_points from a project constant
-    # FIXME: Improvement, get rolesofrom a project constant
-    us_points = us.get("points", [])
-    project_points = {str(p["id"]): p for p in project["points"]}
-    default_point = project["default_points"]
-
-    points = []
-    for role in roles:
-        try:
-            points.append(project_points[str(us_points[str(role["id"])])]["name"])
-        except KeyError:
-            points.append(project_points[str(default_point)]["name"])
-    return points
-
-def us_points_by_role_whith_names(us, project, roles):
-    # FIXME: Improvement, get project_points from a project constant
-    # FIXME: Improvement, get rolesofrom a project constant
-    us_points = us.get("points", [])
-    project_points = {str(p["id"]): p for p in project["points"]}
-    default_point = project["default_points"]
-
-    points = []
-    for role in roles:
-        try:
-            points.append((role["name"], project_points[str(us_points[str(role["id"])])]["name"]))
-        except KeyError:
-            points.append((role["name"], project_points[str(default_point)]["name"]))
-    return points
-
 def issue_types(project):
     dc = {str(p["id"]): p for p in project.get("issue_types", [])}
     return OrderedDict(sorted(dc.items(), key=lambda t: t[1]["order"]))
