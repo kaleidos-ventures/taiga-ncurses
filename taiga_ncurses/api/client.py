@@ -118,6 +118,7 @@ class TaigaClient(BaseClient):
         "milestone":  "/api/v1/milestones/{}",
         "milestone-stats":  "/api/v1/milestones/{}/stats",
         "user_stories": "/api/v1/userstories",
+        "user_stories_bulk_create": "/api/v1/userstories/bulk_create",
         "user_stories_bulk_update_order": "/api/v1/userstories/bulk_update_order",
         "user_story":  "/api/v1/userstories/{}",
         "tasks": "/api/v1/tasks",
@@ -231,6 +232,10 @@ class TaigaClient(BaseClient):
 
     def update_user_stories_order(self, data_dict={}, params={}):
         url = urljoin(self._host, self.URLS.get("user_stories_bulk_update_order"))
+        return self._post(url, data_dict, params)
+
+    def create_user_stories_in_bulk(self, data_dict={}, params={}):
+        url = urljoin(self._host, self.URLS.get("user_stories_bulk_create"))
         return self._post(url, data_dict, params)
 
     def create_user_story(self, data_dict={}, params={}):
