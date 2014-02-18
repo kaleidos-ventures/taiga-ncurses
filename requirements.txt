@@ -1,5 +1,6 @@
-# Urwid 1.2.0-dev
-git+https://github.com/wardi/urwid.git
+# Urwid 1.2.0
+urwid==1.2.0
+#git+https://github.com/wardi/urwid.git
 
 # Extra deps
 requests==2.0.1
