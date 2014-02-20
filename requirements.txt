@@ -1,11 +1,7 @@
-# Urwid 1.2.0
-urwid==1.2.0
+# Urwid
 #git+https://github.com/wardi/urwid.git
+urwid==1.2.0
 
 # Extra deps
 requests==2.0.1
 x256==0.0.3
-
-# For debug only
-#ipdb
-#ipython
