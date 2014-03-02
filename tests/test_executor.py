@@ -68,6 +68,12 @@ def test_delete_user_story_method_returns_a_future():
     f = e.delete_user_story({"id": 123123})
     assert isinstance(f, Future)
 
+def test_create_user_stories_in_bulk_method_returns_a_future():
+    client = mock.Mock()
+    e = executor.Executor(client)
+    f = e.create_user_stories_in_bulk({"ulkStories": "A\nB\nC", "projectId": 1})
+    assert isinstance(f, Future)
+
 def test_update_user_stories_order_method_returns_a_future():
     client = mock.Mock()
     e = executor.Executor(client)

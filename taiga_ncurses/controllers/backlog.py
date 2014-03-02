@@ -236,32 +236,30 @@ class ProjectBacklogSubController(base.Controller):
     def handler_create_user_stories_in_bulk_request(self):
         data = self.view.get_user_stories_in_bulk_form_data()
 
-        if not data.get("subjects", None):
+        if not data.get("bulkStories", None):
             self.view.notifier.error_msg("Subjects are required")
         else:
-            pass
-    #TODO
-    #        us_post_f = self.executor.create_user_stories_in_bulk(data)
-    #        us_post_f.add_done_callback(self.handler_create_user_stories_in_bulk_response)
+            us_post_f = self.executor.create_user_stories_in_bulk(data)
+            us_post_f.add_done_callback(self.handler_create_user_stories_in_bulk_response)
 
-    #def handler_create_user_stories_in_bulk_response(self, future):
-    #    response = future.result()
+    def handler_create_user_stories_in_bulk_response(self, future):
+        response = future.result()
 
-    #    if response is None:
-    #        self.view.notifier.error_msg("Create error")
-    #    else:
-    #        self.view.notifier.info_msg("Create successful!")
-    #        self.view.close_user_story_form()
+        if response is None:
+            self.view.notifier.error_msg("Create error")
+        else:
+            self.view.notifier.info_msg("Create successful!")
+            self.view.close_user_stories_in_bulk_form()
 
-    #        project_stats_f = self.executor.project_stats(self.view.project)
-    #        project_stats_f.add_done_callback(self.handle_project_stats)
+            project_stats_f = self.executor.project_stats(self.view.project)
+            project_stats_f.add_done_callback(self.handle_project_stats)
 
-    #        user_stories_f = self.executor.unassigned_user_stories(self.view.project)
-    #        user_stories_f.add_done_callback(self.handle_user_stories)
+            user_stories_f = self.executor.unassigned_user_stories(self.view.project)
+            user_stories_f.add_done_callback(self.handle_user_stories)
 
-    #        futures = (project_stats_f, user_stories_f)
-    #        futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
-    #        futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
+            futures = (project_stats_f, user_stories_f)
+            futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
+            futures_completed_f.add_done_callback(self.when_backlog_info_fetched)
 
     def handler_delete_user_story_response(self, future):
         response = future.result()

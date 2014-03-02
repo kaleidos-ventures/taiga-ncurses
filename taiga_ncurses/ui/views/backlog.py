@@ -91,7 +91,8 @@ class ProjectBacklogSubView(base.SubView):
         data = {}
         if hasattr(self, "user_stories_in_bulk_form"):
             data.update({
-                "subjects": self.user_stories_in_bulk_form.subjects,
+                "bulkStories": self.user_stories_in_bulk_form.subjects,
+                "projectId": self.project["id"],
             })
         return data
 

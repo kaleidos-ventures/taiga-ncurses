@@ -111,6 +111,9 @@ def successful_update_user_story_response(subject):
         "watchers": []
     }
 
+def successful_create_user_stories_in_bulk_response():
+    return True
+
 def successful_update_user_stories_order_response():
     return True
 
@@ -250,6 +253,8 @@ def patched_executor(login_response=future(successful_login_response("admin")),
                      user_stories=future(user_stories()),
                      create_user_story_response=future(successful_create_user_story_response("Create us")),
                      update_user_story_response=future(successful_update_user_story_response("Update us")),
+                     create_user_stories_in_bulk_response=future(
+                            successful_create_user_stories_in_bulk_response()),
                      update_user_stories_order_response=future(successful_update_user_stories_order_response()),
                      delete_user_story_response=future(successful_delete_user_story_response()),
                      tasks=future(tasks()),
@@ -275,6 +280,7 @@ def patched_executor(login_response=future(successful_login_response("admin")),
     executor.unassigned_user_stories = mock.Mock(return_value=unassigned_user_stories)
     executor.create_user_story = mock.Mock(return_value=create_user_story_response)
     executor.update_user_story = mock.Mock(return_value=update_user_story_response)
+    executor.create_user_stories_in_bulk = mock.Mock(return_value=create_user_stories_in_bulk_response)
     executor.update_user_stories_order = mock.Mock(return_value=update_user_stories_order_response)
     executor.delete_user_story = mock.Mock(return_value=delete_user_story_response)
 

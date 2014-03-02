@@ -45,6 +45,9 @@ class Executor(object):
     def create_user_story(self, data):
         return self.pool.submit(self.client.create_user_story, data_dict=data)
 
+    def create_user_stories_in_bulk(self, data):
+        return self.pool.submit(self.client.create_user_stories_in_bulk, data_dict=data)
+
     def update_user_story(self, user_story, data):
         return self.pool.submit(self.client.update_user_story, id=user_story["id"], data_dict=data)
 

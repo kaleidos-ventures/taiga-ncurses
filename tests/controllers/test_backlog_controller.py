@@ -340,3 +340,61 @@ def test_backlog_controller_change_user_story_points():
     assert project_view.backlog.notifier.info_msg.call_count == 1
     assert list(executor.update_user_story.call_args.call_list()[0][0][1]["points"].values())[0] == item.value
     assert executor.update_user_story.call_count == 1
+
+# BULK
+
+def test_backlog_controller_show_the_new_user_stories_in_bulk_form():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+
+    assert not hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
+    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    assert hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
+
+def test_backlog_controller_cancel_the_new_user_stories_in_bulk_form():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+
+    assert hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
+    form = project_detail_controller.view.backlog.user_stories_in_bulk_form
+    signals.emit(form.cancel_button, "click")
+    assert not hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
+
+def test_backlog_controller_submit_new_user_stories_in_bulk_form_with_errors():
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    form = project_detail_controller.view.backlog.user_stories_in_bulk_form
+
+    signals.emit(form.save_button, "click")
+    assert project_view.backlog.notifier.error_msg.call_count == 1
+
+def test_backlog_controller_submit_new_user_stories_in_bulk_form_successfully():
+    us_subjects = "Create a new user story 1\nCreate a new user story 2"
+    project = factories.project()
+    project_view = views.projects.ProjectDetailView(project)
+    project_view.backlog.notifier = mock.Mock()
+    executor = factories.patched_executor()
+    _ = mock.Mock()
+    project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
+    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    form = project_detail_controller.view.backlog.user_stories_in_bulk_form
+    project_view.backlog.notifier.reset_mock()
+
+    form._subjects_edit.set_edit_text(us_subjects)
+    signals.emit(form.save_button, "click")
+    assert project_view.backlog.notifier.info_msg.call_count == 1
+    assert executor.create_user_stories_in_bulk.call_args.call_list()[0][0][0]["bulkStories"] == us_subjects
+    assert executor.create_user_stories_in_bulk.call_count == 1
+    assert executor.create_user_stories_in_bulk.return_value.result()
