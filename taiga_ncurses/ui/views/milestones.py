@@ -18,8 +18,8 @@ class ProjectMilestoneSubView(base.SubView):
        ( "Milestone Movements:", (
            ("↑ | k | ctrl p", "Move Up"),
            ("↓ | j | ctrl n", "Move Down"),
-           #("← | h | ctrl b", "Move Left"),
-           #("→ | l | ctrl f", "Move Right"),
+           ("← | h | ctrl b", "Move Left"),
+           ("→ | l | ctrl f", "Move Right"),
        )),
        ( "Milestone Actions:", (
            ("m", "Change to another Milestone"),

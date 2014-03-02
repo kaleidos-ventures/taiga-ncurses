@@ -18,8 +18,8 @@ class ProjectBacklogSubView(base.SubView):
        ( "Backlog Movements:", (
            ("↑ | k | ctrl p", "Move Up"),
            ("↓ | j | ctrl n", "Move Down"),
-           #("← | h | ctrl b", "Move Left"),
-           #("→ | l | ctrl f", "Move Right"),
+           ("← | h | ctrl b", "Move Left"),
+           ("→ | l | ctrl f", "Move Right"),
        )),
        ( "User Stories Actions:", (
            ("n", "Create new US"),

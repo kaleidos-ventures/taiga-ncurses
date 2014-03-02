@@ -18,8 +18,8 @@ class ProjectIssuesSubView(base.SubView):
        ( "Issues Movements:", (
            ("↑ | k | ctrl p", "Move Up"),
            ("↓ | j | ctrl n", "Move Down"),
-           #("← | h | ctrl b", "Move Left"),
-           #("→ | l | ctrl f", "Move Right"),
+           ("← | h | ctrl b", "Move Left"),
+           ("→ | l | ctrl f", "Move Right"),
        )),
        ( "Issue Actions:", (
            ("n", "Create new Issue"),
