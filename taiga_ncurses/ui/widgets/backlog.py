@@ -147,8 +147,16 @@ class UserStoryEntry(urwid.WidgetWrap):
     def __init__(self, us, project, roles, summation=0.0, on_status_change=None, on_points_change=None):
         self.user_story = us
 
-        us_ref_and_name = "#{0: <6} {1}".format(str(data.us_ref(us)), data.us_subject(us))
-        colum_items = [("weight", 0.55, generic.ListText(us_ref_and_name, align="left"))]
+        colum_items = [(4, generic.ListText("#{0}".format(str(data.us_ref(us))), align="left"))]
+
+        colum_items.append((1, urwid.AttrMap(generic.ListText("⊕" if data.us_client_requirement(us) else " ",
+                                                              align="left"), "yellow", "focus")))
+        colum_items.append((1, urwid.AttrMap(generic.ListText("☂" if data.us_team_requirement(us) else " ",
+                                                              align="left"), "cyan", "focus")))
+        colum_items.append((2, urwid.AttrMap(generic.ListText("✖" if data.us_is_blocked(us) else " ",
+                                                              align="left"), "red", "focus")))
+
+        colum_items.append(("weight", 0.5, generic.ListText(data.us_subject(us), align="left")))
 
         us_statuses = data.us_statuses(project)
         items = tuple(((urwid.AttrSpec("h{0}".format(utils.color_to_hex(s.get("color", "#ffffff"))), "default"),

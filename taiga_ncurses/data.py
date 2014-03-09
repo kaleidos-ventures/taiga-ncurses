@@ -72,6 +72,15 @@ def us_ref(us):
 def us_subject(us):
     return us.get("subject", "------")
 
+def us_is_blocked(us):
+    return us.get("is_blocked", False)
+
+def us_client_requirement(us):
+    return us.get("client_requirement", False)
+
+def us_team_requirement(us):
+    return us.get("team_requirement", False)
+
 def us_total_points(us):
     return us.get("total_points", "--")
 
