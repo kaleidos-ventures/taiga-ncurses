@@ -314,7 +314,7 @@ def test_backlog_controller_change_user_story_status():
     project_view.backlog.notifier.reset_mock()
 
     us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
-    combo = us.base_widget.widget.contents[1][0]    # 1 => status
+    combo = us.base_widget.widget.contents[5][0]    # 5 => status
     item = combo.menu.get_item(0)                   # 0 => New
     combo.item_changed(item, True)
 
@@ -333,7 +333,7 @@ def test_backlog_controller_change_user_story_points():
     project_view.backlog.notifier.reset_mock()
 
     us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
-    combo = us.base_widget.widget.contents[2][0]    # 1 => points
+    combo = us.base_widget.widget.contents[6][0]    # 6 => points
     item = combo.menu.get_item(2)                   # 2 => 1/2
     combo.item_changed(item, True)
 
