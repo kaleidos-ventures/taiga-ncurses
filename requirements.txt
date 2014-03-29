@@ -3,5 +3,5 @@
 urwid==1.2.0
 
 # Extra deps
-requests==2.0.1
+requests==2.2.1
 x256==0.0.3
