@@ -224,6 +224,14 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
         return self._status_combo.get_selected().value
 
     @property
+    def is_blocked(self):
+        return self._is_blocked_checkbox.get_state()
+
+    @property
+    def blocked_note(self):
+        return self._blocked_note_edit.get_edit_text()
+
+    @property
     def tags(self):
         tags = self._tags_edit.get_edit_text()
         return tags.split(" ,") if tags else []
@@ -249,6 +257,10 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
             self._points_input(),
             generic.box_solid_fill(" ", 1),
             self._status_input(),
+            generic.box_solid_fill(" ", 1),
+            self._is_blocked_input(),
+            generic.box_solid_fill(" ", 1),
+            self._blocked_note_input(),
             generic.box_solid_fill(" ", 1),
             self._tags_input(),
             generic.box_solid_fill(" ", 1),
@@ -313,6 +325,21 @@ class UserStoryForm(mixins.FormMixin, urwid.WidgetWrap):
 
         colum_items = [(17, urwid.Padding(generic.ListText("Status", align="right"), right=4))]
         colum_items.append(self._status_combo)
+        return urwid.Columns(colum_items)
+
+    def _is_blocked_input(self):
+        self._is_blocked_checkbox = urwid.CheckBox(["Is blocked ", (("popup-text-red"), "✖")],
+                state=self.user_story.get("is_blocked", False))
+
+        colum_items = [(17, urwid.Text(" "))]
+        colum_items.append(self._is_blocked_checkbox)
+        return urwid.Columns(colum_items)
+
+    def _blocked_note_input(self):
+        self._blocked_note_edit = urwid.Edit(multiline=True, edit_text=self.user_story.get("blocked_note", ""))
+
+        colum_items = [(17, urwid.Padding(generic.ListText("Blocked note", align="right"), right=4))]
+        colum_items.append(urwid.AttrMap(self._blocked_note_edit, "popup-editor"))
         return urwid.Columns(colum_items)
 
     def _tags_input(self):

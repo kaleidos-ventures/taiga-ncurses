@@ -28,6 +28,7 @@ PALETTE = [
     ("popup-cancel-button", "black", "light gray"),
     ("popup-selected", "dark cyan", "black"),
     ("popup-text-magenta", "light magenta", "dark gray"),
+    ("popup-text-red", "dark red", "dark gray"),
     ("error", "white", "dark red"),
     ("info", "white", "dark blue"),
     ("green", "dark green", "default"),

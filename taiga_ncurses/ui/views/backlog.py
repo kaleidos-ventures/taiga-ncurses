@@ -70,6 +70,8 @@ class ProjectBacklogSubView(base.SubView):
                 "milestone": self.user_story_form.milestone,
                 "points": self.user_story_form.points,
                 "status": self.user_story_form.status,
+                "is_blocked": self.user_story_form.is_blocked,
+                "blocked_note": self.user_story_form.blocked_note,
                 "tags": self.user_story_form.tags,
                 "description": self.user_story_form.description,
                 "team_requirement": self.user_story_form.team_requirement,
