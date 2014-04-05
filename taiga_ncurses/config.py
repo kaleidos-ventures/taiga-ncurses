@@ -119,6 +119,9 @@ DEFAULTS = {
         "domain": "localhost",
         "port": "8000",
     },
+    "site": {
+        "domain": "localhost",
+    }
 }
 
 
@@ -178,6 +181,12 @@ class Configuration(object):
         port = ":{}".format(host["port"]) if "port" in host else ""
 
         return "{scheme}://{domain}{port}".format(scheme=scheme, domain=domain, port=port)
+
+    @property
+    def site(self):
+        site =  self.config_dict["site"]
+        domain = urllib.parse.quote(site["domain"])
+        return domain
 
     @property
     def auth_token(self):

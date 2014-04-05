@@ -130,6 +130,11 @@ class TaigaClient(BaseClient):
     }
 
     # AUTHENTICATIONS
+    def __init__(self, host, site):
+        super().__init__(host)
+        self._site = site
+        self._headers["X-HOST"] = self._site
+
     @property
     def is_authenticated(self):
         return "Authorization" in self._headers

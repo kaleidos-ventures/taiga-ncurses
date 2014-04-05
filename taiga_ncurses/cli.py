@@ -14,7 +14,7 @@ from taiga_ncurses.executor import Executor
 def main():
     config = Configuration()
     config.load()
-    client = TaigaClient(config.host)
+    client = TaigaClient(config.host, config.site)
     if config.auth_token:
         client.set_auth_token(config.auth_token)
     executor = Executor(client)
