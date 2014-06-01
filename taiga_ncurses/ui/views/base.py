@@ -35,7 +35,7 @@ class SubView(object):
     help_popup_info = (
        ( "General", (
            ("B", "Go to Backlog Panel"),
-           ("S", "Go to Milestones Panel"),
+           ("M", "Go to Milestones Panel"),
            ("I", "Go to Issues Panel"),
            ("W", "Go to Wiki Panel"),
            ("A", "Go to Admin Panel"),
