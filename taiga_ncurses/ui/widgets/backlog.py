@@ -96,8 +96,8 @@ class UserStoryList(mixins.ViMotionMixin, mixins.EmacsMotionMixin, urwid.WidgetW
         self.project = project
         self.roles = data.computable_roles(project)
 
-        colum_items = [("weight", 0.55, generic.ListCell("US"))]
-        colum_items.append(("weight", 0.1, generic.ListCell("Status")))
+        colum_items = [("weight", 0.5, generic.ListCell("US"))]
+        colum_items.append(("weight", 0.15, generic.ListCell("Status")))
         colum_items.extend([("weight", 0.05, generic.ListCell(r["name"])) for r in self.roles.values()])
         colum_items.append(("weight", 0.05, generic.ListCell(("green", "TOTAL"))))
         colum_items.append(("weight", 0.08, generic.ListCell(("cyan", "SUM."))))
@@ -147,7 +147,7 @@ class UserStoryEntry(urwid.WidgetWrap):
     def __init__(self, us, project, roles, summation=0.0, on_status_change=None, on_points_change=None):
         self.user_story = us
 
-        colum_items = [(4, generic.ListText("#{0}".format(str(data.us_ref(us))), align="left"))]
+        colum_items = [(6, generic.ListText("#{0}".format(str(data.us_ref(us))), align="left"))]
 
         colum_items.append((1, urwid.AttrMap(generic.ListText("⊕" if data.us_client_requirement(us) else " ",
                                                               align="left"), "yellow", "focus")))
@@ -164,7 +164,7 @@ class UserStoryEntry(urwid.WidgetWrap):
         selected = us.get("status", None) or project.get("default_us_status", None)
         status_combo = generic.ComboBox(items, selected_value=selected, style="cyan", enable_markup=True,
                                         on_state_change=on_status_change, user_data=us)
-        colum_items.append(("weight", 0.1, status_combo))
+        colum_items.append(("weight", 0.15, status_combo))
 
         points = data.points(project)
         items = tuple((p.get("name", ""), p.get("id", None)) for p in points.values())
