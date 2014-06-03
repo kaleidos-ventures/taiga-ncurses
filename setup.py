@@ -12,6 +12,7 @@ REQUIREMENTS = [
     "requests==2.2.1",
     "urwid>=1.2.1",
     "x256==0.0.3",
+    "ConfigObj==5.0.5"
 ]
 
 
