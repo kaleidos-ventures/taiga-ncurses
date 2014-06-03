@@ -1,11 +1,49 @@
-[host]
-scheme = http
-domain = localhost
-port = 8000
-
-[site]
-domain = localhost
-
-[keys]
-quit = q
-debug = D
+[__main__]
+    [[host]]
+        scheme = http
+        domain = localhost
+        port = 8000
+    [[site]]
+        domain = localhost
+    [[keys]]
+        q = Quit
+        D = Debug
+[auth]
+    token = eyJ1c2VyX2lkIjoxfQ:1WrwDI:4O_tvBlX_7ejYxjEsPm4J9D4Dag
+[backlog]
+    [[keys]]
+        n = Create user story
+        delete = Delete user story
+        ? = Help
+        e = Edit user story
+        N = Create user stories in bulk
+        w = Update user stories order
+        m = Move us to milestone
+        K = Us up
+        r = Reload
+        J = Us down
+[projects]
+    [[keys]]
+        B = Backlog
+        P = Projects
+        I = Issues
+        M = Milestones
+        A = Admin
+        W = Wiki
+[milestone]
+    [[keys]]
+        N = Create user story
+        e = Edit user story or task
+        ? = Help
+        m = Change to milestone
+        r = Reload
+        n = Create task
+        delete = Delete user story or task
+[issues]
+    [[keys]]
+        n = Create issue
+        e = Edit issue
+        ? = Help
+        f = Filters
+        r = Reload
+        delete = Delete issue

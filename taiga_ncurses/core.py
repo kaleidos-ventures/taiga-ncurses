@@ -70,8 +70,7 @@ class TaigaCore(object):
             self.loop.draw_screen()
 
     def set_auth_config(self, auth_data):
-        self.configuration.config_dict["auth"] = {}
-        self.configuration.config_dict["auth"]["token"] = auth_data["auth_token"]
+        self.configuration.auth_token = auth_data["auth_token"]
 
     def _build_login_controller(self):
         login_view = views.auth.LoginView('username', 'password')

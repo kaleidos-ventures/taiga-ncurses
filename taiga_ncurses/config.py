@@ -7,13 +7,11 @@ taiga_ncurses.config
 
 import os
 import urllib
-from configparser import ConfigParser
-from collections import ChainMap
+from configobj import ConfigObj
 
 
 DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
 DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
-DEFAULT_AUTH_FILE = os.path.join(DEFAULT_CONFIG_DIR, "auth.ini")
 
 PALETTE = [
     ("default", "white", "default"),
@@ -109,18 +107,28 @@ class ProjectIssuesKeys(metaclass=KeyConfigMeta):
 
 
 DEFAULTS = {
-    "keys": ChainMap(Keys.config,
-                     ProjectKeys.config,
-                     ProjectBacklogKeys.config,
-                     ProjectMilestoneKeys.config,
-                     ProjectIssuesKeys.config),
-    "host": {
-        "scheme": "http",
-        "domain": "localhost",
-        "port": "8000",
+    "__main__": {
+        "host": {
+            "scheme": "http",
+            "domain": "localhost",
+            "port": "8000",
+        },
+        "site": {
+            "domain": "localhost",
+        },
+        "keys": Keys.config
     },
-    "site": {
-        "domain": "localhost",
+    "projects": {
+        "keys": ProjectKeys.config
+    },
+    "backlog": {
+        "keys": ProjectBacklogKeys.config
+    },
+    "milestone": {
+        "keys": ProjectMilestoneKeys.config
+    },
+    "issues": {
+        "keys": ProjectIssuesKeys.config
     }
 }
 
@@ -128,52 +136,26 @@ DEFAULTS = {
 class Configuration(object):
     def __init__(self,
                  config_dict=None,
-                 config_file=DEFAULT_CONFIG_FILE,
-                 auth_config_file=DEFAULT_AUTH_FILE,
-                 config_dir=DEFAULT_CONFIG_DIR):
-        self.config_dict = DEFAULTS.copy()
-        self.config_dict.update({} if config_dict is None else config_dict)
+                 config_file=DEFAULT_CONFIG_FILE):
         self.config_file = config_file
-        self.auth_config_file = auth_config_file
-        self.config_dir = config_dir
+
+        self.config = ConfigObj(infile=DEFAULTS.copy(),
+                                encoding="utf-8",
+                                create_empty=True)
+        self.config.update({} if config_dict is None else config_dict)
+        self.config.filename = self.config_file
 
     def load(self):
-        parser = ConfigParser()
-        parser.read(self.config_file, encoding="utf-8")
-        self.config_dict.update(parser._sections)
-        auth_parser = ConfigParser()
-        auth_parser.read(self.auth_config_file, encoding="utf-8")
-        self.config_dict.update(auth_parser._sections)
+        config = ConfigObj(self.config_file, encoding="utf-8")
+        self.config.merge(config)
 
     def save(self):
-        try:
-            os.mkdir(self.config_dir)
-        except FileExistsError:
-            pass
-        self._save_config()
-        self._save_auth()
-
-    def _save_config(self):
-        parser = ConfigParser()
-        config_sections = (s for s in self.config_dict if s != "auth")
-        for s in config_sections:
-            parser.add_section(s)
-            for k, v in self.config_dict[s].items():
-                parser.set(s, k, str(v))
-        with open(self.config_file, mode="w+", encoding="utf-8") as config_file:
-            parser.write(config_file)
-
-    def _save_auth(self):
-        if "auth" in self.config_dict:
-            parser = ConfigParser()
-            parser.add_section("auth")
-            parser.set("auth", "token", self.config_dict["auth"]["token"])
-            with open(self.auth_config_file, mode="w+", encoding="utf-8") as auth_config_file:
-                parser.write(auth_config_file)
+        os.makedirs(os.path.dirname(self.config_file), exist_ok=True)
+        self.config.write()
 
     @property
     def host(self):
-        host = self.config_dict["host"]
+        host = self.config["__main__"]["host"]
 
         scheme = host["scheme"]
         assert scheme in ("http", "https")
@@ -184,13 +166,14 @@ class Configuration(object):
 
     @property
     def site(self):
-        site =  self.config_dict["site"]
+        site =  self.config["__main__"]["site"]
         domain = urllib.parse.quote(site["domain"])
         return domain
 
     @property
     def auth_token(self):
-        auth_dict = self.config_dict.get("auth", None)
-        if auth_dict is None:
-            return auth_dict
-        return auth_dict.get("token", None)
+        return self.config.get("auth", {}).get("token", None)
+
+    @auth_token.setter
+    def auth_token(self, auth_token):
+        self.config.merge({"auth": {"token": auth_token}})
