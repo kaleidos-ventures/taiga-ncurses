@@ -12,7 +12,7 @@ import urwid
 
 from taiga_ncurses.ui import views
 from taiga_ncurses import controllers
-from taiga_ncurses.config import Keys, PALETTE
+from taiga_ncurses.config import Keys
 
 
 class TaigaCore(object):
@@ -30,7 +30,7 @@ class TaigaCore(object):
 
         # Main Loop
         self.loop = urwid.MainLoop(self.controller.view.widget,
-                                   palette=PALETTE,
+                                   palette=self.configuration.palette,
                                    unhandled_input=self.key_handler,
                                    handle_mouse=True,
                                    pop_ups=True)

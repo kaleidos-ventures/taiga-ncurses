@@ -13,45 +13,45 @@ from configobj import ConfigObj
 DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
 DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
 
-PALETTE = [
-    ("default", "white", "default"),
-    ("editor", "white,underline", "black", ),
-    ("password-editor", "light red,underline", "black"),
-    ("submit-button", "white", "dark green"),
-    ("cancel-button", "black", "light gray"),
-    ("popup", "white", "dark gray"),
-    ("popup-section-title", "white,underline,bold", "dark gray"),
-    ("popup-editor", "white,underline", "dark gray"),
-    ("popup-submit-button", "white", "dark green"),
-    ("popup-cancel-button", "black", "light gray"),
-    ("popup-selected", "dark cyan", "black"),
-    ("popup-text-magenta", "light magenta", "dark gray"),
-    ("popup-text-red", "dark red", "dark gray"),
-    ("error", "white", "dark red"),
-    ("info", "white", "dark blue"),
-    ("green", "dark green", "default"),
-    ("red", "dark red", "default"),
-    ("yellow", "yellow", "default"),
-    ("cyan", "dark cyan", "default"),
-    ("magenta", "light magenta", "default"),
-    ("green-bg", "white", "dark green"),
-    ("projects-button", "black", "dark green"),
-    ("account-button", "black", "dark green"),
-    ("help-button", "white", "black"),
-    ("footer", "black", "black"),
-    ("footer-error", "dark red", "black"),
-    ("footer-info", "light blue", "black"),
-    ("active-tab", "white", "dark blue"),
-    ("inactive-tab", "white", "default"),
-    ("focus", "black", "dark cyan"),
-    ("focus-header", "black", "dark green"),
-    ('progressbar-normal', 'black', 'dark gray', 'standout'),
-    ('progressbar-complete', 'white', 'dark green'),
-    ('progressbar-smooth', 'dark green','dark gray'),
-    ('progressbar-normal-red', 'black', 'dark gray', 'standout'),
-    ('progressbar-complete-red', 'white', 'dark red'),
-    ('progressbar-smooth-red', 'dark red','dark gray')
-]
+DEFAULT_PALETTE = {
+    "default":                  ("white", "default"),
+    "editor":                   ("white,underline", "black", ),
+    "password-editor":          ("light red,underline", "black"),
+    "submit-button":            ("white", "dark green"),
+    "cancel-button":            ("black", "light gray"),
+    "popup":                    ("white","dark gray"),
+    "popup-section-title":      ("white,underline,bold", "dark gray"),
+    "popup-editor":             ("white,underline", "dark gray"),
+    "popup-submit-button":      ("white", "dark green"),
+    "popup-cancel-button":      ("black", "light gray"),
+    "popup-selected":           ("dark cyan", "black"),
+    "popup-text-magenta":       ("light magenta", "dark gray"),
+    "popup-text-red":           ("dark red", "dark gray"),
+    "error":                    ("white", "dark red"),
+    "info":                     ("white", "dark blue"),
+    "green":                    ("dark green", "default"),
+    "red":                      ("dark red", "default"),
+    "yellow":                   ("yellow", "default"),
+    "cyan":                     ("dark cyan", "default"),
+    "magenta":                  ("light magenta", "default"),
+    "green-bg":                 ("white", "dark green"),
+    "projects-button":          ("black", "dark green"),
+    "account-button":           ("black", "dark green"),
+    "help-button":              ("white", "black"),
+    "footer":                   ("black", "black"),
+    "footer-error":             ("dark red", "black"),
+    "footer-info":              ("light blue", "black"),
+    "active-tab":               ("white", "dark blue"),
+    "inactive-tab":             ("white", "default"),
+    "focus":                    ("black", "dark cyan"),
+    "focus-header":             ("black", "dark green"),
+    "progressbar-normal":       ("black", "dark gray", "standout"),
+    "progressbar-complete":     ("white", "dark green"),
+    "progressbar-smooth":       ("dark green","dark gray"),
+    "progressbar-normal-red":   ("black", "dark gray", "standout"),
+    "progressbar-complete-red": ("white", "dark red"),
+    "progressbar-smooth-red":   ("dark red","dark gray")
+}
 
 
 class KeyConfigMeta(type):
@@ -107,7 +107,7 @@ class ProjectIssuesKeys(metaclass=KeyConfigMeta):
 
 
 DEFAULTS = {
-    "__main__": {
+    "main": {
         "host": {
             "scheme": "http",
             "domain": "localhost",
@@ -116,6 +116,7 @@ DEFAULTS = {
         "site": {
             "domain": "localhost",
         },
+        "palette": "default",
         "keys": Keys.config
     },
     "projects": {
@@ -129,6 +130,9 @@ DEFAULTS = {
     },
     "issues": {
         "keys": ProjectIssuesKeys.config
+    },
+    "palettes": {
+        "default": DEFAULT_PALETTE
     }
 }
 
@@ -146,7 +150,8 @@ class Configuration(object):
         self.config.filename = self.config_file
 
     def load(self):
-        config = ConfigObj(self.config_file, encoding="utf-8")
+        config = ConfigObj(infile=self.config_file,
+                           encoding="utf-8")
         self.config.merge(config)
 
     def save(self):
@@ -155,18 +160,20 @@ class Configuration(object):
 
     @property
     def host(self):
-        host = self.config["__main__"]["host"]
+        host = self.config["main"]["host"]
 
         scheme = host["scheme"]
         assert scheme in ("http", "https")
         domain = urllib.parse.quote(host["domain"])
         port = ":{}".format(host["port"]) if "port" in host else ""
 
-        return "{scheme}://{domain}{port}".format(scheme=scheme, domain=domain, port=port)
+        return "{scheme}://{domain}{port}".format(scheme=scheme,
+                                                  domain=domain,
+                                                  port=port)
 
     @property
     def site(self):
-        site =  self.config["__main__"]["site"]
+        site =  self.config["main"]["site"]
         domain = urllib.parse.quote(site["domain"])
         return domain
 
@@ -177,3 +184,9 @@ class Configuration(object):
     @auth_token.setter
     def auth_token(self, auth_token):
         self.config.merge({"auth": {"token": auth_token}})
+
+    @property
+    def palette(self):
+        palette_name = self.config["main"].get("palette", "default")
+        palette_dict = self.config["palettes"].get(palette_name, DEFAULT_PALETTE)
+        return [(k,) + v for k, v in palette_dict.items()]

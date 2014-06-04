@@ -7,7 +7,7 @@ taiga_ncurses.cli
 
 from taiga_ncurses.api.client import TaigaClient
 from taiga_ncurses.core import TaigaCore
-from taiga_ncurses.config import Configuration, DEFAULTS
+from taiga_ncurses.config import Configuration
 from taiga_ncurses.executor import Executor
 
 
