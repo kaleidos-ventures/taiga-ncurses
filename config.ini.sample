@@ -1,49 +1,87 @@
-[__main__]
+[main]
     [[host]]
+        port = 8000
         scheme = http
         domain = localhost
-        port = 8000
     [[site]]
         domain = localhost
+    palette = default
     [[keys]]
-        q = Quit
         D = Debug
-[auth]
-    token = eyJ1c2VyX2lkIjoxfQ:1WrwDI:4O_tvBlX_7ejYxjEsPm4J9D4Dag
-[backlog]
-    [[keys]]
-        n = Create user story
-        delete = Delete user story
-        ? = Help
-        e = Edit user story
-        N = Create user stories in bulk
-        w = Update user stories order
-        m = Move us to milestone
-        K = Us up
-        r = Reload
-        J = Us down
+        q = Quit
 [projects]
     [[keys]]
-        B = Backlog
-        P = Projects
-        I = Issues
-        M = Milestones
-        A = Admin
         W = Wiki
+        B = Backlog
+        I = Issues
+        A = Admin
+        M = Milestones
+        P = Projects
+[backlog]
+    [[keys]]
+        K = Us up
+        n = Create user story
+        w = Update user stories order
+        e = Edit user story
+        ? = Help
+        N = Create user stories in bulk
+        J = Us down
+        m = Move us to milestone
+        delete = Delete user story
+        r = Reload
 [milestone]
     [[keys]]
-        N = Create user story
+        n = Create task
         e = Edit user story or task
+        N = Create user story
         ? = Help
         m = Change to milestone
-        r = Reload
-        n = Create task
         delete = Delete user story or task
+        r = Reload
 [issues]
     [[keys]]
         n = Create issue
         e = Edit issue
         ? = Help
         f = Filters
-        r = Reload
         delete = Delete issue
+        r = Reload
+[palettes]
+    [[default]]
+        footer = black, black
+        progressbar-normal = black, dark gray, standout
+        cancel-button = black, light gray
+        info = white, dark blue
+        progressbar-complete-red = white, dark red
+        submit-button = white, dark green
+        magenta = light magenta, default
+        popup-selected = dark cyan, black
+        green-bg = white, dark green
+        error = white, dark red
+        popup-cancel-button = black, light gray
+        red = dark red, default
+        progressbar-normal-red = black, dark gray, standout
+        popup-text-magenta = light magenta, dark gray
+        popup-section-title = "white,underline,bold", dark gray
+        footer-info = light blue, black
+        footer-error = dark red, black
+        account-button = black, dark green
+        yellow = yellow, default
+        progressbar-complete = white, dark green
+        progressbar-smooth-red = dark red, dark gray
+        popup-text-red = dark red, dark gray
+        default = white, default
+        password-editor = "light red,underline", black
+        popup-submit-button = white, dark green
+        focus-header = black, dark green
+        editor = "white,underline", black
+        popup-editor = "white,underline", dark gray
+        cyan = dark cyan, default
+        progressbar-smooth = dark green, dark gray
+        inactive-tab = white, default
+        green = dark green, default
+        active-tab = white, dark blue
+        popup = white, dark gray
+        projects-button = black, dark green
+        help-button = white, black
+        focus = black, dark cyan
