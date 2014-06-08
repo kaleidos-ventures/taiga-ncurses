@@ -7,7 +7,7 @@ from taiga_ncurses.config import DEFAULTS, Configuration
 SAMPLE_HOST = {
     "scheme": "http",
     "domain": "localhost",
-    "port": 9000
+    "port": 8000
 }
 
 SAMPLE_CONFIG = """
@@ -34,9 +34,9 @@ def test_configuration_builds_a_url_for_the_host():
     _ = tempfile.NamedTemporaryFile()
     config = Configuration(config_file=_)
     _.close()
-    assert config.host == "{scheme}://{domain}:{port}".format(scheme=DEFAULTS["host"]["scheme"],
-                                                              domain=DEFAULTS["host"]["domain"],
-                                                              port=DEFAULTS["host"]["port"])
+    assert config.host == "{scheme}://{domain}:{port}".format(scheme=DEFAULTS["main"]["host"]["scheme"],
+                                                              domain=DEFAULTS["main"]["host"]["domain"],
+                                                              port=DEFAULTS["main"]["host"]["port"])
 
 def test_configuration_load_host_from_file():
     _ = tempfile.NamedTemporaryFile()
@@ -89,7 +89,7 @@ def test_auth_configuration_save_to_file():
     auth_config_file = tempfile.NamedTemporaryFile(mode='w+', encoding='utf-8', delete=False)
     auth_config_file.file.write(SAMPLE_AUTH_CONFIG)
     auth_config_file.close()
-    config = Configuration(auth_config_file=auth_config_file.name)
+    config = Configuration(config_file=auth_config_file.name)
     config.load()
     config.save()
     parser = ConfigParser()
