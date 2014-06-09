@@ -139,7 +139,7 @@ class ConfigData(object):
     def __dir__(self):
         return self._data.keys()
 
-    def __getiattr__(self, name):
+    def __getattr__(self, name):
         if name not in self._data:
             raise AttributeError
 
@@ -148,7 +148,7 @@ class ConfigData(object):
 
         return self._data[name]
 
-    def __setter__(self, name, value):
+    def __setattr__(self, name, value):
         self._data[name] = value
 
     def __delattr__(self, name):
