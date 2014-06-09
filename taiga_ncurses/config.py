@@ -12,6 +12,11 @@ from configobj import ConfigObj
 
 DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
 DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
+###########################################################
+# Default config settings
+###########################################################
+
+# Default palette theme
 
 DEFAULT_PALETTE = {
     "default":                  ("white", "default"),
@@ -53,58 +58,52 @@ DEFAULT_PALETTE = {
     "progressbar-smooth-red":   ("dark red","dark gray")
 }
 
+# Default keyboard shortcut
 
-class KeyConfigMeta(type):
-    def __new__(cls, clsname, bases, dct):
-        dct["config"] = {v: k.capitalize().replace("_", " ") for k, v in dct.items() if k.isupper()}
-        return super().__new__(cls, clsname, bases, dct)
+MAIN_KEYS = {
+    "quit": "q",
+    "debug": "D",
+    "projects": "P",
+    "backlog": "B",
+    "milestone": "M",
+    "issues": "I",
+    "wiki": "W",
+    "admin": "A"
+}
 
+BACKLOG_KEYS = {
+    "create": "n",
+    "create_in_bulk": "N",
+    "edit": "e",
+    "delete": "delete",
+    "update_order": "w",
+    "move_to_milestone": "m",
+    "increase_priority": "K",
+    "decrease_priority": "J",
+    "reload": "r",
+    "help":"?"
+}
 
-class Keys(metaclass=KeyConfigMeta):
-    QUIT = "q"
-    DEBUG = "D"
+MILESTONE_KEYS = {
+    "create_user_story": "N",
+    "create_task": "n",
+    "edit": "e",
+    "delete": "delete",
+    "change_to_milestone": "m",
+    "reload": "r",
+    "help": "?"
+}
 
+ISSUES_KEYS = {
+    "create": "n",
+    "edit": "e",
+    "delete": "delete",
+    "filters": "f",
+    "reload": "r",
+    "help": "?"
+}
 
-class ProjectKeys(metaclass=KeyConfigMeta):
-    PROJECTS = "P"
-    BACKLOG = "B"
-    MILESTONES = "M"
-    ISSUES = "I"
-    WIKI = "W"
-    ADMIN = "A"
-
-
-class ProjectBacklogKeys(metaclass=KeyConfigMeta):
-    CREATE_USER_STORY = "n"
-    CREATE_USER_STORIES_IN_BULK = "N"
-    EDIT_USER_STORY = "e"
-    DELETE_USER_STORY = "delete"
-    UPDATE_USER_STORIES_ORDER = "w"
-    MOVE_US_TO_MILESTONE = "m"
-    US_UP = "K"
-    US_DOWN = "J"
-    RELOAD = "r"
-    HELP = "?"
-
-
-class ProjectMilestoneKeys(metaclass=KeyConfigMeta):
-    CREATE_USER_STORY = "N"
-    CREATE_TASK = "n"
-    EDIT_USER_STORY_OR_TASK = "e"
-    DELETE_USER_STORY_OR_TASK = "delete"
-    CHANGE_TO_MILESTONE = "m"
-    RELOAD = "r"
-    HELP = "?"
-
-
-class ProjectIssuesKeys(metaclass=KeyConfigMeta):
-    CREATE_ISSUE = "n"
-    EDIT_ISSUE = "e"
-    DELETE_ISSUE = "delete"
-    FILTERS = "f"
-    RELOAD = "r"
-    HELP = "?"
-
+# Default settings
 
 DEFAULTS = {
     "main": {
@@ -117,27 +116,49 @@ DEFAULTS = {
             "domain": "localhost",
         },
         "palette": "default",
-        "keys": Keys.config
-    },
-    "projects": {
-        "keys": ProjectKeys.config
+        "keys": MAIN_KEYS
     },
     "backlog": {
-        "keys": ProjectBacklogKeys.config
+        "keys": BACKLOG_KEYS
     },
     "milestone": {
-        "keys": ProjectMilestoneKeys.config
+        "keys": MILESTONE_KEYS
     },
     "issues": {
-        "keys": ProjectIssuesKeys.config
+        "keys": ISSUES_KEYS
     },
     "palettes": {
         "default": DEFAULT_PALETTE
     }
 }
 
+class ConfigData(object):
+    def __init__(data):
+        self._data = data
 
-class Configuration(object):
+    def __dir__(self):
+        return self._data.keys()
+
+    def __getiattr__(self, name):
+        if name not in self._data:
+            raise AttributeError
+
+        if isinstance(self._data[name], dict):
+            return self.__class__(self._data[name])
+
+        return self._data[name]
+
+    def __setter__(self, name, value):
+        self._data[name] = value
+
+    def __delattr__(self, name):
+        if name not in self._data:
+            raise AttributeError
+
+        del self._data[name]
+
+
+class ConfiguratioManager(object):
     def __init__(self,
                  config_dict=None,
                  config_file=DEFAULT_CONFIG_FILE):
@@ -189,4 +210,7 @@ class Configuration(object):
     def palette(self):
         palette_name = self.config["main"].get("palette", "default")
         palette_dict = self.config["palettes"].get(palette_name, DEFAULT_PALETTE)
-        return [(k,) + v for k, v in palette_dict.items()]
+        return [(k,) + tuple(v) for k, v in palette_dict.items()]
+
+
+settings = ConfiguratioManager()

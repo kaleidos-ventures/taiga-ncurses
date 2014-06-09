@@ -8,7 +8,7 @@ taiga_ncurses.controllers.backlog
 from concurrent.futures import wait
 import functools, copy
 
-from taiga_ncurses.config import ProjectBacklogKeys
+from taiga_ncurses.config import settings
 from taiga_ncurses.ui import signals
 
 from . import base
@@ -24,25 +24,25 @@ class ProjectBacklogSubController(base.Controller):
         self.view.user_stories.on_user_story_points_change = self.handle_change_user_story_points_request
 
     def handle(self, key):
-        if key == ProjectBacklogKeys.CREATE_USER_STORY:
+        if key == settings.config["backlog"]["keys"]["create"]:
             self.new_user_story()
-        if key == ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK:
+        if key == settings.config["backlog"]["keys"]["create_in_bulk"]:
             self.new_user_stories_in_bulk()
-        elif key == ProjectBacklogKeys.EDIT_USER_STORY:
+        elif key == settings.config["backlog"]["keys"]["edit"]:
             self.edit_user_story()
-        elif key == ProjectBacklogKeys.DELETE_USER_STORY:
+        elif key == settings.config["backlog"]["keys"]["delete"]:
             self.delete_user_story()
-        elif key == ProjectBacklogKeys.US_UP:
+        elif key == settings.config["backlog"]["keys"]["increase_priority"]:
             self.move_current_us_up()
-        elif key == ProjectBacklogKeys.US_DOWN:
+        elif key == settings.config["backlog"]["keys"]["decrease_priority"]:
             self.move_current_us_down()
-        elif key == ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER:
+        elif key == settings.config["backlog"]["keys"]["update_order"]:
             self.update_user_stories_order()
-        elif key == ProjectBacklogKeys.MOVE_US_TO_MILESTONE:
+        elif key == settings.config["backlog"]["keys"]["move_to_milestone"]:
             self.move_user_story_to_milestone()
-        elif key == ProjectBacklogKeys.RELOAD:
+        elif key == settings.config["backlog"]["keys"]["reload"]:
             self.load()
-        elif key == ProjectBacklogKeys.HELP:
+        elif key == settings.config["backlog"]["keys"]["help"]:
             self.help_info()
         else:
             super().handle(key)

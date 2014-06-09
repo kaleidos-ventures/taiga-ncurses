@@ -7,7 +7,7 @@ taiga_ncurses.controllers.projects
 
 import functools
 
-from taiga_ncurses.config import ProjectKeys
+from taiga_ncurses.config import settings
 from taiga_ncurses.ui import signals
 
 from . import base
@@ -68,26 +68,26 @@ class ProjectDetailController(base.Controller):
         self.subcontroller.load()
 
     def handle(self, key):
-        if key == ProjectKeys.BACKLOG:
+        if key == settings.config["main"]["keys"]["backlog"]:
             self.view.backlog_view()
             self.subcontroller = self.backlog
             self.subcontroller.load()
-        elif key == ProjectKeys.MILESTONES:
+        elif key == settings.config["main"]["keys"]["milestone"]:
             self.view.sprint_view()
             self.subcontroller = self.sprint
             self.subcontroller.load()
-        elif key == ProjectKeys.ISSUES:
+        elif key == settings.config["main"]["keys"]["issue"]:
             self.view.issues_view()
             self.subcontroller = self.issues
             self.subcontroller.load()
-        elif key == ProjectKeys.WIKI:
+        elif key == settings.config["main"]["keys"]["wiki"]:
             self.view.wiki_view()
             self.subcontroller = self.wiki
             self.subcontroller.load()
-        elif key == ProjectKeys.ADMIN:
+        elif key == settings.config["main"]["keys"]["admin"]:
             self.view.admin_view()
             self.subcontroller = self.admin
-        elif key == ProjectKeys.PROJECTS:
+        elif key == settings.config["main"]["keys"]["projects"]:
             self.state_machine.projects()
         else:
             self.subcontroller.handle(key)

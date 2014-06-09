@@ -1,87 +1,85 @@
 [main]
     [[host]]
-        port = 8000
         scheme = http
         domain = localhost
+        port = 8000
     [[site]]
         domain = localhost
     palette = default
     [[keys]]
-        D = Debug
-        q = Quit
-[projects]
-    [[keys]]
-        W = Wiki
-        B = Backlog
-        I = Issues
-        A = Admin
-        M = Milestones
-        P = Projects
+        quit = q
+        debug = D
+        backlog = B
+        admin = A
+        milestone = M
+        projects = P
+        issues = I
+        wiki = W
 [backlog]
     [[keys]]
-        K = Us up
-        n = Create user story
-        w = Update user stories order
-        e = Edit user story
-        ? = Help
-        N = Create user stories in bulk
-        J = Us down
-        m = Move us to milestone
-        delete = Delete user story
-        r = Reload
+        move_to_milestone = m
+        edit = e
+        update_order = w
+        reload = r
+        increase_priority = K
+        decrease_priority = J
+        delete = delete
+        create = n
+        create_in_bulk = N
+        help = ?
 [milestone]
     [[keys]]
-        n = Create task
-        e = Edit user story or task
-        N = Create user story
-        ? = Help
-        m = Change to milestone
-        delete = Delete user story or task
-        r = Reload
+        edit = e
+        create_task = n
+        change_to_milestone = m
+        delete = delete
+        create_user_story = N
+        reload = r
+        help = ?
 [issues]
     [[keys]]
-        n = Create issue
-        e = Edit issue
-        ? = Help
-        f = Filters
-        delete = Delete issue
-        r = Reload
+        edit = e
+        reload = r
+        create = n
+        delete = delete
+        help = ?
+        filters = f
 [palettes]
     [[default]]
-        footer = black, black
-        progressbar-normal = black, dark gray, standout
-        cancel-button = black, light gray
-        info = white, dark blue
         progressbar-complete-red = white, dark red
-        submit-button = white, dark green
-        magenta = light magenta, default
-        popup-selected = dark cyan, black
-        green-bg = white, dark green
-        error = white, dark red
-        popup-cancel-button = black, light gray
-        red = dark red, default
-        progressbar-normal-red = black, dark gray, standout
-        popup-text-magenta = light magenta, dark gray
-        popup-section-title = "white,underline,bold", dark gray
-        footer-info = light blue, black
-        footer-error = dark red, black
-        account-button = black, dark green
-        yellow = yellow, default
-        progressbar-complete = white, dark green
-        progressbar-smooth-red = dark red, dark gray
-        popup-text-red = dark red, dark gray
-        default = white, default
-        password-editor = "light red,underline", black
-        popup-submit-button = white, dark green
-        focus-header = black, dark green
-        editor = "white,underline", black
-        popup-editor = "white,underline", dark gray
-        cyan = dark cyan, default
         progressbar-smooth = dark green, dark gray
-        inactive-tab = white, default
-        green = dark green, default
-        active-tab = white, dark blue
-        popup = white, dark gray
+        default = white, default
+        popup-submit-button = white, dark green
         projects-button = black, dark green
-        help-button = white, black
+        progressbar-normal-red = black, dark gray, standout
+        green-bg = white, dark green
+        popup-selected = dark cyan, black
+        info = white, dark blue
+        error = white, dark red
+        progressbar-smooth-red = dark red, dark gray
+        submit-button = white, dark green
+        footer = black, black
+        progressbar-complete = white, dark green
+        cyan = dark cyan, default
+        footer-error = dark red, black
+        password-editor = "light red,underline", black
+        popup = white, dark gray
+        popup-cancel-button = black, light gray
+        yellow = yellow, default
+        magenta = light magenta, default
+        focus-header = black, dark green
+        popup-text-red = dark red, dark gray
+        account-button = black, dark green
+        progressbar-normal = black, dark gray, standout
+        footer-info = light blue, black
+        inactive-tab = white, default
         focus = black, dark cyan
+        green = dark green, default
+        red = dark red, default
+        active-tab = white, dark blue
+        help-button = white, black
+        popup-editor = "white,underline", dark gray
+        popup-section-title = "white,underline,bold", dark gray
+        editor = "white,underline", black
+        popup-text-magenta = light magenta, dark gray
+        cancel-button = black, light gray

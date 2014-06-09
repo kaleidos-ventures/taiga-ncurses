@@ -8,7 +8,7 @@ taiga_ncurses.controllers.milestone
 from concurrent.futures import wait
 import functools
 
-from taiga_ncurses.config import ProjectMilestoneKeys
+from taiga_ncurses.config import settings
 from taiga_ncurses.ui import signals
 from taiga_ncurses.ui.widgets.milestones import UserStoryEntry, TaskEntry
 import taiga_ncurses.data
@@ -29,19 +29,19 @@ class ProjectMilestoneSubController(base.Controller):
         self.view.taskboard.on_user_story_points_change = self.handle_change_user_story_points_request
 
     def handle(self, key):
-        if key == ProjectMilestoneKeys.CREATE_USER_STORY:
+        if key == settings.config["milestone"]["keys"]["create_user_story"]:
             self.new_user_story()
-        elif key == ProjectMilestoneKeys.CREATE_TASK:
+        elif key == settings.config["milestone"]["keys"]["create_task"]:
             self.new_task()
-        elif key == ProjectMilestoneKeys.EDIT_USER_STORY_OR_TASK:
+        elif key == settings.config["milestone"]["keys"]["edit"]:
             self.edit_user_story_or_task()
-        elif key == ProjectMilestoneKeys.DELETE_USER_STORY_OR_TASK:
+        elif key == settings.config["milestone"]["keys"]["delete"]:
             self.delete_user_story_or_task()
-        elif key == ProjectMilestoneKeys.CHANGE_TO_MILESTONE:
+        elif key == settings.config["milestone"]["keys"]["change_to_milestone"]:
             self.change_to_milestone()
-        elif key == ProjectMilestoneKeys.RELOAD:
+        elif key == settings.config["milestone"]["keys"]["reload"]:
             self.load()
-        elif key == ProjectMilestoneKeys.HELP:
+        elif key == settings.config["milestone"]["keys"]["help"]:
             self.help_info()
         else:
             super().handle(key)

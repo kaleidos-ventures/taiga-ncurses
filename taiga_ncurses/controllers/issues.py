@@ -8,7 +8,7 @@ taiga_ncurses.controllers.issues
 from concurrent.futures import wait
 import functools
 
-from taiga_ncurses.config import ProjectIssuesKeys
+from taiga_ncurses.config import settings
 from taiga_ncurses.ui import signals
 
 from . import base
@@ -41,17 +41,17 @@ class ProjectIssuesSubController(base.Controller):
         self.view.issues.on_issue_assigned_to_change = self.handle_change_issue_assigned_to_request
 
     def handle(self, key):
-        if key == ProjectIssuesKeys.CREATE_ISSUE:
+        if key == settings.config["issues"]["keys"]["create"]:
             self.new_issue()
-        elif key == ProjectIssuesKeys.EDIT_ISSUE:
+        elif key == settings.config["issues"]["keys"]["edit"]:
             self.edit_issue()
-        elif key == ProjectIssuesKeys.DELETE_ISSUE:
+        elif key == settings.config["issues"]["keys"]["delete"]:
             self.delete_issue()
-        elif key == ProjectIssuesKeys.FILTERS:
+        elif key == settings.config["issues"]["keys"]["filters"]:
             self.filters()
-        elif key == ProjectIssuesKeys.RELOAD:
+        elif key == settings.config["issues"]["keys"]["reload"]:
             self.load()
-        elif key == ProjectIssuesKeys.HELP:
+        elif key == settings.config["issues"]["keys"]["help"]:
             self.help_info()
         else:
             super().handle(key)

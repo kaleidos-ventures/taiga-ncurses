@@ -12,13 +12,13 @@ import urwid
 
 from taiga_ncurses.ui import views
 from taiga_ncurses import controllers
-from taiga_ncurses.config import Keys
+from taiga_ncurses.config import settings
 
 
 class TaigaCore(object):
-    def __init__(self, executor, configuration, authenticated=False, draw=True):
+    def __init__(self, executor, settings, authenticated=False, draw=True):
         self.executor = executor
-        self.configuration = configuration
+        self.settings = settings
         self.draw = draw
 
         if authenticated:
@@ -30,7 +30,7 @@ class TaigaCore(object):
 
         # Main Loop
         self.loop = urwid.MainLoop(self.controller.view.widget,
-                                   palette=self.configuration.palette,
+                                   palette=self.settings.palette,
                                    unhandled_input=self.key_handler,
                                    handle_mouse=True,
                                    pop_ups=True)
@@ -39,10 +39,10 @@ class TaigaCore(object):
         self.loop.run()
 
     def key_handler(self, key):
-        if key == Keys.QUIT:
-            self.configuration.save()
+        if key == settings.config["main"]["keys"]["quit"]:
+            self.settings.save()
             raise urwid.ExitMainLoop
-        elif key == Keys.DEBUG:
+        elif key == settings.config["main"]["keys"]["debug"]:
             self.debug()
         else:
             return self.controller.handle(key)
@@ -70,7 +70,7 @@ class TaigaCore(object):
             self.loop.draw_screen()
 
     def set_auth_config(self, auth_data):
-        self.configuration.auth_token = auth_data["auth_token"]
+        self.settings.auth_token = auth_data["auth_token"]
 
     def _build_login_controller(self):
         login_view = views.auth.LoginView('username', 'password')
@@ -92,7 +92,6 @@ class TaigaCore(object):
                                                                           self.executor,
                                                                           self.state_machine)
         return project_controller
-
 
 
 class StateMeta(type):
