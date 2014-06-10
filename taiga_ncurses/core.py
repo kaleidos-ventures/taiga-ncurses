@@ -39,10 +39,10 @@ class TaigaCore(object):
         self.loop.run()
 
     def key_handler(self, key):
-        if key == settings.config["main"]["keys"]["quit"]:
+        if key == settings.data.main.keys.quit:
             self.settings.save()
             raise urwid.ExitMainLoop
-        elif key == settings.config["main"]["keys"]["debug"]:
+        elif key == settings.data.main.keys.debug:
             self.debug()
         else:
             return self.controller.handle(key)
@@ -70,7 +70,7 @@ class TaigaCore(object):
             self.loop.draw_screen()
 
     def set_auth_config(self, auth_data):
-        self.settings.auth_token = auth_data["auth_token"]
+        self.settings.data.auth.token = auth_data["auth_token"]
 
     def _build_login_controller(self):
         login_view = views.auth.LoginView('username', 'password')

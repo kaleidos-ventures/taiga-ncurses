@@ -7,7 +7,6 @@ taiga_ncurses.config
 
 import os
 import urllib
-from configobj import ConfigObj
 
 
 DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
@@ -129,11 +128,14 @@ DEFAULTS = {
     },
     "palettes": {
         "default": DEFAULT_PALETTE
+    },
+    "auth": {
+        "token": None,
     }
 }
 
 class ConfigData(object):
-    def __init__(data):
+    def __init__(self, data):
         self._data = data
 
     def __dir__(self):
@@ -157,59 +159,43 @@ class ConfigData(object):
 
         del self._data[name]
 
+    def items(self):
+        return self._data.items()
+
 
 class ConfiguratioManager(object):
-    def __init__(self,
-                 config_dict=None,
-                 config_file=DEFAULT_CONFIG_FILE):
+    def __init__(self, config_file=DEFAULT_CONFIG_FILE):
         self.config_file = config_file
-
-        self.config = ConfigObj(infile=DEFAULTS.copy(),
-                                encoding="utf-8",
-                                create_empty=True)
-        self.config.update({} if config_dict is None else config_dict)
-        self.config.filename = self.config_file
+        self.data = ConfigData(DEFAULTS.copy())
 
     def load(self):
-        config = ConfigObj(infile=self.config_file,
-                           encoding="utf-8")
-        self.config.merge(config)
+        # TODO
+        pass
 
-    def save(self):
-        os.makedirs(os.path.dirname(self.config_file), exist_ok=True)
-        self.config.write()
+    def save(self):\
+        # TODO
+        pass
 
     @property
     def host(self):
-        host = self.config["main"]["host"]
-
-        scheme = host["scheme"]
+        scheme = self.data.main.host.scheme
         assert scheme in ("http", "https")
-        domain = urllib.parse.quote(host["domain"])
-        port = ":{}".format(host["port"]) if "port" in host else ""
-
+        domain = urllib.parse.quote(self.data.main.host.domain)
+        try:
+            port = ":{}".format(self.data.main.host.port)
+        except AttributeError:
+            port = ""
         return "{scheme}://{domain}{port}".format(scheme=scheme,
                                                   domain=domain,
                                                   port=port)
 
     @property
-    def site(self):
-        site =  self.config["main"]["site"]
-        domain = urllib.parse.quote(site["domain"])
-        return domain
-
-    @property
-    def auth_token(self):
-        return self.config.get("auth", {}).get("token", None)
-
-    @auth_token.setter
-    def auth_token(self, auth_token):
-        self.config.merge({"auth": {"token": auth_token}})
-
-    @property
     def palette(self):
-        palette_name = self.config["main"].get("palette", "default")
-        palette_dict = self.config["palettes"].get(palette_name, DEFAULT_PALETTE)
+        palette_name = self.data.main.palette
+        try:
+            palette_dict = getattr(self.data.palettes, palette_name)
+        except AttributeError:
+            palette_dict = DEFAULT_PALETTE
         return [(k,) + tuple(v) for k, v in palette_dict.items()]
 
 
