@@ -24,8 +24,8 @@ Just execute these commands in your virtualenv(wrapper):
     $ taiga-ncurses         # to run the app
 
 
-Obviously you need the `taiga backend`_ and, if you consider yourself a loser,
-you can use the `taiga web client`_, sometimes. ;-)
+Obviously you need the `taiga backend`_ and, if you don't fancy living in darkness,
+you can use the `taiga web client`_, sometimes. :P
 
 Note: taiga-ncurses only runs with python 3.3+.
 
