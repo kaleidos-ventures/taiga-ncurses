@@ -29,5 +29,15 @@ you can use the `taiga web client`_, sometimes. :P
 
 Note: taiga-ncurses only runs with python 3.3+.
 
+Community
+---------
+
+Taiga has a `mailing list`_. Feel free to join it and ask any questions you may have.
+
+To subscribe for announcements of releases, important changes and so on, please follow 
+`@taigaio`_ on Twitter.
+
 .. _taiga backend: https://github.com/kaleidos/taiga-back
 .. _taiga web client: https://github.com/kaleidos/taiga-front
+.. _mailing list: http://groups.google.com/d/forum/taigaio
+.. _@taigaio: https://twitter.com/taigaio
