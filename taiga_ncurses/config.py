@@ -136,7 +136,7 @@ DEFAULTS = {
 
 class ConfigData(object):
     def __init__(self, data):
-        self._data = data
+        super().__setattr__('_data', data)
 
     def __dir__(self):
         return self._data.keys()
