@@ -68,26 +68,26 @@ class ProjectDetailController(base.Controller):
         self.subcontroller.load()
 
     def handle(self, key):
-        if key == settings.config.data.main.keys.backlog:
+        if key == settings.data.main.keys.backlog:
             self.view.backlog_view()
             self.subcontroller = self.backlog
             self.subcontroller.load()
-        elif key == settings.config.data.main.keys.milestone:
+        elif key == settings.data.main.keys.milestone:
             self.view.sprint_view()
             self.subcontroller = self.sprint
             self.subcontroller.load()
-        elif key == settings.config.data.main.keys.issue:
+        elif key == settings.data.main.keys.issues:
             self.view.issues_view()
             self.subcontroller = self.issues
             self.subcontroller.load()
-        elif key == settings.config.data.main.keys.wiki:
+        elif key == settings.data.main.keys.wiki:
             self.view.wiki_view()
             self.subcontroller = self.wiki
             self.subcontroller.load()
-        elif key == settings.config.data.main.keys.admin:
+        elif key == settings.data.main.keys.admin:
             self.view.admin_view()
             self.subcontroller = self.admin
-        elif key == settings.config.data.main.keys.projects:
+        elif key == settings.data.main.keys.projects:
             self.state_machine.projects()
         else:
             self.subcontroller.handle(key)

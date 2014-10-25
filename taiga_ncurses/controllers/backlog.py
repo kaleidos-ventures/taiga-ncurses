@@ -24,25 +24,25 @@ class ProjectBacklogSubController(base.Controller):
         self.view.user_stories.on_user_story_points_change = self.handle_change_user_story_points_request
 
     def handle(self, key):
-        if key == settings.config["backlog"]["keys"]["create"]:
+        if key == settings.data.backlog.keys.create:
             self.new_user_story()
-        if key == settings.config["backlog"]["keys"]["create_in_bulk"]:
+        if key == settings.data.backlog.keys.create_in_bulk:
             self.new_user_stories_in_bulk()
-        elif key == settings.config["backlog"]["keys"]["edit"]:
+        elif key == settings.data.backlog.keys.edit:
             self.edit_user_story()
-        elif key == settings.config["backlog"]["keys"]["delete"]:
+        elif key == settings.data.backlog.keys.delete:
             self.delete_user_story()
-        elif key == settings.config["backlog"]["keys"]["increase_priority"]:
+        elif key == settings.data.backlog.keys.increase_priority:
             self.move_current_us_up()
-        elif key == settings.config["backlog"]["keys"]["decrease_priority"]:
+        elif key == settings.data.backlog.keys.decrease_priority:
             self.move_current_us_down()
-        elif key == settings.config["backlog"]["keys"]["update_order"]:
+        elif key == settings.data.backlog.keys.update_order:
             self.update_user_stories_order()
-        elif key == settings.config["backlog"]["keys"]["move_to_milestone"]:
+        elif key == settings.data.backlog.keys.move_to_milestone:
             self.move_user_story_to_milestone()
-        elif key == settings.config["backlog"]["keys"]["reload"]:
+        elif key == settings.data.backlog.keys.reload:
             self.load()
-        elif key == settings.config["backlog"]["keys"]["help"]:
+        elif key == settings.data.backlog.keys.help:
             self.help_info()
         else:
             super().handle(key)

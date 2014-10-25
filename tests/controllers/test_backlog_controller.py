@@ -2,7 +2,8 @@ from concurrent.futures import Future
 from unittest import mock
 
 from taiga_ncurses.ui import signals, views
-from taiga_ncurses import controllers, config
+from taiga_ncurses import controllers
+from taiga_ncurses.config import settings
 from taiga_ncurses.executor import Executor
 from taiga_ncurses.core import StateMachine
 
@@ -17,7 +18,7 @@ def test_backlog_controller_show_the_help_popup():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
     assert not hasattr(project_detail_controller.view.backlog, "help_popup")
-    project_detail_controller.handle(config.ProjectBacklogKeys.HELP)
+    project_detail_controller.handle(settings.data.backlog.keys.help)
     assert hasattr(project_detail_controller.view.backlog, "help_popup")
 
 def test_backlog_controller_close_the_help_popup():
@@ -26,7 +27,7 @@ def test_backlog_controller_close_the_help_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.HELP)
+    project_detail_controller.handle(settings.data.backlog.keys.help)
 
     assert hasattr(project_detail_controller.view.backlog, "help_popup")
     help_popup = project_detail_controller.view.backlog.help_popup
@@ -44,7 +45,7 @@ def test_backlog_controller_reload():
 
     assert executor.project_stats.call_count == 0
     assert executor.unassigned_user_stories.call_count == 0
-    project_detail_controller.handle(config.ProjectBacklogKeys.RELOAD)
+    project_detail_controller.handle(settings.data.backlog.keys.reload)
     assert executor.project_stats.call_count == 1
     assert executor.unassigned_user_stories.call_count == 1
 
@@ -56,7 +57,7 @@ def test_backlog_controller_show_the_new_user_story_form():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
     assert not hasattr(project_detail_controller.view.backlog, "user_story_form")
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.create)
     assert hasattr(project_detail_controller.view.backlog, "user_story_form")
 
 def test_backlog_controller_cancel_the_new_user_story_form():
@@ -65,7 +66,7 @@ def test_backlog_controller_cancel_the_new_user_story_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.create)
 
     assert hasattr(project_detail_controller.view.backlog, "user_story_form")
     form = project_detail_controller.view.backlog.user_story_form
@@ -79,7 +80,7 @@ def test_backlog_controller_submit_new_user_story_form_with_errors():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.create)
     form = project_detail_controller.view.backlog.user_story_form
 
     signals.emit(form.save_button, "click")
@@ -94,7 +95,7 @@ def test_backlog_controller_submit_new_user_story_form_successfully():
                            factories.successful_create_user_story_response(us_subject)))
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.create)
     form = project_detail_controller.view.backlog.user_story_form
     project_view.backlog.notifier.reset_mock()
 
@@ -113,7 +114,7 @@ def test_backlog_controller_show_the_edit_user_story_form():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
     assert not hasattr(project_detail_controller.view.backlog, "user_story_form")
-    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.edit)
     assert hasattr(project_detail_controller.view.backlog, "user_story_form")
     assert (project_detail_controller.view.backlog.user_story_form.user_story ==
             project_detail_controller.view.backlog.user_stories.widget.get_focus().user_story)
@@ -124,7 +125,7 @@ def test_backlog_controller_cancel_the_edit_user_story_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.edit)
 
     assert hasattr(project_detail_controller.view.backlog, "user_story_form")
     form = project_detail_controller.view.backlog.user_story_form
@@ -138,7 +139,7 @@ def test_backlog_controller_submit_the_edit_user_story_form_with_errors():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.edit)
     form = project_detail_controller.view.backlog.user_story_form
 
     form._subject_edit.set_edit_text("")
@@ -154,7 +155,7 @@ def test_backlog_controller_submit_edit_user_story_form_successfully():
                            factories.successful_update_user_story_response(us_subject)))
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.edit)
     form = project_detail_controller.view.backlog.user_story_form
     project_view.backlog.notifier.reset_mock()
 
@@ -179,7 +180,7 @@ def test_backlog_controller_move_user_story_down():
     us_a_old = project_detail_controller.backlog.user_stories[0]
     us_b_old = project_detail_controller.backlog.user_stories[1]
 
-    project_detail_controller.handle(config.ProjectBacklogKeys.US_DOWN)
+    project_detail_controller.handle(settings.data.backlog.keys.decrease_priority)
     assert project_view.backlog.notifier.info_msg.call_count == 1
 
     us_b_new = project_detail_controller.backlog.user_stories[0]
@@ -201,7 +202,7 @@ def test_backlog_controller_move_user_story_up():
     us_a_old = project_detail_controller.backlog.user_stories[0]
     us_b_old = project_detail_controller.backlog.user_stories[1]
 
-    project_detail_controller.handle(config.ProjectBacklogKeys.US_UP)
+    project_detail_controller.handle(settings.data.backlog.keys.increase_priority)
     assert project_view.backlog.notifier.info_msg.call_count == 1
 
     us_b_new = project_detail_controller.backlog.user_stories[0]
@@ -218,7 +219,7 @@ def test_backlog_controller_update_user_stories_order_with_errors():
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
-    project_detail_controller.handle(config.ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER)
+    project_detail_controller.handle(settings.data.backlog.keys.update_order)
     assert project_view.backlog.notifier.error_msg.call_count == 1
 
 def test_backlog_controller_update_user_stories_order_with_success():
@@ -230,7 +231,7 @@ def test_backlog_controller_update_user_stories_order_with_success():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
     project_view.backlog.notifier.reset_mock()
 
-    project_detail_controller.handle(config.ProjectBacklogKeys.UPDATE_USER_STORIES_ORDER)
+    project_detail_controller.handle(settings.data.backlog.keys.update_order)
     assert project_view.backlog.notifier.info_msg.call_count == 1
 
 def test_backlog_controller_delete_user_story_with_errors():
@@ -241,7 +242,7 @@ def test_backlog_controller_delete_user_story_with_errors():
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
-    project_detail_controller.handle(config.ProjectBacklogKeys.DELETE_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.delete)
     assert project_view.backlog.notifier.error_msg.call_count == 1
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.backlog.user_stories[0]["id"])
@@ -255,7 +256,7 @@ def test_backlog_controller_delete_user_story_with_success():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
     project_view.backlog.notifier.reset_mock()
 
-    project_detail_controller.handle(config.ProjectBacklogKeys.DELETE_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.delete)
     assert project_view.backlog.notifier.info_msg.call_count == 1
     assert (executor.delete_user_story.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.backlog.user_stories[0]["id"])
@@ -268,7 +269,7 @@ def test_backlog_controller_show_the_milestone_selector_popup():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
     assert not hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")
-    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
+    project_detail_controller.handle(settings.data.backlog.keys.move_to_milestone)
     assert hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")
 
 def test_backlog_controller_close_the_milestone_selector_popup():
@@ -277,7 +278,7 @@ def test_backlog_controller_close_the_milestone_selector_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
+    project_detail_controller.handle(settings.data.backlog.keys.move_to_milestone)
 
     assert hasattr(project_detail_controller.view.backlog, "milestone_selector_popup")
     milestone_selector_popup = project_detail_controller.view.backlog.milestone_selector_popup
@@ -291,7 +292,7 @@ def test_backlog_controller_move_a_user_story_to_a_milestone():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.MOVE_US_TO_MILESTONE)
+    project_detail_controller.handle(settings.data.backlog.keys.move_to_milestone)
     milestone_selector_popup = project_detail_controller.view.backlog.milestone_selector_popup
     project_view.backlog.notifier.reset_mock()
 
@@ -310,7 +311,7 @@ def test_backlog_controller_change_user_story_status():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.edit)
     project_view.backlog.notifier.reset_mock()
 
     us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
@@ -329,7 +330,7 @@ def test_backlog_controller_change_user_story_points():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.EDIT_USER_STORY)
+    project_detail_controller.handle(settings.data.backlog.keys.edit)
     project_view.backlog.notifier.reset_mock()
 
     us = project_detail_controller.view.backlog.user_stories.widget.contents[1][0]
@@ -351,7 +352,7 @@ def test_backlog_controller_show_the_new_user_stories_in_bulk_form():
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
 
     assert not hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    project_detail_controller.handle(settings.data.backlog.keys.create_in_bulk)
     assert hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
 
 def test_backlog_controller_cancel_the_new_user_stories_in_bulk_form():
@@ -360,7 +361,7 @@ def test_backlog_controller_cancel_the_new_user_stories_in_bulk_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    project_detail_controller.handle(settings.data.backlog.keys.create_in_bulk)
 
     assert hasattr(project_detail_controller.view.backlog, "user_stories_in_bulk_form")
     form = project_detail_controller.view.backlog.user_stories_in_bulk_form
@@ -374,7 +375,7 @@ def test_backlog_controller_submit_new_user_stories_in_bulk_form_with_errors():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    project_detail_controller.handle(settings.data.backlog.keys.create_in_bulk)
     form = project_detail_controller.view.backlog.user_stories_in_bulk_form
 
     signals.emit(form.save_button, "click")
@@ -388,7 +389,7 @@ def test_backlog_controller_submit_new_user_stories_in_bulk_form_successfully():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectBacklogKeys.CREATE_USER_STORIES_IN_BULK)
+    project_detail_controller.handle(settings.data.backlog.keys.create_in_bulk)
     form = project_detail_controller.view.backlog.user_stories_in_bulk_form
     project_view.backlog.notifier.reset_mock()
 
