@@ -41,17 +41,17 @@ class ProjectIssuesSubController(base.Controller):
         self.view.issues.on_issue_assigned_to_change = self.handle_change_issue_assigned_to_request
 
     def handle(self, key):
-        if key == settings.config["issues"]["keys"]["create"]:
+        if key == settings.data.issues.keys.create:
             self.new_issue()
-        elif key == settings.config["issues"]["keys"]["edit"]:
+        elif key == settings.data.issues.keys.edit:
             self.edit_issue()
-        elif key == settings.config["issues"]["keys"]["delete"]:
+        elif key == settings.data.issues.keys.delete:
             self.delete_issue()
-        elif key == settings.config["issues"]["keys"]["filters"]:
+        elif key == settings.data.issues.keys.filters:
             self.filters()
-        elif key == settings.config["issues"]["keys"]["reload"]:
+        elif key == settings.data.issues.keys.reload:
             self.load()
-        elif key == settings.config["issues"]["keys"]["help"]:
+        elif key == settings.data.issues.keys.help:
             self.help_info()
         else:
             super().handle(key)
@@ -329,7 +329,6 @@ class ProjectIssuesSubController(base.Controller):
             futures = (issues_stats_f, issues_f)
             futures_completed_f = self.executor.pool.submit(lambda : wait(futures, 10))
             futures_completed_f.add_done_callback(self.when_issues_info_fetched)
-
 
     def handle_refresh_issues(self, future):
         self.issues = future.result()

@@ -29,19 +29,19 @@ class ProjectMilestoneSubController(base.Controller):
         self.view.taskboard.on_user_story_points_change = self.handle_change_user_story_points_request
 
     def handle(self, key):
-        if key == settings.config["milestone"]["keys"]["create_user_story"]:
+        if key == settings.data.milestone.keys.create_user_story:
             self.new_user_story()
-        elif key == settings.config["milestone"]["keys"]["create_task"]:
+        elif key == settings.data.milestone.keys.create_task:
             self.new_task()
-        elif key == settings.config["milestone"]["keys"]["edit"]:
+        elif key == settings.data.milestone.keys.edit:
             self.edit_user_story_or_task()
-        elif key == settings.config["milestone"]["keys"]["delete"]:
+        elif key == settings.data.milestone.keys.delete:
             self.delete_user_story_or_task()
-        elif key == settings.config["milestone"]["keys"]["change_to_milestone"]:
+        elif key == settings.data.milestone.keys.change_to_milestone:
             self.change_to_milestone()
-        elif key == settings.config["milestone"]["keys"]["reload"]:
+        elif key == settings.data.milestone.keys.reload:
             self.load()
-        elif key == settings.config["milestone"]["keys"]["help"]:
+        elif key == settings.data.milestone.keys.help:
             self.help_info()
         else:
             super().handle(key)
