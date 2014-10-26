@@ -10,4 +10,5 @@ from . import (auth,
                projects,
                backlog,
                milestones,
+               issues,
                wiki)
