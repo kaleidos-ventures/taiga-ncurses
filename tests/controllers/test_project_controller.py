@@ -2,7 +2,8 @@ from concurrent.futures import Future
 from unittest import mock
 
 from taiga_ncurses.ui import signals, views
-from taiga_ncurses import controllers, config
+from taiga_ncurses import controllers
+from taiga_ncurses.config import settings
 from taiga_ncurses.executor import Executor
 from taiga_ncurses.core import StateMachine
 
@@ -116,7 +117,7 @@ def test_project_detail_controller_fetches_issues_and_transitions_to_issues():
                                                                              state_machine)
     assert state_machine.state == state_machine.PROJECT_BACKLOG
 
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     assert state_machine.state == state_machine.PROJECT_ISSUES
 
 def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskboard():
@@ -128,7 +129,7 @@ def test_project_detail_controller_fetches_task_and_transitions_to_sprint_taskbo
                                                                              state_machine)
     assert state_machine.state == state_machine.PROJECT_BACKLOG
 
-    project_detail_controller.handle(config.ProjectKeys.MILESTONES)
+    project_detail_controller.handle(settings.data.main.keys.milestone)
     assert state_machine.state == state_machine.PROJECT_MILESTONES
 
 def test_project_detail_controller_fetches_wiki_pages_and_transitions_to_wiki():
@@ -140,5 +141,5 @@ def test_project_detail_controller_fetches_wiki_pages_and_transitions_to_wiki():
                                                                              state_machine)
     assert state_machine.state == state_machine.PROJECT_BACKLOG
 
-    project_detail_controller.handle(config.ProjectKeys.WIKI)
+    project_detail_controller.handle(settings.data.main.keys.wiki)
     assert state_machine.state == state_machine.PROJECT_WIKI
