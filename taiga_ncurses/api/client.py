@@ -145,6 +145,7 @@ class TaigaClient(BaseClient):
         data_dict = {
             "username": username,
             "password": password,
+            "type": "normal"
         }
         data = self._post(url, data_dict, params)
 
