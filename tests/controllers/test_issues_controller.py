@@ -2,7 +2,8 @@ from concurrent.futures import Future
 from unittest import mock
 
 from taiga_ncurses.ui import signals, views
-from taiga_ncurses import controllers, config
+from taiga_ncurses import controllers
+from taiga_ncurses.config import settings
 from taiga_ncurses.executor import Executor
 from taiga_ncurses.core import StateMachine
 
@@ -15,10 +16,10 @@ def test_issues_controller_show_the_filters_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
 
     assert not hasattr(project_detail_controller.view.issues, "filters_popup")
-    project_detail_controller.handle(config.ProjectIssuesKeys.FILTERS)
+    project_detail_controller.handle(settings.data.issues.keys.filters)
     assert hasattr(project_detail_controller.view.issues, "filters_popup")
 
 def test_issues_controller_submit_the_filters_popup():
@@ -28,8 +29,8 @@ def test_issues_controller_submit_the_filters_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.FILTERS)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.filters)
     filters_popup = project_detail_controller.view.issues.filters_popup
     project_view.issues.notifier.reset_mock()
     executor.issues.reset_mock()
@@ -61,8 +62,8 @@ def test_issues_controller_cancel_the_filters_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.FILTERS)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.filters)
 
     assert hasattr(project_detail_controller.view.issues, "filters_popup")
     filters_popup = project_detail_controller.view.issues.filters_popup
@@ -75,10 +76,10 @@ def test_issues_controller_show_the_help_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
 
     assert not hasattr(project_detail_controller.view.issues, "help_popup")
-    project_detail_controller.handle(config.ProjectIssuesKeys.HELP)
+    project_detail_controller.handle(settings.data.issues.keys.help)
     assert hasattr(project_detail_controller.view.issues, "help_popup")
 
 def test_issues_controller_close_the_help_popup():
@@ -87,8 +88,8 @@ def test_issues_controller_close_the_help_popup():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.HELP)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.help)
 
     assert hasattr(project_detail_controller.view.issues, "help_popup")
     help_popup = project_detail_controller.view.issues.help_popup
@@ -101,13 +102,13 @@ def test_issues_controller_reload():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     executor.project_issues_stats.reset_mock()
     executor.issues.reset_mock()
 
     assert executor.project_issues_stats.call_count == 0
     assert executor.issues.call_count == 0
-    project_detail_controller.handle(config.ProjectIssuesKeys.RELOAD)
+    project_detail_controller.handle(settings.data.issues.keys.reload)
     assert executor.project_issues_stats.call_count == 1
     assert executor.issues.call_count == 1
 
@@ -117,10 +118,10 @@ def test_issues_controller_show_the_new_issue_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
 
     assert not hasattr(project_detail_controller.view.issues, "issue_form")
-    project_detail_controller.handle(config.ProjectIssuesKeys.CREATE_ISSUE)
+    project_detail_controller.handle(settings.data.issues.keys.create)
     assert hasattr(project_detail_controller.view.issues, "issue_form")
 
 def test_issues_controller_cancel_the_new_issue_form():
@@ -129,8 +130,8 @@ def test_issues_controller_cancel_the_new_issue_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.CREATE_ISSUE)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.create)
 
     assert hasattr(project_detail_controller.view.issues, "issue_form")
     form = project_detail_controller.view.issues.issue_form
@@ -144,8 +145,8 @@ def test_issues_controller_submit_new_issue_form_with_errors():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.CREATE_ISSUE)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.create)
     form = project_detail_controller.view.issues.issue_form
 
     signals.emit(form.save_button, "click")
@@ -160,8 +161,8 @@ def test_issues_controller_submit_new_issue_form_successfully():
                            factories.successful_create_issue_response(issue_subject)))
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.CREATE_ISSUE)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.create)
     form = project_detail_controller.view.issues.issue_form
     project_view.issues.notifier.reset_mock()
 
@@ -178,10 +179,10 @@ def test_issues_controller_show_the_edit_issue_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
 
     assert not hasattr(project_detail_controller.view.issues, "issue_form")
-    project_detail_controller.handle(config.ProjectIssuesKeys.EDIT_ISSUE)
+    project_detail_controller.handle(settings.data.issues.keys.edit)
     assert hasattr(project_detail_controller.view.issues, "issue_form")
     assert (project_detail_controller.view.issues.issue_form.issue ==
             project_detail_controller.view.issues.issues.list_walker.get_focus()[0].issue)
@@ -192,8 +193,8 @@ def test_issues_controller_cancel_the_edit_issue_form():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.EDIT_ISSUE)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.edit)
 
     assert hasattr(project_detail_controller.view.issues, "issue_form")
     form = project_detail_controller.view.issues.issue_form
@@ -207,8 +208,8 @@ def test_issues_controller_submit_the_edit_issue_form_with_errors():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.EDIT_ISSUE)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.edit)
     form = project_detail_controller.view.issues.issue_form
 
     form._subject_edit.set_edit_text("")
@@ -224,8 +225,8 @@ def test_issues_controller_submit_edit_issue_form_successfully():
                            factories.successful_update_issue_response(issue_subject)))
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
-    project_detail_controller.handle(config.ProjectIssuesKeys.EDIT_ISSUE)
+    project_detail_controller.handle(settings.data.main.keys.issues)
+    project_detail_controller.handle(settings.data.issues.keys.edit)
     form = project_detail_controller.view.issues.issue_form
     project_view.issues.notifier.reset_mock()
 
@@ -245,9 +246,9 @@ def test_issues_controller_delete_issue_with_errors():
     executor = factories.patched_executor(delete_issue_response=factories.future(None))
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
 
-    project_detail_controller.handle(config.ProjectIssuesKeys.DELETE_ISSUE)
+    project_detail_controller.handle(settings.data.issues.keys.delete)
     assert project_view.issues.notifier.error_msg.call_count == 1
     assert (executor.delete_issue.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.issues.issues[0]["id"])
@@ -259,10 +260,10 @@ def test_issues_controller_delete_issue_with_success():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     project_view.issues.notifier.reset_mock()
 
-    project_detail_controller.handle(config.ProjectIssuesKeys.DELETE_ISSUE)
+    project_detail_controller.handle(settings.data.issues.keys.delete)
     assert project_view.issues.notifier.info_msg.call_count == 1
     assert (executor.delete_issue.call_args.call_list()[0][0][0]["id"] ==
             project_detail_controller.issues.issues[0]["id"])
@@ -274,7 +275,7 @@ def test_issues_controller_change_issue_status():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     project_view.issues.notifier.reset_mock()
 
     issue = project_view.issues.issues.widget.contents()[0][0]
@@ -293,7 +294,7 @@ def test_issues_controller_change_issue_priority():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     project_view.issues.notifier.reset_mock()
 
     issue = project_view.issues.issues.widget.contents()[0][0]
@@ -312,7 +313,7 @@ def test_issues_controller_change_issue_severity():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     project_view.issues.notifier.reset_mock()
 
     issue = project_view.issues.issues.widget.contents()[0][0]
@@ -331,7 +332,7 @@ def test_issues_controller_change_issue_assigned_to():
     executor = factories.patched_executor()
     _ = mock.Mock()
     project_detail_controller = controllers.projects.ProjectDetailController(project_view, executor, _)
-    project_detail_controller.handle(config.ProjectKeys.ISSUES)
+    project_detail_controller.handle(settings.data.main.keys.issues)
     project_view.issues.notifier.reset_mock()
 
     issue = project_view.issues.issues.widget.contents()[0][0]
