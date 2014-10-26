@@ -64,7 +64,7 @@ class Executor(object):
     def unassigned_user_stories(self, project):
         params = {
             "project": project["id"],
-            "milestone__isnull": True
+            "milestone": None
         }
 
         return self.pool.submit(self.client.get_user_stories, params=params)
