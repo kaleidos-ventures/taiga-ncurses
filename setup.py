@@ -9,8 +9,8 @@ from taiga_ncurses import __name__, __description__, __version__
 from setuptools import setup, find_packages
 
 REQUIREMENTS = [
-    "requests==2.2.1",
-    "urwid>=1.2.1",
+    "requests==2.4.3",
+    "urwid>=1.3.0",
     "x256==0.0.3"
 ]
 
