@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.controllers.auth
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from taiga_ncurses.ui import signals

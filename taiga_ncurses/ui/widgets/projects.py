@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.widgets.projects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid
@@ -23,4 +23,3 @@ class ProjectDetailHeader(mixins.NonSelectableMixin, urwid.WidgetWrap):
             ("weight", 0.1, urwid.AttrMap(self.account_button, "account-button")),
         ])
         super().__init__(urwid.AttrMap(cols, "green-bg"))
-

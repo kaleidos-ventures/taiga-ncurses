@@ -2,20 +2,21 @@
 
 """
 taiga_ncurses.config
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 """
 
 import os
 import urllib
 
 
-DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
-DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
 ###########################################################
 # Default config settings
 ###########################################################
 
-# Default palette theme
+DEFAULT_CONFIG_DIR =  os.path.join(os.environ["HOME"], ".taiga-ncurses")
+DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_DIR, "config.ini")
+
+# Default color palette
 
 DEFAULT_PALETTE = {
     "default":                  ("white", "default"),
@@ -134,7 +135,7 @@ DEFAULTS = {
     }
 }
 
-class ConfigData(object):
+class ConfigData:
     def __init__(self, data):
         super().__setattr__('_data', data)
 
@@ -172,12 +173,12 @@ class ConfiguratioManager(object):
         # TODO
         pass
 
-    def save(self):\
+    def save(self):
         # TODO
         pass
 
     @property
-    def host(self):
+    def host(self) -> str:
         scheme = self.data.main.host.scheme
         assert scheme in ("http", "https")
         domain = urllib.parse.quote(self.data.main.host.domain)

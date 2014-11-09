@@ -2,13 +2,9 @@
 
 """
 taiga_ncurses.ui.widgets
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
-from . import (generic,
-               auth,
-               projects,
-               backlog,
-               milestones,
-               issues,
-               wiki)
+from . import (
+    generic, auth, projects, backlog, milestones, issues, wiki
+)

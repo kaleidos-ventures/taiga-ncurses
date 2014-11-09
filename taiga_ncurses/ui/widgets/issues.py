@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.widgets.issues
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid

@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.controllers.milestone
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait

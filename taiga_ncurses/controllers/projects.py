@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.controllers.projects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import functools
@@ -98,5 +98,3 @@ class ProjectAdminSubController(base.Controller):
         self.view = view
         self.executor = executor
         self.state_machine = state_machine
-
-

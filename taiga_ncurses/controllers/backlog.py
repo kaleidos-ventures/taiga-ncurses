@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.controllers.backlog
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait

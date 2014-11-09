@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.data
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 """
 
 from datetime import datetime

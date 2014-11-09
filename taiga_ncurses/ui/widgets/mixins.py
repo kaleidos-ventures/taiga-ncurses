@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.widgets.mixins
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid

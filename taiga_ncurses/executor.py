@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.executor
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import ThreadPoolExecutor

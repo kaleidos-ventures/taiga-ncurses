@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.controllers.wiki
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait
@@ -51,4 +51,3 @@ class ProjectWikiSubController(base.Controller):
         self.view.wiki_page.populate(self.wiki_pages, wiki_page)
 
         self.view.notifier.info_msg("Change to wiki page: '{}'".format(wiki_page["slug"]))
-

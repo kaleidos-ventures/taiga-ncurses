@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.widgets.wiki
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid

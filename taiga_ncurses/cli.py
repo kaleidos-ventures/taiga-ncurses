@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.cli
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 """
 
 from taiga_ncurses.api.client import TaigaClient

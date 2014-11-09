@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.views.auth
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from taiga_ncurses.ui.widgets import generic, auth

@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.views.backlog
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid
@@ -106,4 +106,3 @@ class ProjectBacklogSubView(base.SubView):
     def close_milestone_selector_popup(self):
         del self.milestone_selector_popup
         self.parent.hide_widget_on_top()
-

@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.api.client
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from urllib.parse import urljoin

@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.widgets.utils
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from x256 import x256

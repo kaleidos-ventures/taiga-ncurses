@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses
-~~~~~~~~~
+~~~~~~~~~~~~~
 """
 
 __name__ = "taiga_ncurses"

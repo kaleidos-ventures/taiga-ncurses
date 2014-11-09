@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.widgets.auth
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid
@@ -31,8 +31,3 @@ def wrap_login_button(button):
 class Login(mixins.FormMixin, urwid.ListBox):
     def __init__(self, widgets):
         super(Login, self).__init__(urwid.SimpleListWalker(widgets))
-
-
-
-
-

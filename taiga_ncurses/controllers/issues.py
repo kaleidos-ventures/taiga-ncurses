@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.controllers.issues
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 from concurrent.futures import wait

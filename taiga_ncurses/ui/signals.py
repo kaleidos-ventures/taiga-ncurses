@@ -2,7 +2,7 @@
 
 """
 taiga_ncurses.ui.signals
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
 import urwid
