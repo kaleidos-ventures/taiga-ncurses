@@ -8,7 +8,7 @@ taiga_ncurses.executor
 from concurrent.futures import ThreadPoolExecutor
 
 
-class Executor(object):
+class Executor:
     def __init__(self, client):
         self.client = client
         self.pool = ThreadPoolExecutor(2)

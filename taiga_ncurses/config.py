@@ -164,7 +164,7 @@ class ConfigData:
         return self._data.items()
 
 
-class ConfiguratioManager(object):
+class ConfiguratioManager:
     def __init__(self, config_file=DEFAULT_CONFIG_FILE):
         self.config_file = config_file
         self.data = ConfigData(DEFAULTS.copy())

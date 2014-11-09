@@ -6,7 +6,7 @@ taiga_ncurses.controllers.base
 """
 
 
-class Controller(object):
+class Controller:
     view = None
 
     def handle(self, key):

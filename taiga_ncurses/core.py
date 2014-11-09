@@ -15,7 +15,7 @@ from taiga_ncurses import controllers
 from taiga_ncurses.config import settings
 
 
-class TaigaCore(object):
+class TaigaCore:
     def __init__(self, executor, settings, authenticated=False, draw=True):
         self.executor = executor
         self.settings = settings

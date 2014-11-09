@@ -11,7 +11,7 @@ import json
 import requests
 
 
-class BaseClient(object):
+class BaseClient:
     """ The base class for an API client. """
 
     BASE_HEADERS = {

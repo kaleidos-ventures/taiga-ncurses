@@ -10,7 +10,7 @@ import urwid
 from taiga_ncurses.ui.widgets import generic
 
 
-class View(object):
+class View:
     widget = None
     notifier = None
 
@@ -28,7 +28,7 @@ class View(object):
                        min_width=min_width, min_height=min_height)
 
 
-class SubView(object):
+class SubView:
     parent = None
     widget = None
     help_popup_title = "Help Info"

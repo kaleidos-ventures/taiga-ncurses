@@ -8,12 +8,12 @@ taiga_ncurses.ui.widgets.mixins
 import urwid
 
 
-class IgnoreKeyPressMixin(object):
+class IgnoreKeyPressMixin:
     def keypress(self, size, key):
         return key
 
 
-class KeyPressMixin(object):
+class KeyPressMixin:
     signals = ["click"]
 
     def keypress(self, size, key):
@@ -62,7 +62,7 @@ class KeyPressMixin(object):
         return True
 
 
-class FormMixin(object):
+class FormMixin:
     FORM_KEYS = {
         "tab": "down",
         "shift tab": "up",
@@ -72,7 +72,7 @@ class FormMixin(object):
         key = self.FORM_KEYS.get(key, key)
         return super().keypress(size, key)
 
-class ViMotionMixin(object):
+class ViMotionMixin:
     VI_KEYS = {
         "j": "down",
         "k": "up",
@@ -84,7 +84,7 @@ class ViMotionMixin(object):
         key = self.VI_KEYS.get(key, key)
         return super().keypress(size, key)
 
-class EmacsMotionMixin(object):
+class EmacsMotionMixin:
     EMACS_KEYS = {
         "ctrl n": "down",
         "ctrl p": "up",
@@ -96,7 +96,7 @@ class EmacsMotionMixin(object):
         key = self.EMACS_KEYS.get(key, key)
         return super().keypress(size, key)
 
-class NotifierMixin(object):
+class NotifierMixin:
     ERROR_PREFIX = ""
     ERROR_ATTR = "error"
     INFO_PREFIX = ""
@@ -115,11 +115,11 @@ class NotifierMixin(object):
         self.set_text("")
 
 
-class PlainButtonMixin(object):
+class PlainButtonMixin:
     button_left = urwid.Text("")
     button_right = urwid.Text("")
 
 
-class NonSelectableMixin(object):
+class NonSelectableMixin:
     def selectable(self):
         return False
