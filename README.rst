@@ -11,6 +11,13 @@ taiga-ncurses
 
 A NCurses client for Taiga.
 
+Project status
+--------------
+
+Currently on design phases: This project was a proof of concept to try to create a curses client 
+for Taiga in the 6th `PiWeek`_. It isn't finished yet and currently it isn't 
+feature complete. You can see some screenshots at https://github.com/taigaio/taiga-ncurses/issues/4#issuecomment-57717386 
+
 Setup development environment
 -----------------------------
 
@@ -41,3 +48,4 @@ To subscribe for announcements of releases, important changes and so on, please 
 .. _taiga web client: https://github.com/kaleidos/taiga-front
 .. _mailing list: http://groups.google.com/d/forum/taigaio
 .. _@taigaio: https://twitter.com/taigaio
+.. _PiWeek: http://piweek.com
