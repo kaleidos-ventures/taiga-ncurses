@@ -4,6 +4,13 @@
 A text interface to Taiga.
 """
 
+from __future__ import print_function
+import sys
+if sys.version_info[0] < 3 or sys.version_info[1] < 3:
+    print("Sorry, taiga-ncurses needs python >= 3.3", file=sys.stderr)
+    sys.exit(-1)
+
+
 from taiga_ncurses import __name__, __description__, __version__
 
 from setuptools import setup, find_packages
