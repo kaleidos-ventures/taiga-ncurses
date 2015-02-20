@@ -5,10 +5,11 @@ taiga-ncurses
     :target: http://kaleidos.net/community/greenmine/
 .. image:: https://taiga.io/media/support/attachments/article-22/banner-gh.png
     :target: https://taiga.io
-.. image:: https://api.travis-ci.org/taigaio/taiga-ncurses.png?branch=master
+.. image:: https://travis-ci.org/taigaio/taiga-ncurses.svg?branch=master
     :target: https://travis-ci.org/taigaio/taiga-ncurses
-.. image:: https://coveralls.io/repos/taigaio/taiga-ncurses/badge.png?branch=master
+.. image:: https://coveralls.io/repos/taigaio/taiga-ncurses/badge.svg?branch=master 
     :target: https://coveralls.io/r/taigaio/taiga-ncurses?branch=master
+
 
 
 A NCurses client for Taiga.
